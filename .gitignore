@@ -1,0 +1,21 @@
+# Kết quả build của .NET
+bin/
+obj/
+publish/
+publish-fixed/
+publish-final/
+artifacts/
+
+# Dữ liệu chạy thật (mỗi máy một khác, không đưa lên Git)
+**/Data/software-list.json
+**/Data/app-settings.json
+**/Logs/
+*.corrupted-*.bak
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.user
+
+# Claude / Assistant worktrees
+.claude/

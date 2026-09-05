@@ -1,0 +1,20 @@
+<Project>
+
+  <!--
+    Áp dụng cho MỌI project trong solution.
+    Bản Release (bản mang đi USB) không kèm file .pdb để thư mục publish gọn gàng.
+    Lưu ý: từ .NET 8, RuntimeIdentifier không còn tự lan sang project được tham chiếu,
+    nên điều kiện ở đây dựa vào Configuration.
+  -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+</Project>

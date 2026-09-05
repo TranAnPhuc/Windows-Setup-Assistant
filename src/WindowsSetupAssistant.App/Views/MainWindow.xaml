@@ -1,0 +1,421 @@
+<Window x:Class="WindowsSetupAssistant.App.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:WindowsSetupAssistant.App.ViewModels"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
+        Title="Windows Setup Assistant"
+        Icon="pack://application:,,,/WindowsSetupAssistant;component/Assets/AppIcon.ico"
+        Height="780" Width="1200"
+        MinHeight="620" MinWidth="980"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource WindowBackgroundBrush}"
+        TextOptions.TextFormattingMode="Display">
+
+    <Grid Margin="16,14,16,10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- ==================== Thanh tiêu đề ==================== -->
+        <Grid Grid.Row="0" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                <TextBlock Text="Windows Setup Assistant" Style="{StaticResource PageTitleText}" />
+                <TextBlock Text="Cài hàng loạt phần mềm bằng WinGet sau khi cài lại Windows"
+                           Style="{StaticResource MutedText}" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="Cấu hình:" VerticalAlignment="Center" Margin="0,0,8,0"
+                           Foreground="{DynamicResource MutedTextBrush}" />
+
+                <ComboBox Width="200"
+                          ItemsSource="{Binding Profiles}"
+                          SelectedItem="{Binding SelectedProfile}"
+                          IsEnabled="{Binding IsInstalling, Converter={StaticResource InverseBoolean}}"
+                          ToolTip="Chọn bộ phần mềm muốn dùng">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <Button Content="Mới" Command="{Binding NewProfileCommand}" Margin="6,0,0,0" ToolTip="Tạo cấu hình mới" />
+                <Button Content="Đổi tên" Command="{Binding RenameProfileCommand}" Margin="6,0,0,0" />
+                <Button Content="Nhân bản" Command="{Binding DuplicateProfileCommand}" Margin="6,0,0,0" />
+                <Button Content="Xoá" Command="{Binding DeleteProfileCommand}" Margin="6,0,0,0"
+                        Style="{StaticResource DangerButton}" />
+
+                <Border Width="1" Background="{DynamicResource AppBorderBrush}" Margin="12,2" />
+
+                <Button Content="{Binding ThemeButtonText}" Command="{Binding ToggleThemeCommand}" />
+            </StackPanel>
+        </Grid>
+
+        <!-- ==================== Cảnh báo thiếu WinGet ==================== -->
+        <Border Grid.Row="1"
+                Margin="0,0,0,12"
+                Padding="14,12"
+                CornerRadius="8"
+                Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource WarningBrush}"
+                BorderThickness="1.5"
+                Visibility="{Binding ShowWingetWarning, Converter={StaticResource BoolToVisibility}}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Chưa dùng được WinGet"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource WarningBrush}" />
+                    <TextBlock Text="{Binding WingetWarning}" Style="{StaticResource MutedText}" Margin="0,4,0,0" />
+                    <TextBlock Style="{StaticResource MutedText}" Margin="0,4,0,0"
+                               Text="Cách khắc phục: cài ứng dụng &quot;App Installer&quot; của Microsoft từ Microsoft Store, sau đó mở lại ứng dụng này." />
+                </StackPanel>
+
+                <Button Grid.Column="1"
+                        Content="Mở Microsoft Store"
+                        VerticalAlignment="Center"
+                        Margin="12,0,0,0"
+                        Command="{Binding OpenAppInstallerPageCommand}" />
+            </Grid>
+        </Border>
+
+        <!-- ==================== Nội dung chính ==================== -->
+        <TabControl Grid.Row="2">
+
+            <!-- ~~~~~ Tab 1: Danh sách phần mềm ~~~~~ -->
+            <TabItem Header="Danh sách phần mềm">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Thanh công cụ -->
+                    <Grid Grid.Row="0" Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox Grid.Column="0" Width="240"
+                                 Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged, Delay=200}"
+                                 ToolTip="Lọc theo tên hoặc Package Id" />
+
+                        <ComboBox Grid.Column="1" Width="150" Margin="8,0,0,0"
+                                  ItemsSource="{Binding CategoryFilters}"
+                                  SelectedItem="{Binding CategoryFilter}"
+                                  DisplayMemberPath="DisplayName" />
+
+                        <StackPanel Grid.Column="3" Orientation="Horizontal">
+                            <Button Content="Chọn tất cả" Command="{Binding SelectAllCommand}" />
+                            <Button Content="Bỏ chọn" Command="{Binding SelectNoneCommand}" Margin="6,0,0,0" />
+                            <Button Content="Đảo chọn" Command="{Binding InvertSelectionCommand}" Margin="6,0,0,0" />
+                            <Button Content="Chỉ cái chưa cài" Command="{Binding SelectNotInstalledCommand}" Margin="6,0,0,0" />
+
+                            <Border Width="1" Background="{DynamicResource AppBorderBrush}" Margin="10,2" />
+
+                            <Button Content="Thêm" Command="{Binding AddPackageCommand}" Style="{StaticResource PrimaryButton}" />
+                            <Button Content="Sửa" Command="{Binding EditPackageCommand}" Margin="6,0,0,0" />
+                            <Button Content="Xoá" Command="{Binding DeletePackageCommand}" Margin="6,0,0,0"
+                                    Style="{StaticResource DangerButton}" />
+                            <Button Content="↑" Command="{Binding MoveUpCommand}" Margin="6,0,0,0" Width="34" ToolTip="Di chuyển lên" />
+                            <Button Content="↓" Command="{Binding MoveDownCommand}" Margin="4,0,0,0" Width="34" ToolTip="Di chuyển xuống" />
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Bảng phần mềm -->
+                    <DataGrid Grid.Row="1"
+                              x:Name="PackagesGrid"
+                              ItemsSource="{Binding PackagesView}"
+                              SelectedItem="{Binding SelectedPackage}">
+                        <DataGrid.InputBindings>
+                            <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding EditPackageCommand}" />
+                            <KeyBinding Key="Delete" Command="{Binding DeletePackageCommand}" />
+                        </DataGrid.InputBindings>
+
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Cài" Width="52">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
+                                                  IsEnabled="{Binding DataContext.IsNotInstalling, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                  HorizontalAlignment="Center"
+                                                  ToolTip="Chọn để đưa vào lượt cài đặt" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTextColumn Header="Tên phần mềm" Binding="{Binding Name}" Width="2*" />
+
+                            <DataGridTextColumn Header="WinGet Package Id" Binding="{Binding PackageId}" Width="2*"
+                                                FontFamily="Consolas" />
+
+                            <DataGridTextColumn Header="Nhóm" Binding="{Binding CategoryDisplayName}" Width="110" />
+
+                            <DataGridTemplateColumn Header="Trạng thái" Width="170">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding StatusText}"
+                                                   FontWeight="SemiBold"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   Foreground="{Binding StatusBrushKey, Converter={StaticResource ResourceKeyToBrush}}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTextColumn Header="Ghi chú" Binding="{Binding Notes}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- Thanh hành động dưới cùng -->
+                    <Border Grid.Row="2" Style="{StaticResource Card}" Margin="0,10,0,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding SummaryText}" FontWeight="SemiBold" />
+                                <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource MutedText}" Margin="0,2,0,0" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Button Content="Kiểm tra đã cài"
+                                        Command="{Binding RefreshInstalledCommand}"
+                                        ToolTip="Hỏi WinGet xem phần mềm nào đã có trên máy" />
+
+                                <Button Content="Thử lại phần lỗi"
+                                        Command="{Binding RetryFailedCommand}"
+                                        Margin="8,0,0,0" />
+
+                                <Button Content="Huỷ cài đặt"
+                                        Command="{Binding CancelInstallCommand}"
+                                        Margin="8,0,0,0"
+                                        Style="{StaticResource DangerButton}"
+                                        Visibility="{Binding IsInstalling, Converter={StaticResource BoolToVisibility}}" />
+
+                                <Button Content="Bắt đầu cài đặt"
+                                        Command="{Binding InstallSelectedCommand}"
+                                        Margin="8,0,0,0"
+                                        Style="{StaticResource PrimaryButton}" />
+                            </StackPanel>
+
+                            <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,12,0,0"
+                                  Visibility="{Binding IsInstalling, Converter={StaticResource BoolToVisibility}}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{Binding CurrentPackageText}" Margin="0,0,0,6" />
+                                    <ProgressBar Value="{Binding ProgressValue, Mode=OneWay}" Maximum="100" />
+                                </StackPanel>
+
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding ProgressText}"
+                                           VerticalAlignment="Bottom"
+                                           Margin="12,0,0,0"
+                                           FontWeight="SemiBold" />
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <!-- ~~~~~ Tab 2: Tìm trên WinGet ~~~~~ -->
+            <TabItem Header="Tìm trên WinGet">
+                <Grid DataContext="{Binding Search}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox Grid.Column="0"
+                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="Ví dụ: chrome, visual studio code, 7-zip">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Return" Command="{Binding SearchCommand}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+
+                        <Button Grid.Column="1" Content="Tìm kiếm" Margin="8,0,0,0"
+                                Style="{StaticResource PrimaryButton}"
+                                Command="{Binding SearchCommand}" />
+
+                        <Button Grid.Column="2" Content="Xoá kết quả" Margin="8,0,0,0"
+                                Command="{Binding ClearCommand}" />
+                    </Grid>
+
+                    <TextBlock Grid.Row="1" Text="{Binding StatusMessage}"
+                               Style="{StaticResource MutedText}" Margin="0,8,0,8" />
+
+                    <DataGrid Grid.Row="2" ItemsSource="{Binding Results}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Tên phần mềm" Binding="{Binding Name}" Width="2*" />
+                            <DataGridTextColumn Header="WinGet Package Id" Binding="{Binding PackageId}" Width="2*"
+                                                FontFamily="Consolas" />
+                            <DataGridTextColumn Header="Phiên bản" Binding="{Binding Version}" Width="130" />
+                            <DataGridTextColumn Header="Nguồn" Binding="{Binding Source}" Width="90" />
+                            <DataGridTemplateColumn Header="" Width="190">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Button Content="Thêm vào danh sách"
+                                                    Padding="10,4"
+                                                    HorizontalAlignment="Left"
+                                                    Command="{Binding DataContext.Search.AddCommand,
+                                                                      RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}"
+                                                    Visibility="{Binding IsAlreadyInList,
+                                                                         Converter={StaticResource InverseBoolToVisibility}}" />
+                                            <TextBlock Text="{Binding StatusText}"
+                                                       VerticalAlignment="Center"
+                                                       Foreground="{DynamicResource MutedTextBrush}"
+                                                       Visibility="{Binding StatusText, Converter={StaticResource StringToVisibility}}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <!-- ~~~~~ Tab 3: Kết quả cài đặt ~~~~~ -->
+            <TabItem Header="Kết quả cài đặt">
+                <DataGrid ItemsSource="{Binding Results}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Phần mềm" Binding="{Binding DisplayName}" Width="1.6*" />
+                        <DataGridTextColumn Header="Package Id" Binding="{Binding PackageId}" Width="1.6*"
+                                            FontFamily="Consolas" />
+                        <DataGridTemplateColumn Header="Kết quả" Width="130">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Outcome, Converter={StaticResource InstallOutcome}}"
+                                               FontWeight="SemiBold"
+                                               Foreground="{Binding Outcome, Converter={StaticResource InstallOutcomeToBrush}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Exit code"
+                                            Binding="{Binding ExitCode, Converter={StaticResource ExitCode}}"
+                                            Width="160" FontFamily="Consolas" />
+                        <DataGridTextColumn Header="Thời gian"
+                                            Binding="{Binding Duration, Converter={StaticResource Duration}}"
+                                            Width="110" />
+                        <DataGridTextColumn Header="Thông báo" Binding="{Binding Message}" Width="2.4*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+
+            <!-- ~~~~~ Tab 4: Nhật ký ~~~~~ -->
+            <TabItem Header="Nhật ký">
+                <Grid DataContext="{Binding Logs}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                        <Button Content="Xoá nhật ký" Command="{Binding ClearCommand}" />
+                        <Button Content="Sao chép tất cả" Command="{Binding CopyCommand}" Margin="8,0,0,0" />
+                        <Button Content="Mở thư mục log" Command="{Binding OpenLogFolderCommand}" Margin="8,0,0,0" />
+                        <CheckBox Content="Tự cuộn xuống dòng mới" IsChecked="{Binding AutoScroll}" Margin="16,0,0,0" />
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1" x:Name="LogGrid" ItemsSource="{Binding Entries}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Thời điểm"
+                                                Binding="{Binding Timestamp, StringFormat='{}{0:HH:mm:ss}'}"
+                                                Width="90" FontFamily="Consolas" />
+                            <DataGridTemplateColumn Header="Mức" Width="90">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Level}"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{Binding Level, Converter={StaticResource LogLevelToBrush}}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Nội dung" Binding="{Binding Message}" Width="2*" />
+                            <DataGridTextColumn Header="Câu lệnh" Binding="{Binding Command}" Width="2*"
+                                                FontFamily="Consolas" />
+                            <DataGridTextColumn Header="Exit code"
+                                                Binding="{Binding ExitCode, Converter={StaticResource ExitCode}}"
+                                                Width="150" FontFamily="Consolas" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <TextBlock Grid.Row="2" Text="{Binding LogFileDescription}"
+                               Style="{StaticResource MutedText}" Margin="0,8,0,0" />
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <!-- ==================== Thanh trạng thái ==================== -->
+        <Border Grid.Row="3" Margin="0,10,0,0" Padding="0,8,0,0"
+                BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="0,1,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis"
+                           Style="{StaticResource MutedText}"
+                           Text="{Binding DataFilePath, StringFormat='Dữ liệu: {0}'}"
+                           ToolTip="{Binding DataFilePath}" />
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding PrivilegeText}" Style="{StaticResource MutedText}"
+                               VerticalAlignment="Center" Margin="0,0,10,0" />
+                    <Button Content="Chạy bằng quyền Admin" Command="{Binding RestartAsAdminCommand}" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
+                    <Button Content="Mở thư mục dữ liệu" Command="{Binding OpenDataFolderCommand}" />
+                    <Button Content="Nhập JSON" Command="{Binding ImportCommand}" Margin="6,0,0,0" />
+                    <Button Content="Xuất tất cả" Command="{Binding ExportCommand}" Margin="6,0,0,0" />
+                    <Button Content="Xuất cấu hình này" Command="{Binding ExportProfileCommand}" Margin="6,0,0,0" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

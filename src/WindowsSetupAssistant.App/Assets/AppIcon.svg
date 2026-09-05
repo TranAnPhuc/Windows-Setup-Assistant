@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Windows Setup Assistant — download complete</title>
+  <desc>Original project artwork: blue rounded tile, white download tray and green checkmark. Transparent outside the tile.</desc>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#2563EB" />
+  <path d="M104 48 H132 V100 H158 L118 140 L78 100 H104 Z" fill="#FFFFFF" />
+  <path d="M52 140 H76 V160 H160 V140 H184 V184 H52 Z" fill="#FFFFFF" />
+  <circle cx="190" cy="190" r="46" fill="#FFFFFF" stroke="#2563EB" stroke-width="8" />
+  <path d="M168 190 L184 206 L214 174" fill="none" stroke="#15803D" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

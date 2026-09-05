@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+
+    <AssemblyName>WindowsSetupAssistant</AssemblyName>
+    <RootNamespace>WindowsSetupAssistant.App</RootNamespace>
+    <Product>Windows Setup Assistant</Product>
+    <AssemblyTitle>Install and manage Windows applications with WinGet</AssemblyTitle>
+    <Description>Install and manage Windows applications with WinGet</Description>
+    <Version>1.0.1</Version>
+    <Company>Windows Setup Assistant</Company>
+    <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
+
+    <!--
+      Không khai báo requestedExecutionLevel nên ứng dụng chạy ở mức "asInvoker"
+      (quyền người dùng thường). Chỉ khi người dùng tự bấm nút "Chạy bằng quyền Admin"
+      thì ứng dụng mới khởi động lại qua UAC.
+    -->
+  </PropertyGroup>
+
+  <!--
+    Cấu hình chỉ áp dụng khi publish có RuntimeIdentifier (win-x64).
+    Nhờ đặt điều kiện, lệnh "dotnet build"/"dotnet run" thường ngày vẫn nhanh và bình thường.
+
+    Lệnh publish:
+      dotnet publish src/WindowsSetupAssistant.App -c Release -r win-x64 -o publish
+  -->
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' != ''">
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <DebugType>none</DebugType>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\AppIcon.ico" />
+    <ProjectReference Include="..\WindowsSetupAssistant.Infrastructure\WindowsSetupAssistant.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
