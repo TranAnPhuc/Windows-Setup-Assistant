@@ -417,9 +417,14 @@ public sealed class MainViewModel : ObservableObject, IDisposable
                 await RefreshInstalledStatesAsync(showDialog: false).ConfigureAwait(true);
             }
         }
-        catch (OperationCanceledException) when (_isClosing || _disposed)
+        catch (OperationCanceledException) when (_isClosing || _disposed || _lifetimeCts.IsCancellationRequested)
         {
             // Đóng cửa sổ trong lúc khởi động không phải lỗi và không được ghi catalog rỗng.
+            //
+            // Phải xét cả _lifetimeCts: cờ _isClosing chỉ bật trong lúc PrepareForCloseAsync chạy
+            // rồi được trả về false ngay sau đó, trong khi ngoại lệ huỷ ở đây thường lan tới MUỘN HƠN.
+            // Nếu chỉ dựa vào _isClosing thì người dùng đóng app lúc đang nạp dữ liệu
+            // sẽ bị hiện hộp "Lỗi khởi động" một cách vô lý.
         }
         catch (Exception ex)
         {

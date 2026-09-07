@@ -91,19 +91,18 @@ public partial class App : WpfApplication
 
     protected override void OnExit(ExitEventArgs e)
     {
-        // Bảo đảm danh sách đã được ghi xuống đĩa trước khi thoát.
-        try
-        {
-            _mainViewModel?.PrepareForCloseAsync().GetAwaiter().GetResult();
-        }
-        catch (Exception)
-        {
-            // Đang thoát rồi thì không hiển thị lỗi nữa.
-        }
-        finally
-        {
-            _mainViewModel?.Dispose();
-        }
+        // KHÔNG gọi PrepareForCloseAsync().GetAwaiter().GetResult() ở đây.
+        //
+        // OnExit chạy trên chính UI thread. Chặn UI thread để chờ một tác vụ async
+        // mà tác vụ đó lại cần quay về UI thread để chạy tiếp (ConfigureAwait(true))
+        // sẽ gây DEADLOCK: cửa sổ đã đóng nhưng tiến trình không bao giờ thoát.
+        // Đây là lỗi đã tái hiện được: đóng cửa sổ xong, process vẫn sống mãi.
+        //
+        // Việc dừng hàng đợi và lưu dữ liệu đã được MainWindow.OnClosing thực hiện
+        // đầy đủ (và await đúng cách) TRƯỚC khi cửa sổ được phép đóng.
+        // Ngoài ra danh sách còn được tự lưu ngay sau mỗi thay đổi, nên đến đây
+        // chỉ cần giải phóng tài nguyên.
+        _mainViewModel?.Dispose();
 
         base.OnExit(e);
     }

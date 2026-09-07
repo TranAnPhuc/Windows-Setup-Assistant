@@ -1,14 +1,20 @@
 using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using WindowsSetupAssistant.App.Services;
+using WindowsSetupAssistant.App.Tests.Fakes;
 using WindowsSetupAssistant.App.ViewModels;
 using WindowsSetupAssistant.App.Views;
+using WindowsSetupAssistant.Application.Services;
+using WindowsSetupAssistant.Domain.Entities;
 using WindowsSetupAssistant.Domain.Enums;
 using WindowsSetupAssistant.Domain.Models;
+using WindowsSetupAssistant.Tests.Fakes;
 
 namespace WindowsSetupAssistant.App.Tests;
 
@@ -274,4 +280,114 @@ public sealed class MainWindowBindingTests
                 await WpfTestHost.WaitUntilAsync(() => !window.IsVisible);
             }
         });
+
+    /// <summary>
+    /// Đóng cửa sổ lúc đang cài phải hỏi lại, và trả lời "No" phải thật sự giữ ứng dụng lại.
+    /// Đây là phần nối dây giữa Window.Closing và MainViewModel.PrepareForCloseAsync.
+    /// </summary>
+    [Fact]
+    public Task ClosingWhileInstallingIsConfirmedAndCancellable() => WpfTestHost.Run(async () =>
+    {
+        await using var fixture = new ViewModelFixture();
+        await fixture.SeedAsync();
+        var vm = fixture.ViewModel;
+        var started = false;
+        fixture.Winget.BeforeInstall = async (_, token) =>
+        {
+            started = true;
+            await Task.Delay(Timeout.Infinite, token);
+        };
+
+        var window = new MainWindow { DataContext = vm };
+        await WpfTestHost.ShowAsync(window);
+        await WpfTestHost.WaitUntilAsync(() => !vm.LoadedCommand.IsRunning);
+
+        vm.InstallSelectedCommand.Execute(null);
+        await WpfTestHost.WaitUntilAsync(() => started);
+        Assert.True(vm.IsInstalling);
+
+        // Bấm X rồi trả lời "No": cửa sổ ở lại, hàng đợi vẫn chạy tiếp.
+        fixture.Dialogs.ConfirmResult = false;
+        window.Close();
+        await WpfTestHost.DrainAsync();
+        Assert.True(window.IsVisible);
+        Assert.True(vm.IsInstalling);
+        Assert.Single(fixture.Winget.InstallCalls);
+
+        // Bấm X rồi trả lời "Yes": hàng đợi dừng lại và cửa sổ đóng thật.
+        fixture.Dialogs.ConfirmResult = true;
+        window.Close();
+        await WpfTestHost.WaitUntilAsync(() => !window.IsVisible);
+        Assert.False(vm.IsInstalling);
+        fixture.AssertHealthy();
+    });
+
+    /// <summary>
+    /// Đóng cửa sổ lúc danh sách còn đang nạp.
+    ///
+    /// Đây là đường đi mà PrepareForCloseAsync hoàn tất ĐỒNG BỘ: không có hàng đợi để dừng,
+    /// và vì catalog chưa nạp xong nên cũng không có gì để lưu. Khi đó "await" trong
+    /// MainWindow.OnClosing không nhả luồng, nên nếu gọi thẳng Close() thì WPF ném
+    /// "Cannot call Close while a Window is closing" và cửa sổ kẹt lại vĩnh viễn.
+    /// Lỗi này đã tái hiện được trên ứng dụng thật; test khoá lại hành vi đúng.
+    /// </summary>
+    [Fact]
+    public Task ClosingWhileCatalogStillLoadingStillClosesTheWindow() => WpfTestHost.Run(async () =>
+    {
+        var directory = Path.Combine(Path.GetTempPath(), "wsa-close-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+
+        var logger = new RecordingLogger();
+        var winget = new UiWingetFake();
+        var dialogs = new UiDialogFake();
+        var repository = new GatedProfileRepository();
+
+        var vm = new MainViewModel(
+            repository, winget, new InstallationQueueService(winget, logger), logger, dialogs,
+            new ThemeManager(), new SettingsStore(Path.Combine(directory, "settings.json")),
+            new AppSettings { CheckInstalledOnStartup = false },
+            new LogViewModel(logger, dialogs, null));
+
+        try
+        {
+            var window = new MainWindow { DataContext = vm };
+            await WpfTestHost.ShowAsync(window);
+
+            window.Close();
+            await WpfTestHost.WaitUntilAsync(() => !window.IsVisible);
+
+            Assert.Empty(dialogs.Errors);
+
+            // Không được ghi đè dữ liệu chưa đọc bằng một catalog rỗng.
+            Assert.Equal(0, repository.SaveCount);
+        }
+        finally
+        {
+            repository.CompleteLoad();
+            vm.Dispose();
+            try { Directory.Delete(directory, recursive: true); } catch (IOException) { }
+        }
+    });
+
+    /// <summary>Không cài đặt gì thì đóng cửa sổ phải diễn ra bình thường, không hỏi han.</summary>
+    [Fact]
+    public Task ClosingWhenIdleDoesNotAskAnything() => WpfTestHost.Run(async () =>
+    {
+        await using var fixture = new ViewModelFixture();
+        await fixture.SeedAsync();
+        var vm = fixture.ViewModel;
+
+        var window = new MainWindow { DataContext = vm };
+        await WpfTestHost.ShowAsync(window);
+        await WpfTestHost.WaitUntilAsync(() => !vm.LoadedCommand.IsRunning);
+
+        // Nếu có hỏi thì câu trả lời "No" sẽ chặn việc đóng - đây chính là cách phát hiện.
+        fixture.Dialogs.ConfirmResult = false;
+        window.Close();
+        await WpfTestHost.WaitUntilAsync(() => !window.IsVisible);
+
+        Assert.False(vm.IsInstalling);
+        Assert.Empty(fixture.Winget.InstallCalls);
+        fixture.AssertHealthy();
+    });
 }

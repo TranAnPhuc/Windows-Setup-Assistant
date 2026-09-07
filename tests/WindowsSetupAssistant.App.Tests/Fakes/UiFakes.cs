@@ -59,6 +59,42 @@ internal sealed class UiWingetFake : IWingetService
         InstallAsync(package, outputProgress, cancellationToken);
 }
 
+/// <summary>
+/// Repository giả mà LoadAsync chỉ hoàn tất khi test cho phép.
+/// Dùng để dựng đúng tình huống "đóng cửa sổ lúc danh sách chưa nạp xong",
+/// khi đó MainViewModel.PrepareForCloseAsync chạy hoàn toàn đồng bộ.
+/// </summary>
+internal sealed class GatedProfileRepository : IProfileRepository
+{
+    private readonly TaskCompletionSource<SoftwareCatalog> _load =
+        new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+    public string DataFilePath => "gated-repository (test only)";
+
+    public int SaveCount { get; private set; }
+
+    public async Task<SoftwareCatalog> LoadAsync(CancellationToken cancellationToken = default)
+    {
+        await using var registration = cancellationToken.Register(() => _load.TrySetCanceled(cancellationToken));
+        return await _load.Task.ConfigureAwait(false);
+    }
+
+    /// <summary>Cho phép LoadAsync kết thúc - gọi ở cuối test để không bỏ lại tác vụ treo.</summary>
+    public void CompleteLoad() => _load.TrySetResult(new SoftwareCatalog());
+
+    public Task SaveAsync(SoftwareCatalog catalog, CancellationToken cancellationToken = default)
+    {
+        SaveCount++;
+        return Task.CompletedTask;
+    }
+
+    public Task ExportAsync(SoftwareCatalog catalog, string filePath, CancellationToken cancellationToken = default) =>
+        Task.CompletedTask;
+
+    public Task<SoftwareCatalog> ImportAsync(string filePath, CancellationToken cancellationToken = default) =>
+        Task.FromResult(new SoftwareCatalog());
+}
+
 internal sealed class UiDialogFake : IDialogService
 {
     public bool ConfirmResult { get; set; } = true;
