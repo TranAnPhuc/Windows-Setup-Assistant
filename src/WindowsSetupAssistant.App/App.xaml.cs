@@ -1,5 +1,7 @@
+using System.Globalization;
 using System.Windows;
 using System.Windows.Threading;
+using WindowsSetupAssistant.App.Localization;
 using WindowsSetupAssistant.App.Mvvm;
 using WindowsSetupAssistant.App.Services;
 using WindowsSetupAssistant.App.ViewModels;
@@ -32,6 +34,11 @@ public partial class App : WpfApplication
 
         var settingsStore = new SettingsStore();
         var settings = settingsStore.Load();
+
+        var language = LanguageCatalog.Resolve(settings.Language, CultureInfo.InstalledUICulture);
+        LocalizationSource.Instance.SetLanguage(language);
+        settings.Language = language.Name;
+        settingsStore.Save(settings);
 
         var themeManager = new ThemeManager();
         themeManager.Apply(settings.Theme);

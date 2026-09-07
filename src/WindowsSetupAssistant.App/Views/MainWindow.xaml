@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:WindowsSetupAssistant.App.ViewModels"
+        xmlns:loc="clr-namespace:WindowsSetupAssistant.App.Localization"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
         Title="Windows Setup Assistant"
@@ -58,6 +59,14 @@
                 <Button Content="Xoá" Command="{Binding DeleteProfileCommand}" Margin="6,0,0,0"
                         Style="{StaticResource DangerButton}" />
 
+                <Border Width="1" Background="{DynamicResource AppBorderBrush}" Margin="12,2" />
+
+                <TextBlock Text="{loc:Text Ui_LanguageLabel}" VerticalAlignment="Center"
+                           Margin="0,0,8,0" Foreground="{DynamicResource MutedTextBrush}" />
+                <ComboBox Width="130"
+                          ItemsSource="{Binding Languages}"
+                          SelectedItem="{Binding SelectedLanguage}"
+                          DisplayMemberPath="DisplayName" />
                 <Border Width="1" Background="{DynamicResource AppBorderBrush}" Margin="12,2" />
 
                 <Button Content="{Binding ThemeButtonText}" Command="{Binding ToggleThemeCommand}" />

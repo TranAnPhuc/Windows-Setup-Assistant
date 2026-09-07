@@ -8,7 +8,8 @@
     -->
 
     <system:Double x:Key="BaseFontSize">13</system:Double>
-    <FontFamily x:Key="AppFontFamily">Segoe UI</FontFamily>
+    <!-- Segoe UI không có glyph chữ Hán; WPF tự lùi sang font sau cho từng ký tự. -->
+    <FontFamily x:Key="AppFontFamily">Segoe UI, Microsoft JhengHei UI, Microsoft JhengHei, PMingLiU</FontFamily>
     <CornerRadius x:Key="ControlCornerRadius">6</CornerRadius>
 
     <!-- ===================== TextBlock ===================== -->

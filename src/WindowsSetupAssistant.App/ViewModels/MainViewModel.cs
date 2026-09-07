@@ -3,7 +3,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Principal;
+using System.Globalization;
 using System.Windows.Data;
+using WindowsSetupAssistant.App.Localization;
 using WindowsSetupAssistant.App.Mvvm;
 using WindowsSetupAssistant.App.Services;
 using WindowsSetupAssistant.Application.Abstractions;
@@ -103,6 +105,10 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         _settings = settings;
         _scanService = scanService;
         _backupExporter = backupExporter;
+
+        _selectedLanguage = LanguageCatalog.Supported
+            .FirstOrDefault(l => string.Equals(l.Code, settings.Language, StringComparison.OrdinalIgnoreCase))
+            ?? LanguageCatalog.Supported[0];
 
         Logs = logViewModel;
         Search = new SearchViewModel(
@@ -237,6 +243,30 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     public RelayCommand RestartAsAdminCommand { get; }
 
     // ---------------------------------------------------------------- Thuộc tính hiển thị
+
+    public IReadOnlyList<LanguageOption> Languages => LanguageCatalog.Supported;
+
+    private LanguageOption _selectedLanguage = LanguageCatalog.Supported[0];
+
+    public LanguageOption SelectedLanguage
+    {
+        get => _selectedLanguage;
+        set
+        {
+            if (!SetProperty(ref _selectedLanguage, value) || value is null)
+            {
+                return;
+            }
+
+            LocalizationSource.Instance.SetLanguage(CultureInfo.GetCultureInfo(value.Code));
+            _settings.Language = value.Code;
+            _settingsStore.Save(_settings);
+
+            // Chuỗi tính toán trong ViewModel không tự đổi như binding trong XAML,
+            // nên báo cho WPF biết mọi thuộc tính đều đã thay đổi.
+            OnPropertyChanged(string.Empty);
+        }
+    }
 
     public InstallationProfile? SelectedProfile
     {
