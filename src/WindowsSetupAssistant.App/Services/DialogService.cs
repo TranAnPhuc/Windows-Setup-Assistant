@@ -26,6 +26,8 @@ public interface IDialogService
     bool ShowInstallConfirmation(InstallConfirmViewModel viewModel);
 
     string? ShowTextInput(TextInputViewModel viewModel);
+
+    bool ShowScanResult(ScanResultViewModel viewModel) => false;
 }
 
 /// <summary>Hiện thực bằng MessageBox và các cửa sổ WPF thật.</summary>
@@ -81,6 +83,8 @@ public sealed class DialogService : IDialogService
         var window = new TextInputWindow { DataContext = viewModel };
         return ShowDialog(window) ? viewModel.Text.Trim() : null;
     }
+
+    public bool ShowScanResult(ScanResultViewModel viewModel) => ShowDialog(new ScanResultWindow { DataContext = viewModel });
 
     private static bool ShowDialog(Window window)
     {

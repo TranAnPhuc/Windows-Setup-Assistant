@@ -294,7 +294,18 @@ public static class WingetOutputParser
 
     private static bool LooksLikePackageId(string value)
     {
-        if (string.IsNullOrWhiteSpace(value) || value.Any(char.IsWhiteSpace))
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return false;
+        }
+
+        if (value.StartsWith(@"ARP\", StringComparison.OrdinalIgnoreCase) ||
+            value.StartsWith(@"MSIX\", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        if (value.Any(char.IsWhiteSpace))
         {
             return false;
         }

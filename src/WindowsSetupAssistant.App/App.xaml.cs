@@ -44,6 +44,8 @@ public partial class App : WpfApplication
 
         // --- Application ---
         var queueService = new InstallationQueueService(wingetService, logger);
+        var scanService = new MachineScanService(wingetService, logger);
+        var backupExporter = new BackupExporter();
 
         // --- Presentation ---
         var dialogService = new DialogService();
@@ -53,6 +55,8 @@ public partial class App : WpfApplication
             repository,
             wingetService,
             queueService,
+            scanService,
+            backupExporter,
             logger,
             dialogService,
             themeManager,

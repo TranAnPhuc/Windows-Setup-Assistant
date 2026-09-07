@@ -45,6 +45,7 @@ public static class CatalogNormalizer
             }
 
             profile.Packages ??= new List<SoftwarePackage>();
+            profile.ManualSoftware ??= new List<WindowsSetupAssistant.Domain.Models.InstalledSoftwareEntry>();
 
             var validPackages = new List<SoftwarePackage>(profile.Packages.Count);
             var seenPackageIds = new HashSet<Guid>();

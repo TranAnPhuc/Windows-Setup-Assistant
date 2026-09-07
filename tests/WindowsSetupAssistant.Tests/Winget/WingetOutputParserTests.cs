@@ -8,6 +8,41 @@ namespace WindowsSetupAssistant.Tests.Winget;
 /// </summary>
 public class WingetOutputParserTests
 {
+    private static string MixedListOutput =>
+        "Name".PadRight(28) + "Id".PadRight(62) + "Version".PadRight(18) + "Source\n" +
+        new string('-', 114) + "\n" +
+        "7-Zip 17.00 beta (x64)".PadRight(28) + "7zip.7zip".PadRight(62) + "17.00".PadRight(18) + "winget\n" +
+        "Android Studio".PadRight(28) + @"ARP\Machine\X64\Android Studio".PadRight(62) + "2026.1".PadRight(18) + "\n" +
+        "3D Viewer".PadRight(28) + @"MSIX\Microsoft.Microsoft3DViewer_7.2602.8012.0".PadRight(62) + "7.2602.8012.0".PadRight(18) + "\n";
+
+    [Fact]
+    public void ParseTable_KeepsAppsAndFeaturesRow()
+    {
+        var packages = WingetOutputParser.ParseTable(MixedListOutput);
+        var entry = Assert.Single(packages, p => p.Name == "Android Studio");
+        Assert.Equal(@"ARP\Machine\X64\Android Studio", entry.PackageId);
+        Assert.Equal("2026.1", entry.Version);
+    }
+
+    [Fact]
+    public void ParseTable_KeepsMsixRow() => Assert.Contains(
+        WingetOutputParser.ParseTable(MixedListOutput), p => p.PackageId.StartsWith(@"MSIX\", StringComparison.Ordinal));
+
+    [Fact]
+    public void ParseTable_StillReadsNormalWingetRow()
+    {
+        var sevenZip = Assert.Single(WingetOutputParser.ParseTable(MixedListOutput), p => p.PackageId == "7zip.7zip");
+        Assert.Equal("17.00", sevenZip.Version);
+        Assert.Equal("winget", sevenZip.Source);
+    }
+
+    [Fact]
+    public void ParseTable_SummaryLineIsStillRejected()
+    {
+        var packages = WingetOutputParser.ParseTable(MixedListOutput + "2 upgrades available.\n");
+        Assert.Equal(3, packages.Count);
+        Assert.DoesNotContain(packages, p => p.Name.Contains("upgrades available"));
+    }
     // Output thật của: winget search "Google Chrome" --source winget
     private const string SearchOutput =
         "Name                                   Id                                 Version        Match\n" +

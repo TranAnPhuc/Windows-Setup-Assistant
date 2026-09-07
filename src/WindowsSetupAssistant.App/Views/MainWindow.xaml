@@ -205,6 +205,10 @@
                             </StackPanel>
 
                             <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Button Content="Quét &amp; sao lưu máy này"
+                                        Command="{Binding ScanAndBackupCommand}"
+                                        Margin="0,0,8,0"
+                                        ToolTip="Quét phần mềm đang có trên máy và lưu lại trước khi cài lại Windows" />
                                 <Button Content="Kiểm tra đã cài"
                                         Command="{Binding RefreshInstalledCommand}"
                                         ToolTip="Hỏi WinGet xem phần mềm nào đã có trên máy" />

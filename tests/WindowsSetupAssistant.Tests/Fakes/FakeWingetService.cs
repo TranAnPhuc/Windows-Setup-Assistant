@@ -13,6 +13,8 @@ namespace WindowsSetupAssistant.Tests.Fakes;
 public sealed class FakeWingetService : IWingetService
 {
     public HashSet<string> InstalledPackageIds { get; } = new(StringComparer.OrdinalIgnoreCase);
+    public List<WingetPackageInfo> InstalledRows { get; } = new();
+    public Exception? ThrowOnGetInstalled { get; set; }
 
     /// <summary>Thứ tự các gói đã được gọi Install (dùng để kiểm tra thứ tự hàng đợi).</summary>
     public List<string> InstallCalls { get; } = new();
@@ -38,9 +40,14 @@ public sealed class FakeWingetService : IWingetService
     public Task<IReadOnlyList<WingetPackageInfo>> SearchAsync(string query, CancellationToken cancellationToken = default) =>
         Task.FromResult<IReadOnlyList<WingetPackageInfo>>(Array.Empty<WingetPackageInfo>());
 
-    public Task<IReadOnlyList<WingetPackageInfo>> GetInstalledPackagesAsync(CancellationToken cancellationToken = default) =>
-        Task.FromResult<IReadOnlyList<WingetPackageInfo>>(
-            InstalledPackageIds.Select(id => new WingetPackageInfo(id, id, "1.0", null, "winget")).ToList());
+    public Task<IReadOnlyList<WingetPackageInfo>> GetInstalledPackagesAsync(CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (ThrowOnGetInstalled is not null) throw ThrowOnGetInstalled;
+        return Task.FromResult<IReadOnlyList<WingetPackageInfo>>(InstalledRows.Count > 0
+            ? InstalledRows.ToList()
+            : InstalledPackageIds.Select(id => new WingetPackageInfo(id, id, "1.0", null, "winget")).ToList());
+    }
 
     public Task<bool> IsInstalledAsync(string packageId, CancellationToken cancellationToken = default)
     {

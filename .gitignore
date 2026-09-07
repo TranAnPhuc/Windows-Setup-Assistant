@@ -4,6 +4,7 @@ obj/
 publish/
 publish-fixed/
 publish-final/
+publish-final-new/
 artifacts/
 
 # Dữ liệu chạy thật (mỗi máy một khác, không đưa lên Git)

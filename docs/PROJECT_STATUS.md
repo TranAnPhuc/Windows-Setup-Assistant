@@ -1,6 +1,12 @@
 # Trạng thái dự án — Windows Setup Assistant
 
-_Cập nhật: 2026-09-05 — Milestone 3: Hoàn tất bản cuối (Release Final), kiểm thử WPF toàn diện, xử lý an toàn dữ liệu và xuất bản vào `publish-final`._
+_Cập nhật: 2026-09-07 — Milestone 4: triển khai nền tảng quét và sao lưu phần mềm; publish Release đã xác minh khởi động._
+
+## Milestone 4 — Quét và sao lưu
+
+Đã hoàn thành parser giữ lại các dòng `ARP\`/`MSIX\`, model phân loại Domain, dịch vụ quét qua `IWingetService`, exporter JSON/CSV UTF-8 BOM, ViewModel/cửa sổ xem lại và nút “Quét & sao lưu máy này”. Cấu hình vẫn giữ nguyên kiến trúc hiện tại; constructor cũ của `MainViewModel` được giữ qua overload để không phá test/consumer hiện có.
+
+Kiểm thử mới dùng fake WinGet và thư mục tạm, không chạy cài đặt thật. Hiện build/test đạt **161/161** (144 core + 17 WPF).
 
 ## Chức năng đã hoàn thành
 
@@ -14,7 +20,7 @@ _Cập nhật: 2026-09-05 — Milestone 3: Hoàn tất bản cuối (Release Fin
 - Đồng bộ vòng đời đóng ứng dụng (`PrepareForCloseAsync`): tự động dừng WinGet đang chạy, huỷ tìm kiếm, lưu trữ dữ liệu an toàn và giải phóng tài nguyên mà không chặn UI thread.
 - Xử lý lỗi JSON an toàn: khi file JSON bị hỏng cú pháp, ứng dụng giữ nguyên file cũ, báo lỗi rõ ràng và tuyệt đối không tự ghi đè bằng dữ liệu mẫu.
 - Sửa triệt để lỗi hiển thị ComboBox profile: khai báo ItemTemplate rõ ràng, bổ sung `ToString()` trên `InstallationProfile` trả về tên profile.
-- Bộ kiểm thử toàn diện: 142/142 test đạt (128 test logic tầng Core + 14 test WPF UI/binding/layout/themes/icon).
+- Bộ kiểm thử toàn diện: 161/161 test đạt (144 test logic tầng Core + 17 test WPF UI/binding/layout/themes/icon).
 - Đã publish bản cuối self-contained/single-file `win-x64`: `publish-final/WindowsSetupAssistant.exe` (62.9 MB) với icon ứng dụng nhúng đầy đủ (16px đến 256px).
 
 ## Quyết định kỹ thuật quan trọng
@@ -30,7 +36,7 @@ _Cập nhật: 2026-09-05 — Milestone 3: Hoàn tất bản cuối (Release Fin
 
 - `dotnet restore WindowsSetupAssistant.sln` — thành công.
 - `dotnet build WindowsSetupAssistant.sln -m:1 -p:UseSharedCompilation=false` — thành công, 0 warning, 0 error.
-- `dotnet test WindowsSetupAssistant.sln -m:1 -p:UseSharedCompilation=false --logger "console;verbosity=minimal"` — 142/142 passed (128 Core + 14 WPF UI).
+- `dotnet test WindowsSetupAssistant.sln -m:1 -p:UseSharedCompilation=false --logger "console;verbosity=minimal"` — 161/161 passed (144 Core + 17 WPF UI).
 - Đã chạy kiểm tra khởi động EXE Debug: chạy trơn tru, không có lỗi Binding.
 - Đã publish Release self-contained/single-file `win-x64` vào `publish-final/WindowsSetupAssistant.exe`:
   - Kích thước: 65,965,190 byte (~62.9 MB).
@@ -46,8 +52,26 @@ _Cập nhật: 2026-09-05 — Milestone 3: Hoàn tất bản cuối (Release Fin
 - `src/WindowsSetupAssistant.App/ViewModels/MainViewModel.cs` — cập nhật trạng thái các nút khi đóng ứng dụng (`!_isClosing`), điều kiện `SelectedCount > 0` cho cài đặt.
 - `src/WindowsSetupAssistant.Infrastructure/Persistence/JsonProfileRepository.cs` — giữ nguyên file cũ khi gặp JSON lỗi, không ghi đè dữ liệu mẫu.
 - `src/WindowsSetupAssistant.Infrastructure/Winget/ProcessRunner.cs` — `KillProcessTree` bổ sung `WaitForExit(5000)` đảm bảo tiến trình đã thoát.
+- `src/WindowsSetupAssistant.Domain/Classification/InstalledSoftwareClassifier.cs` — ưu tiên `MSIX\` là app hệ thống, nguồn WinGet hợp lệ mới cài tự động, còn lại ghi chú cài tay.
+- `src/WindowsSetupAssistant.Infrastructure/Persistence/BackupExporter.cs` — xuất JSON một profile và CSV cài tay với BOM/RFC4180.
+- `src/WindowsSetupAssistant.App/ViewModels/ScanResultViewModel.cs`, `src/WindowsSetupAssistant.App/Views/ScanResultWindow.xaml` — xem lại, tick chọn và tạo profile sao lưu.
 - `src/WindowsSetupAssistant.Domain/Entities/InstallationProfile.cs` — override `ToString() => Name`.
 - `src/WindowsSetupAssistant.App/Views/MainWindow.xaml` — bổ sung `Icon`, cập nhật `ItemTemplate` cho ComboBox profile, binding `IsEnabled` cho CheckBox phần mềm.
 - `src/WindowsSetupAssistant.App/Services/ThemeManager.cs` — chuẩn hoá URI resource theme theo pack format.
 - `tests/WindowsSetupAssistant.App.Tests/` — hoàn thiện bộ kiểm thử WPF (WpfTestHost, test binding, icon, layout DPI, regression test).
 - `tests/WindowsSetupAssistant.Tests/` — bổ sung test huỷ tiến trình và kiểm tra giữ nguyên file JSON lỗi.
+
+## Việc còn lại / Milestone tiếp theo
+
+- Bổ sung test WPF trực tiếp cho `ScanResultWindow` và test ViewModel `ScanAndBackup` với fake dialog/exporter.
+- Hoàn thiện hiển thị/lọc nhóm app hệ thống trong cửa sổ xem lại theo spec (hiện dữ liệu hệ thống được phân loại và không đưa vào profile mặc định).
+- Chạy smoke test UI với fake-winget, khởi động bản Release, sau đó publish lại self-contained `win-x64` vào `publish-final` mới.
+
+## Lệnh build/test
+
+`dotnet restore WindowsSetupAssistant.sln --force -m:1`
+
+`dotnet build WindowsSetupAssistant.sln --no-restore -m:1 -p:UseSharedCompilation=false`
+
+`dotnet test WindowsSetupAssistant.sln --no-build --no-restore -m:1 --logger "console;verbosity=minimal"`
+

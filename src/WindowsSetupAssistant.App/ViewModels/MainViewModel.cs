@@ -10,6 +10,7 @@ using WindowsSetupAssistant.Application.Abstractions;
 using WindowsSetupAssistant.Application.Models;
 using WindowsSetupAssistant.Application.Services;
 using WindowsSetupAssistant.Domain.Entities;
+using WindowsSetupAssistant.Domain.Classification;
 using WindowsSetupAssistant.Domain.Enums;
 using WindowsSetupAssistant.Domain.Models;
 
@@ -37,6 +38,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     private readonly ThemeManager _themeManager;
     private readonly SettingsStore _settingsStore;
     private readonly AppSettings _settings;
+    private readonly IMachineScanService? _scanService;
+    private readonly IBackupExporter? _backupExporter;
 
     private SoftwareCatalog _catalog = new();
     private InstallationProfile? _selectedProfile;
@@ -73,6 +76,21 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         ThemeManager themeManager,
         SettingsStore settingsStore,
         AppSettings settings,
+        LogViewModel logViewModel) : this(repository, wingetService, queueService, null, null, logger, dialogService, themeManager, settingsStore, settings, logViewModel)
+    {
+    }
+
+    public MainViewModel(
+        IProfileRepository repository,
+        IWingetService wingetService,
+        InstallationQueueService queueService,
+        IMachineScanService? scanService,
+        IBackupExporter? backupExporter,
+        IAppLogger logger,
+        IDialogService dialogService,
+        ThemeManager themeManager,
+        SettingsStore settingsStore,
+        AppSettings settings,
         LogViewModel logViewModel)
     {
         _repository = repository;
@@ -83,6 +101,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         _themeManager = themeManager;
         _settingsStore = settingsStore;
         _settings = settings;
+        _scanService = scanService;
+        _backupExporter = backupExporter;
 
         Logs = logViewModel;
         Search = new SearchViewModel(
@@ -123,6 +143,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         RefreshInstalledCommand = new AsyncRelayCommand(
             () => RefreshInstalledStatesAsync(showDialog: true),
             () => !_isClosing && !IsInstalling && IsWingetAvailable);
+        ScanAndBackupCommand = new AsyncRelayCommand(ScanAndBackupAsync,
+            () => _scanService is not null && _backupExporter is not null && !_isClosing && !IsInstalling && IsWingetAvailable);
 
         // --- Cấu hình / dữ liệu ---
         NewProfileCommand = new RelayCommand(NewProfile, () => !_isClosing && !IsInstalling);
@@ -164,6 +186,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     // ---------------------------------------------------------------- Command
 
     public AsyncRelayCommand LoadedCommand { get; }
+    public AsyncRelayCommand ScanAndBackupCommand { get; }
 
     public RelayCommand AddPackageCommand { get; }
 
@@ -580,7 +603,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         {
             Name = info.Name,
             PackageId = info.PackageId,
-            Category = GuessCategory(info),
+            Category = SoftwareCategoryGuesser.Guess(info),
             Version = info.Version
         };
 
@@ -1216,6 +1239,32 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
     // ---------------------------------------------------------------- Import / Export
 
+    private async Task ScanAndBackupAsync()
+    {
+        if (_scanService is null || _backupExporter is null) return;
+        IsBusy = true;
+        StatusMessage = "Đang quét phần mềm trên máy...";
+        MachineSnapshot snapshot;
+        try { snapshot = await _scanService.ScanAsync(_lifetimeCts.Token).ConfigureAwait(true); }
+        catch (OperationCanceledException) { StatusMessage = "Đã huỷ quét."; return; }
+        catch (Exception ex) { _logger.Error($"Quét máy thất bại: {ex.Message}"); _dialogService.ShowError("Quét thất bại", ex.Message); return; }
+        finally { IsBusy = false; }
+        if (snapshot.Entries.Count == 0) { _dialogService.ShowInfo("Quét xong", "Không tìm thấy phần mềm nào trên máy này."); return; }
+        var review = new ScanResultViewModel(snapshot);
+        if (!_dialogService.ShowScanResult(review) || !review.HasAnySelected) return;
+        var profile = review.BuildProfile(_catalog.Profiles.Select(p => p.Name));
+        _catalog.Profiles.Add(profile); Profiles.Add(profile); SelectedProfile = profile;
+        await SaveCatalogAsync().ConfigureAwait(true);
+        var path = _dialogService.SaveJsonFile("Lưu bản sao lưu phần mềm", $"sao-luu-{snapshot.MachineName}-{snapshot.ScannedAt:yyyyMMdd-HHmm}.json");
+        if (path is null) return;
+        try
+        {
+            var paths = await _backupExporter.ExportAsync(profile, path, _catalog.SchemaVersion, _lifetimeCts.Token).ConfigureAwait(true);
+            _dialogService.ShowInfo("Sao lưu thành công", $"Đã ghi:\n{paths.JsonPath}\n{paths.CsvPath}");
+        }
+        catch (Exception ex) { _logger.Error($"Ghi file sao lưu thất bại: {ex.Message}"); _dialogService.ShowError("Ghi file thất bại", ex.Message); }
+    }
+
     private async Task ImportAsync()
     {
         var path = _dialogService.OpenJsonFile("Chọn file JSON danh sách phần mềm");
@@ -1449,6 +1498,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         ImportCommand.RaiseCanExecuteChanged();
         ExportCommand.RaiseCanExecuteChanged();
         ExportProfileCommand.RaiseCanExecuteChanged();
+        ScanAndBackupCommand.RaiseCanExecuteChanged();
         RestartAsAdminCommand.RaiseCanExecuteChanged();
         Search.RefreshCommandStates();
     }
