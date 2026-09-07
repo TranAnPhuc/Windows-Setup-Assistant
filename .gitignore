@@ -14,6 +14,7 @@ artifacts/
 **/Logs/
 *.corrupted-*.bak
 
+
 # Visual Studio / Rider
 .vs/
 .idea/
@@ -21,3 +22,6 @@ artifacts/
 
 # Claude / Assistant worktrees
 .claude/
+
+# Node.js
+node_modules/

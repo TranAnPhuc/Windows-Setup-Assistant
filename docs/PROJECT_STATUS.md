@@ -2,6 +2,8 @@
 
 _Cập nhật: 2026-09-07 — Milestone 4: triển khai nền tảng quét và sao lưu phần mềm; publish Release đã xác minh khởi động._
 
+Tài liệu Word hướng dẫn sử dụng đã bổ sung quy trình quét, rà soát, xuất JSON/CSV và khôi phục trên máy mới.
+
 ## Milestone 4 — Quét và sao lưu
 
 Đã hoàn thành parser giữ lại các dòng `ARP\`/`MSIX\`, model phân loại Domain, dịch vụ quét qua `IWingetService`, exporter JSON/CSV UTF-8 BOM, ViewModel/cửa sổ xem lại và nút “Quét & sao lưu máy này”. Cấu hình vẫn giữ nguyên kiến trúc hiện tại; constructor cũ của `MainViewModel` được giữ qua overload để không phá test/consumer hiện có.
