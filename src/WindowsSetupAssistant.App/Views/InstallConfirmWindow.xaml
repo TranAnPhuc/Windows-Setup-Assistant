@@ -4,9 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:WindowsSetupAssistant.App.ViewModels"
+        xmlns:loc="clr-namespace:WindowsSetupAssistant.App.Localization"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:InstallConfirmViewModel}"
-        Title="Xác nhận cài đặt"
+        Title="{loc:Text Ui_ConfirmTitle}"
         Width="620" Height="600"
         WindowStartupLocation="CenterOwner"
         ShowInTaskbar="False"
@@ -53,20 +54,20 @@
 
         <Border Grid.Row="2" Style="{StaticResource Card}" Margin="0,14,0,0">
             <StackPanel>
-                <TextBlock Text="Nếu phần mềm đã có sẵn trên máy:" Style="{StaticResource SectionTitleText}" />
-                <RadioButton Content="Bỏ qua - không đụng tới bản đang cài (khuyên dùng)"
+                <TextBlock Text="{loc:Text Ui_ConfirmExistingLabel}" Style="{StaticResource SectionTitleText}" />
+                <RadioButton Content="{loc:Text Ui_ConfirmActionSkip}"
                              IsChecked="{Binding SkipExisting}" />
-                <RadioButton Content="Nâng cấp lên phiên bản mới nhất (winget upgrade)"
+                <RadioButton Content="{loc:Text Ui_ConfirmActionUpgrade}"
                              IsChecked="{Binding UpgradeExisting}" />
 
                 <TextBlock Style="{StaticResource MutedText}" Margin="0,10,0,0"
-                           Text="Các phần mềm được cài LẦN LƯỢT. Nếu một phần mềm lỗi, hàng đợi vẫn chạy tiếp và lỗi được ghi vào Nhật ký. Bạn có thể bấm Huỷ bất cứ lúc nào." />
+                           Text="{loc:Text Ui_ConfirmNote}" />
             </StackPanel>
         </Border>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
-            <Button Content="Huỷ" IsCancel="True" MinWidth="110" />
-            <Button Content="Bắt đầu cài đặt" Click="OnConfirmClick" IsDefault="True" MinWidth="150" Margin="10,0,0,0"
+            <Button Content="{loc:Text Ui_BtnCancel}" IsCancel="True" MinWidth="110" />
+            <Button Content="{loc:Text Ui_BtnStartInstall}" Click="OnConfirmClick" IsDefault="True" MinWidth="150" Margin="10,0,0,0"
                     Style="{StaticResource PrimaryButton}" />
         </StackPanel>
     </Grid>

@@ -170,4 +170,28 @@
   <data name="Ui_BtnImportJson" xml:space="preserve"><value>Import JSON</value></data>
   <data name="Ui_BtnExportAll" xml:space="preserve"><value>Export all</value></data>
   <data name="Ui_BtnExportCurrent" xml:space="preserve"><value>Export this profile</value></data>
+  <data name="Ui_EditorTip" xml:space="preserve"><value>Package Id must match the WinGet source. Use the &quot;Search WinGet&quot; tab to find exact Ids.</value></data>
+  <data name="Ui_EditorFieldName" xml:space="preserve"><value>Software name</value></data>
+  <data name="Ui_EditorFieldPackageId" xml:space="preserve"><value>WinGet Package Id</value></data>
+  <data name="Ui_EditorFieldPackageIdHint" xml:space="preserve"><value>Examples: Google.Chrome, Git.Git, 7zip.7zip, Notepad++.Notepad++</value></data>
+  <data name="Ui_EditorFieldCategory" xml:space="preserve"><value>Category</value></data>
+  <data name="Ui_EditorFieldNotes" xml:space="preserve"><value>Notes (optional)</value></data>
+  <data name="Ui_BtnCancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Ui_BtnSave" xml:space="preserve"><value>Save</value></data>
+  <data name="Ui_BtnOk" xml:space="preserve"><value>OK</value></data>
+  <data name="Ui_ConfirmTitle" xml:space="preserve"><value>Confirm installation</value></data>
+  <data name="Ui_ConfirmExistingLabel" xml:space="preserve"><value>If software is already installed:</value></data>
+  <data name="Ui_ConfirmActionSkip" xml:space="preserve"><value>Skip - keep existing installation (recommended)</value></data>
+  <data name="Ui_ConfirmActionUpgrade" xml:space="preserve"><value>Upgrade to latest version (winget upgrade)</value></data>
+  <data name="Ui_ConfirmNote" xml:space="preserve"><value>Packages are installed SEQUENTIALLY. If an error occurs, the queue continues and the error is logged. You can cancel at any time.</value></data>
+  <data name="Ui_ScanResultTitle" xml:space="preserve"><value>Software scan results</value></data>
+  <data name="Ui_ScanResultSubtitle" xml:space="preserve"><value>Select software to transfer to the new machine. Manual items are noted only, not installed automatically.</value></data>
+  <data name="Ui_ScanGroupWinget" xml:space="preserve"><value>Can reinstall using WinGet</value></data>
+  <data name="Ui_ColumnKeep" xml:space="preserve"><value>Keep</value></data>
+  <data name="Ui_ScanGroupManual" xml:space="preserve"><value>Requires manual installation after reinstalling Windows</value></data>
+  <data name="Ui_ColumnRecord" xml:space="preserve"><value>Record</value></data>
+  <data name="Ui_ColumnIdentifier" xml:space="preserve"><value>Identifier</value></data>
+  <data name="Ui_BtnSaveBackup" xml:space="preserve"><value>Save backup</value></data>
+  <data name="Ui_EditorTitleAdd" xml:space="preserve"><value>Add new software</value></data>
+  <data name="Ui_EditorTitleEdit" xml:space="preserve"><value>Edit software</value></data>
 </root>

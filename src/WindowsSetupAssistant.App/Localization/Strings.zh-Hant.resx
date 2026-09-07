@@ -170,4 +170,28 @@
   <data name="Ui_BtnImportJson" xml:space="preserve"><value>匯入 JSON</value></data>
   <data name="Ui_BtnExportAll" xml:space="preserve"><value>全部匯出</value></data>
   <data name="Ui_BtnExportCurrent" xml:space="preserve"><value>匯出此設定檔</value></data>
+  <data name="Ui_EditorTip" xml:space="preserve"><value>Package Id 必須與 WinGet 來源一致。請使用「在 WinGet 上搜尋」分頁取得準確的 Id。</value></data>
+  <data name="Ui_EditorFieldName" xml:space="preserve"><value>軟體名稱</value></data>
+  <data name="Ui_EditorFieldPackageId" xml:space="preserve"><value>WinGet Package Id</value></data>
+  <data name="Ui_EditorFieldPackageIdHint" xml:space="preserve"><value>例如：Google.Chrome, Git.Git, 7zip.7zip, Notepad++.Notepad++</value></data>
+  <data name="Ui_EditorFieldCategory" xml:space="preserve"><value>軟體分類</value></data>
+  <data name="Ui_EditorFieldNotes" xml:space="preserve"><value>備註（選填）</value></data>
+  <data name="Ui_BtnCancel" xml:space="preserve"><value>取消</value></data>
+  <data name="Ui_BtnSave" xml:space="preserve"><value>儲存</value></data>
+  <data name="Ui_BtnOk" xml:space="preserve"><value>確認</value></data>
+  <data name="Ui_ConfirmTitle" xml:space="preserve"><value>確認安裝</value></data>
+  <data name="Ui_ConfirmExistingLabel" xml:space="preserve"><value>若軟體已安裝在此電腦上：</value></data>
+  <data name="Ui_ConfirmActionSkip" xml:space="preserve"><value>略過 - 保留現有安裝（建議）</value></data>
+  <data name="Ui_ConfirmActionUpgrade" xml:space="preserve"><value>升級至最新版本 (winget upgrade)</value></data>
+  <data name="Ui_ConfirmNote" xml:space="preserve"><value>軟體將依序安裝。若某個軟體發生錯誤，佇列仍會繼續並將錯誤寫入記錄。您可以隨時點選「取消」。</value></data>
+  <data name="Ui_ScanResultTitle" xml:space="preserve"><value>軟體掃描結果</value></data>
+  <data name="Ui_ScanResultSubtitle" xml:space="preserve"><value>選取要轉移至新電腦的軟體。手動安裝項目僅供記錄，不會自動安裝。</value></data>
+  <data name="Ui_ScanGroupWinget" xml:space="preserve"><value>可使用 WinGet 重新安裝</value></data>
+  <data name="Ui_ColumnKeep" xml:space="preserve"><value>保留</value></data>
+  <data name="Ui_ScanGroupManual" xml:space="preserve"><value>重灌 Windows 後需手動安裝</value></data>
+  <data name="Ui_ColumnRecord" xml:space="preserve"><value>記錄</value></data>
+  <data name="Ui_ColumnIdentifier" xml:space="preserve"><value>識別碼</value></data>
+  <data name="Ui_BtnSaveBackup" xml:space="preserve"><value>儲存備份</value></data>
+  <data name="Ui_EditorTitleAdd" xml:space="preserve"><value>新增軟體</value></data>
+  <data name="Ui_EditorTitleEdit" xml:space="preserve"><value>編輯軟體</value></data>
 </root>

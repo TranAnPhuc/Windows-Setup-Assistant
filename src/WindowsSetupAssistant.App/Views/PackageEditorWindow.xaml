@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:WindowsSetupAssistant.App.ViewModels"
+        xmlns:loc="clr-namespace:WindowsSetupAssistant.App.Localization"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:PackageEditorViewModel}"
         Title="{Binding Title}"
@@ -17,22 +18,22 @@
     <StackPanel Margin="20">
         <TextBlock Text="{Binding Title}" Style="{StaticResource PageTitleText}" Margin="0,0,0,4" />
         <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,16"
-                   Text="Package Id phải đúng như trên nguồn WinGet. Dùng tab &quot;Tìm trên WinGet&quot; để lấy Id chính xác." />
+                   Text="{loc:Text Ui_EditorTip}" />
 
-        <TextBlock Text="Tên phần mềm" Margin="0,0,0,4" />
+        <TextBlock Text="{loc:Text Ui_EditorFieldName}" Margin="0,0,0,4" />
         <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
 
-        <TextBlock Text="WinGet Package Id" Margin="0,14,0,4" />
+        <TextBlock Text="{loc:Text Ui_EditorFieldPackageId}" Margin="0,14,0,4" />
         <TextBox Text="{Binding PackageId, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas" />
         <TextBlock Style="{StaticResource MutedText}" Margin="0,4,0,0"
-                   Text="Ví dụ: Google.Chrome, Git.Git, 7zip.7zip, Notepad++.Notepad++" />
+                   Text="{loc:Text Ui_EditorFieldPackageIdHint}" />
 
-        <TextBlock Text="Nhóm phần mềm" Margin="0,14,0,4" />
+        <TextBlock Text="{loc:Text Ui_EditorFieldCategory}" Margin="0,14,0,4" />
         <ComboBox ItemsSource="{Binding Categories}"
                   SelectedItem="{Binding Category}"
                   DisplayMemberPath="DisplayName" />
 
-        <TextBlock Text="Ghi chú (không bắt buộc)" Margin="0,14,0,4" />
+        <TextBlock Text="{loc:Text Ui_EditorFieldNotes}" Margin="0,14,0,4" />
         <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"
                  AcceptsReturn="True"
                  TextWrapping="Wrap"
@@ -50,8 +51,8 @@
         </Border>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-            <Button Content="Huỷ" IsCancel="True" MinWidth="96" />
-            <Button Content="Lưu" Click="OnSaveClick" IsDefault="True" MinWidth="96" Margin="10,0,0,0"
+            <Button Content="{loc:Text Ui_BtnCancel}" IsCancel="True" MinWidth="96" />
+            <Button Content="{loc:Text Ui_BtnSave}" Click="OnSaveClick" IsDefault="True" MinWidth="96" Margin="10,0,0,0"
                     Style="{StaticResource PrimaryButton}" />
         </StackPanel>
     </StackPanel>

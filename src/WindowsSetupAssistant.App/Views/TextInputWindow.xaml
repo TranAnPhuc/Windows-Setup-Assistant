@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:WindowsSetupAssistant.App.ViewModels"
+        xmlns:loc="clr-namespace:WindowsSetupAssistant.App.Localization"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:TextInputViewModel}"
         Title="{Binding Title}"
@@ -19,8 +20,8 @@
         <TextBox x:Name="InputBox" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0">
-            <Button Content="Huỷ" IsCancel="True" MinWidth="96" />
-            <Button Content="Đồng ý" Click="OnOkClick" IsDefault="True" MinWidth="96" Margin="10,0,0,0"
+            <Button Content="{loc:Text Ui_BtnCancel}" IsCancel="True" MinWidth="96" />
+            <Button Content="{loc:Text Ui_BtnOk}" Click="OnOkClick" IsDefault="True" MinWidth="96" Margin="10,0,0,0"
                     Style="{StaticResource PrimaryButton}" />
         </StackPanel>
     </StackPanel>

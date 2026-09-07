@@ -170,4 +170,28 @@
   <data name="Ui_BtnImportJson" xml:space="preserve"><value>Nhập JSON</value></data>
   <data name="Ui_BtnExportAll" xml:space="preserve"><value>Xuất tất cả</value></data>
   <data name="Ui_BtnExportCurrent" xml:space="preserve"><value>Xuất cấu hình này</value></data>
+  <data name="Ui_EditorTip" xml:space="preserve"><value>Package Id phải đúng như trên nguồn WinGet. Dùng tab &quot;Tìm trên WinGet&quot; để lấy Id chính xác.</value></data>
+  <data name="Ui_EditorFieldName" xml:space="preserve"><value>Tên phần mềm</value></data>
+  <data name="Ui_EditorFieldPackageId" xml:space="preserve"><value>WinGet Package Id</value></data>
+  <data name="Ui_EditorFieldPackageIdHint" xml:space="preserve"><value>Ví dụ: Google.Chrome, Git.Git, 7zip.7zip, Notepad++.Notepad++</value></data>
+  <data name="Ui_EditorFieldCategory" xml:space="preserve"><value>Nhóm phần mềm</value></data>
+  <data name="Ui_EditorFieldNotes" xml:space="preserve"><value>Ghi chú (không bắt buộc)</value></data>
+  <data name="Ui_BtnCancel" xml:space="preserve"><value>Huỷ</value></data>
+  <data name="Ui_BtnSave" xml:space="preserve"><value>Lưu</value></data>
+  <data name="Ui_BtnOk" xml:space="preserve"><value>Đồng ý</value></data>
+  <data name="Ui_ConfirmTitle" xml:space="preserve"><value>Xác nhận cài đặt</value></data>
+  <data name="Ui_ConfirmExistingLabel" xml:space="preserve"><value>Nếu phần mềm đã có sẵn trên máy:</value></data>
+  <data name="Ui_ConfirmActionSkip" xml:space="preserve"><value>Bỏ qua - không đụng tới bản đang cài (khuyên dùng)</value></data>
+  <data name="Ui_ConfirmActionUpgrade" xml:space="preserve"><value>Nâng cấp lên phiên bản mới nhất (winget upgrade)</value></data>
+  <data name="Ui_ConfirmNote" xml:space="preserve"><value>Các phần mềm được cài LẦN LƯỢT. Nếu một phần mềm lỗi, hàng đợi vẫn chạy tiếp và lỗi được ghi vào Nhật ký. Bạn có thể bấm Huỷ bất cứ lúc nào.</value></data>
+  <data name="Ui_ScanResultTitle" xml:space="preserve"><value>Kết quả quét phần mềm</value></data>
+  <data name="Ui_ScanResultSubtitle" xml:space="preserve"><value>Chọn phần mềm muốn mang sang máy mới. Mục cài tay chỉ được ghi chú, không tự động cài.</value></data>
+  <data name="Ui_ScanGroupWinget" xml:space="preserve"><value>Có thể cài lại bằng WinGet</value></data>
+  <data name="Ui_ColumnKeep" xml:space="preserve"><value>Giữ</value></data>
+  <data name="Ui_ScanGroupManual" xml:space="preserve"><value>Cần cài thủ công sau khi cài Windows</value></data>
+  <data name="Ui_ColumnRecord" xml:space="preserve"><value>Ghi</value></data>
+  <data name="Ui_ColumnIdentifier" xml:space="preserve"><value>Mã định danh</value></data>
+  <data name="Ui_BtnSaveBackup" xml:space="preserve"><value>Lưu bản sao lưu</value></data>
+  <data name="Ui_EditorTitleAdd" xml:space="preserve"><value>Thêm phần mềm mới</value></data>
+  <data name="Ui_EditorTitleEdit" xml:space="preserve"><value>Sửa phần mềm</value></data>
 </root>
