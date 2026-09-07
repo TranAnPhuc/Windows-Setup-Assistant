@@ -1,3 +1,5 @@
+using WindowsSetupAssistant.App.Localization;
+using WindowsSetupAssistant.Application.Abstractions;
 using System.IO;
 using WindowsSetupAssistant.App.Mvvm;
 using WindowsSetupAssistant.App.Services;
@@ -20,14 +22,15 @@ internal sealed class ViewModelFixture : IAsyncDisposable
     public List<Exception> CommandErrors { get; } = new();
     public JsonProfileRepository Repository { get; }
     public MainViewModel ViewModel { get; }
+    public IStringLocalizer Localizer => LocalizationSource.Instance.Localizer;
 
     public ViewModelFixture()
     {
         Directory.CreateDirectory(DirectoryPath);
         Repository = new JsonProfileRepository(Path.Combine(DirectoryPath, "Data", "software-list.json"), Logger);
         ViewModel = new MainViewModel(Repository, Winget, new InstallationQueueService(Winget, Logger),
-            Logger, Dialogs, new ThemeManager(), new SettingsStore(Path.Combine(DirectoryPath, "Data", "settings.json")),
-            new AppSettings { CheckInstalledOnStartup = true }, new LogViewModel(Logger, Dialogs, null));
+            null, null, Logger, Dialogs, new ThemeManager(), new SettingsStore(Path.Combine(DirectoryPath, "Data", "settings.json")),
+            new AppSettings { CheckInstalledOnStartup = true }, new LogViewModel(Logger, Dialogs, null, Localizer), Localizer);
         AsyncRelayCommand.UnhandledExceptionHandler = CommandErrors.Add;
     }
 

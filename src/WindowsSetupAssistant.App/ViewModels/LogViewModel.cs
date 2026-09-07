@@ -1,3 +1,5 @@
+using WindowsSetupAssistant.App.Localization;
+using WindowsSetupAssistant.Domain.Localization;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -26,17 +28,25 @@ public sealed class LogViewModel : ObservableObject, IDisposable
     private bool _autoScroll = true;
     private bool _disposed;
 
-    public LogViewModel(IAppLogger logger, IDialogService dialogService, string? logFilePath)
+    private readonly IStringLocalizer _localizer;
+
+    public LogViewModel(IAppLogger logger, IDialogService dialogService, string? logFilePath, IStringLocalizer localizer)
     {
         _dialogService = dialogService;
         _logger = logger;
         _logFilePath = logFilePath;
+        _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
 
         logger.EntryLogged += OnEntryLogged;
 
         ClearCommand = new RelayCommand(() => Entries.Clear());
         CopyCommand = new RelayCommand(CopyToClipboard);
         OpenLogFolderCommand = new RelayCommand(OpenLogFolder, () => _logFilePath is not null);
+    }
+
+    public LogViewModel(IAppLogger logger, IDialogService dialogService, string? logFilePath)
+        : this(logger, dialogService, logFilePath, LocalizationSource.Instance.Localizer)
+    {
     }
 
     public ObservableCollection<LogEntry> Entries { get; } = new();
@@ -48,8 +58,8 @@ public sealed class LogViewModel : ObservableObject, IDisposable
     public RelayCommand OpenLogFolderCommand { get; }
 
     public string LogFileDescription => _logFilePath is null
-        ? "Không ghi được file log (thư mục chỉ đọc)."
-        : $"File log: {_logFilePath}";
+        ? _localizer[UiKeys.LogFileCannotWrite]
+        : _localizer.Format(LocalizedText.Of(UiKeys.LogFileDescription, _logFilePath));
 
     public bool AutoScroll
     {
@@ -98,11 +108,11 @@ public sealed class LogViewModel : ObservableObject, IDisposable
         {
             var text = string.Join(Environment.NewLine, Entries.Select(e => e.ToString()));
             Clipboard.SetText(text);
-            _dialogService.ShowInfo("Nhật ký", "Đã sao chép toàn bộ nhật ký vào clipboard.");
+            _dialogService.ShowInfo(_localizer[UiKeys.LogDialogTitle], _localizer[UiKeys.LogCopied]);
         }
         catch (Exception ex)
         {
-            _dialogService.ShowError("Nhật ký", $"Không sao chép được: {ex.Message}");
+            _dialogService.ShowError(_localizer[UiKeys.LogDialogTitle], _localizer.Format(LocalizedText.Of(UiKeys.LogCopyFailed, ex.Message)));
         }
     }
 
@@ -129,7 +139,7 @@ public sealed class LogViewModel : ObservableObject, IDisposable
         }
         catch (Exception ex)
         {
-            _dialogService.ShowError("Nhật ký", $"Không mở được thư mục log: {ex.Message}");
+            _dialogService.ShowError(_localizer[UiKeys.LogDialogTitle], _localizer.Format(LocalizedText.Of(UiKeys.LogOpenFolderFailed, ex.Message)));
         }
     }
 

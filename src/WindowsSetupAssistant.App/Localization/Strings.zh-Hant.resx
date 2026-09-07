@@ -195,4 +195,426 @@
   <data name="Ui_EditorTitleAdd" xml:space="preserve"><value>新增軟體</value></data>
   <data name="Ui_EditorTitleEdit" xml:space="preserve"><value>編輯軟體</value></data>
   <data name="Ui_DataFileLabel" xml:space="preserve"><value>資料：</value></data>
+  <data name="Ui_StatusOutcomeSucceeded" xml:space="preserve">
+    <value>已安裝</value>
+  </data>
+  <data name="Ui_StatusOutcomeUpgraded" xml:space="preserve">
+    <value>已升級</value>
+  </data>
+  <data name="Ui_StatusOutcomeSkipped" xml:space="preserve">
+    <value>已略過 (已存在)</value>
+  </data>
+  <data name="Ui_StatusOutcomeAlreadyInstalled" xml:space="preserve">
+    <value>已是最新版本</value>
+  </data>
+  <data name="Ui_StatusOutcomeFailed" xml:space="preserve">
+    <value>失敗</value>
+  </data>
+  <data name="Ui_StatusOutcomeCancelled" xml:space="preserve">
+    <value>已取消</value>
+  </data>
+  <data name="Ui_StatusOutcomeUnknown" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="Ui_StatusStateInstalled" xml:space="preserve">
+    <value>已安裝</value>
+  </data>
+  <data name="Ui_StatusStateInstalledVersion" xml:space="preserve">
+    <value>已安裝 ({0})</value>
+  </data>
+  <data name="Ui_StatusStateNotInstalled" xml:space="preserve">
+    <value>未安裝</value>
+  </data>
+  <data name="Ui_StatusStateChecking" xml:space="preserve">
+    <value>正在檢查...</value>
+  </data>
+  <data name="Ui_StatusStateNotChecked" xml:space="preserve">
+    <value>未檢查</value>
+  </data>
+  <data name="Ui_CategoryAll" xml:space="preserve">
+    <value>所有類別</value>
+  </data>
+  <data name="Ui_CategoryBrowser" xml:space="preserve">
+    <value>瀏覽器</value>
+  </data>
+  <data name="Ui_CategoryDevelopment" xml:space="preserve">
+    <value>開發</value>
+  </data>
+  <data name="Ui_CategoryOffice" xml:space="preserve">
+    <value>辦公</value>
+  </data>
+  <data name="Ui_CategoryEntertainment" xml:space="preserve">
+    <value>娛樂</value>
+  </data>
+  <data name="Ui_CategoryUtility" xml:space="preserve">
+    <value>工具</value>
+  </data>
+  <data name="Ui_CategoryOther" xml:space="preserve">
+    <value>其他</value>
+  </data>
+  <data name="Ui_PackageEditorEditTitle" xml:space="preserve">
+    <value>編輯軟體</value>
+  </data>
+  <data name="Ui_PackageEditorAddTitle" xml:space="preserve">
+    <value>新增軟體</value>
+  </data>
+  <data name="Ui_PackageEditorNameRequired" xml:space="preserve">
+    <value>請輸入軟體名稱。</value>
+  </data>
+  <data name="Ui_InstallConfirmHeadline" xml:space="preserve">
+    <value>即將安裝 {0} 個軟體</value>
+  </data>
+  <data name="Ui_InstallConfirmDetailInstalled" xml:space="preserve">
+    <value>其中有 {0} 個軟體已安裝在此電腦上。</value>
+  </data>
+  <data name="Ui_InstallConfirmDetailSequential" xml:space="preserve">
+    <value>軟體將會依序安裝，非同時並行。</value>
+  </data>
+  <data name="Ui_LogFileCannotWrite" xml:space="preserve">
+    <value>無法寫入記錄檔 (唯讀目錄)。</value>
+  </data>
+  <data name="Ui_LogFileDescription" xml:space="preserve">
+    <value>記錄檔：{0}</value>
+  </data>
+  <data name="Ui_LogDialogTitle" xml:space="preserve">
+    <value>記錄</value>
+  </data>
+  <data name="Ui_LogCopied" xml:space="preserve">
+    <value>已複製所有記錄至剪貼簿。</value>
+  </data>
+  <data name="Ui_LogCopyFailed" xml:space="preserve">
+    <value>無法複製：{0}</value>
+  </data>
+  <data name="Ui_LogOpenFolderFailed" xml:space="preserve">
+    <value>無法開啟記錄資料夾：{0}</value>
+  </data>
+  <data name="Ui_ScanResultHeadline" xml:space="preserve">
+    <value>已在 {1} 上掃描到 {0} 個軟體</value>
+  </data>
+  <data name="Ui_ScanResultAutomaticHeader" xml:space="preserve">
+    <value>自動安裝 ({0})</value>
+  </data>
+  <data name="Ui_ScanResultManualHeader" xml:space="preserve">
+    <value>手動安裝備註 ({0})</value>
+  </data>
+  <data name="Ui_ScanResultSystemLabel" xml:space="preserve">
+    <value>顯示系統元件 ({0})</value>
+  </data>
+  <data name="Ui_ScanResultProfileBaseName" xml:space="preserve">
+    <value>備份 {0}</value>
+  </data>
+  <data name="Ui_SearchAlreadyInList" xml:space="preserve">
+    <value>已在清單中</value>
+  </data>
+  <data name="Ui_SearchInitialPrompt" xml:space="preserve">
+    <value>輸入關鍵字並點擊「搜尋」以在 WinGet 中查詢軟體。</value>
+  </data>
+  <data name="Ui_SearchCleared" xml:space="preserve">
+    <value>已清除搜尋結果。</value>
+  </data>
+  <data name="Ui_SearchSearching" xml:space="preserve">
+    <value>正在搜尋 WinGet 軟體庫...</value>
+  </data>
+  <data name="Ui_SearchNoResults" xml:space="preserve">
+    <value>找不到符合關鍵字的軟體。</value>
+  </data>
+  <data name="Ui_SearchResultsFound" xml:space="preserve">
+    <value>找到 {0} 個結果。點擊「新增」加入安裝清單。</value>
+  </data>
+  <data name="Ui_SearchFailed" xml:space="preserve">
+    <value>搜尋失敗：{0}</value>
+  </data>
+  <data name="Ui_StatusReady" xml:space="preserve">
+    <value>就緒。</value>
+  </data>
+  <data name="Ui_SelectionSummary" xml:space="preserve">
+    <value>{0} 個軟體 - 已選取 {1} - 已安裝 {2}</value>
+  </data>
+  <data name="Ui_ThemeSwitchLight" xml:space="preserve">
+    <value>淺色佈景</value>
+  </data>
+  <data name="Ui_ThemeSwitchDark" xml:space="preserve">
+    <value>深色佈景</value>
+  </data>
+  <data name="Ui_AdminRunningAsAdmin" xml:space="preserve">
+    <value>正在以系統管理員身分執行</value>
+  </data>
+  <data name="Ui_AdminRunningAsUser" xml:space="preserve">
+    <value>正在以一般使用者身分執行</value>
+  </data>
+  <data name="Ui_StatusLoadingCatalog" xml:space="preserve">
+    <value>正在載入軟體清單...</value>
+  </data>
+  <data name="Ui_StatusLoadedFrom" xml:space="preserve">
+    <value>已從 {0} 載入資料</value>
+  </data>
+  <data name="Ui_DataErrorLoadFailed" xml:space="preserve">
+    <value>無法讀取位於 {0} 的清單。原有資料已被保留，應用程式不會覆寫此檔案。請檢查檔案權限或 USB 連線並重新開啟。詳細資訊：{1}</value>
+  </data>
+  <data name="Ui_StatusLoadFailedAutoSaveDisabled" xml:space="preserve">
+    <value>無法載入資料 — 已關閉自動儲存以保護現有清單。</value>
+  </data>
+  <data name="Ui_DialogStartupError" xml:space="preserve">
+    <value>啟動錯誤</value>
+  </data>
+  <data name="Ui_StatusCheckingWinget" xml:space="preserve">
+    <value>正在檢查 WinGet...</value>
+  </data>
+  <data name="Ui_StatusWingetReady" xml:space="preserve">
+    <value>WinGet 已就緒 ({0})。</value>
+  </data>
+  <data name="Ui_StatusWingetNotReady" xml:space="preserve">
+    <value>無法使用 WinGet - 請參閱上方警告。</value>
+  </data>
+  <data name="Ui_DialogNoProfile" xml:space="preserve">
+    <value>尚無設定檔</value>
+  </data>
+  <data name="Ui_DialogNoProfilePrompt" xml:space="preserve">
+    <value>請在新增軟體前先建立設定檔。</value>
+  </data>
+  <data name="Ui_DialogAlreadyExists" xml:space="preserve">
+    <value>已存在</value>
+  </data>
+  <data name="Ui_DialogPackageAlreadyInProfile" xml:space="preserve">
+    <value>{0} 已在此設定檔清單中。</value>
+  </data>
+  <data name="Ui_DialogPackageAlreadyInList" xml:space="preserve">
+    <value>{0} 已在清單中。</value>
+  </data>
+  <data name="Ui_StatusPackageAdded" xml:space="preserve">
+    <value>已新增 {0}。</value>
+  </data>
+  <data name="Ui_DialogDuplicatePackageId" xml:space="preserve">
+    <value>重複的 Package ID</value>
+  </data>
+  <data name="Ui_DialogDuplicatePackageIdPrompt" xml:space="preserve">
+    <value>此設定檔中已有其他軟體使用此 Package ID。</value>
+  </data>
+  <data name="Ui_StatusPackageUpdated" xml:space="preserve">
+    <value>已更新 {0}。</value>
+  </data>
+  <data name="Ui_DialogDeletePackage" xml:space="preserve">
+    <value>刪除軟體</value>
+  </data>
+  <data name="Ui_DialogDeletePackageConfirm" xml:space="preserve">
+    <value>確定要從清單中刪除「{0}」嗎？</value>
+  </data>
+  <data name="Ui_StatusPackageDeleted" xml:space="preserve">
+    <value>已刪除 {0}。</value>
+  </data>
+  <data name="Ui_StatusCheckingInstalled" xml:space="preserve">
+    <value>正在檢查電腦上已安裝的軟體...</value>
+  </data>
+  <data name="Ui_StatusCheckedInstalledSummary" xml:space="preserve">
+    <value>檢查完成：{0}/{1} 個軟體已安裝在此電腦上。</value>
+  </data>
+  <data name="Ui_DialogCheckCompleted" xml:space="preserve">
+    <value>檢查完成</value>
+  </data>
+  <data name="Ui_StatusCheckInstalledFailed" xml:space="preserve">
+    <value>無法檢查安裝狀態。</value>
+  </data>
+  <data name="Ui_DialogError" xml:space="preserve">
+    <value>錯誤</value>
+  </data>
+  <data name="Ui_DialogNoSoftwareSelected" xml:space="preserve">
+    <value>未選取軟體</value>
+  </data>
+  <data name="Ui_DialogNoSoftwareSelectedPrompt" xml:space="preserve">
+    <value>請至少勾選一個要安裝的軟體。</value>
+  </data>
+  <data name="Ui_StatusInstallCancelledNoop" xml:space="preserve">
+    <value>已取消 - 尚未安裝任何內容。</value>
+  </data>
+  <data name="Ui_DialogRetry" xml:space="preserve">
+    <value>重試</value>
+  </data>
+  <data name="Ui_DialogRetryFailedConfirm" xml:space="preserve">
+    <value>重新安裝 {0} 個失敗的軟體？</value>
+  </data>
+  <data name="Ui_StatusPreparing" xml:space="preserve">
+    <value>正在準備...</value>
+  </data>
+  <data name="Ui_DialogInstallError" xml:space="preserve">
+    <value>安裝錯誤</value>
+  </data>
+  <data name="Ui_InstallSummaryCancelled" xml:space="preserve">
+    <value>安裝過程已取消。</value>
+  </data>
+  <data name="Ui_InstallSummaryFinished" xml:space="preserve">
+    <value>安裝完成。</value>
+  </data>
+  <data name="Ui_InstallSummarySucceeded" xml:space="preserve">
+    <value>成功：{0}</value>
+  </data>
+  <data name="Ui_InstallSummarySkipped" xml:space="preserve">
+    <value>已略過 (已存在)：{0}</value>
+  </data>
+  <data name="Ui_InstallSummaryFailed" xml:space="preserve">
+    <value>失敗：{0}</value>
+  </data>
+  <data name="Ui_InstallSummaryCancelledCount" xml:space="preserve">
+    <value>已取消：{0}</value>
+  </data>
+  <data name="Ui_InstallSummaryTotalDuration" xml:space="preserve">
+    <value>總耗時：{0} 分鐘</value>
+  </data>
+  <data name="Ui_InstallSummaryFailedPackages" xml:space="preserve">
+    <value>失敗的軟體：</value>
+  </data>
+  <data name="Ui_InstallSummaryFailedHint" xml:space="preserve">
+    <value>您可以點擊「重試失敗項目」或查看記錄分頁以獲取詳細資訊。</value>
+  </data>
+  <data name="Ui_StatusInstallCancelled" xml:space="preserve">
+    <value>安裝程序已取消。</value>
+  </data>
+  <data name="Ui_StatusInstallCompleted" xml:space="preserve">
+    <value>完成：{0} 成功，{1} 失敗。</value>
+  </data>
+  <data name="Ui_DialogInstallResultTitle" xml:space="preserve">
+    <value>安裝結果</value>
+  </data>
+  <data name="Ui_StatusCancelling" xml:space="preserve">
+    <value>正在取消... 等待目前套件停止。</value>
+  </data>
+  <data name="Ui_DialogNewProfileTitle" xml:space="preserve">
+    <value>新設定檔</value>
+  </data>
+  <data name="Ui_DialogProfileNamePrompt" xml:space="preserve">
+    <value>設定檔名稱：</value>
+  </data>
+  <data name="Ui_DialogNewProfileDefault" xml:space="preserve">
+    <value>新設定檔</value>
+  </data>
+  <data name="Ui_StatusProfileCreated" xml:space="preserve">
+    <value>已建立設定檔「{0}」。</value>
+  </data>
+  <data name="Ui_DialogRenameProfileTitle" xml:space="preserve">
+    <value>重新命名設定檔</value>
+  </data>
+  <data name="Ui_DialogNewNamePrompt" xml:space="preserve">
+    <value>新名稱：</value>
+  </data>
+  <data name="Ui_ProfileCopySuffix" xml:space="preserve">
+    <value>{0} (副本)</value>
+  </data>
+  <data name="Ui_StatusProfileDuplicated" xml:space="preserve">
+    <value>已複製為「{0}」。</value>
+  </data>
+  <data name="Ui_DialogDeleteProfileTitle" xml:space="preserve">
+    <value>刪除設定檔</value>
+  </data>
+  <data name="Ui_DialogDeleteProfileConfirm" xml:space="preserve">
+    <value>確定要刪除設定檔「{0}」及其內含的 {1} 個軟體嗎？</value>
+  </data>
+  <data name="Ui_StatusProfileDeleted" xml:space="preserve">
+    <value>已刪除設定檔「{0}」。</value>
+  </data>
+  <data name="Ui_StatusScanningMachine" xml:space="preserve">
+    <value>正在掃描電腦上的軟體...</value>
+  </data>
+  <data name="Ui_StatusScanCancelled" xml:space="preserve">
+    <value>掃描已取消。</value>
+  </data>
+  <data name="Ui_DialogScanFailed" xml:space="preserve">
+    <value>掃描失敗</value>
+  </data>
+  <data name="Ui_DialogScanFinished" xml:space="preserve">
+    <value>掃描完成</value>
+  </data>
+  <data name="Ui_DialogNoSoftwareFound" xml:space="preserve">
+    <value>在此電腦上找不到任何軟體。</value>
+  </data>
+  <data name="Ui_DialogSaveBackupTitle" xml:space="preserve">
+    <value>儲存軟體備份</value>
+  </data>
+  <data name="Ui_DialogBackupSuccess" xml:space="preserve">
+    <value>備份成功</value>
+  </data>
+  <data name="Ui_DialogBackupSavedFiles" xml:space="preserve">
+    <value>已寫入：
+{0}
+{1}</value>
+  </data>
+  <data name="Ui_DialogWriteFileFailed" xml:space="preserve">
+    <value>寫入檔案失敗</value>
+  </data>
+  <data name="Ui_DialogOpenJsonTitle" xml:space="preserve">
+    <value>選取軟體清單 JSON 檔案</value>
+  </data>
+  <data name="Ui_DialogImportTitle" xml:space="preserve">
+    <value>匯入清單</value>
+  </data>
+  <data name="Ui_DialogImportPrompt" xml:space="preserve">
+    <value>檔案內含 {0} 個設定檔。
+
+選取「Yes」以完全取代目前的清單。
+選取「No」以新增這些設定檔至現有清單。</value>
+  </data>
+  <data name="Ui_ProfileImportSuffix" xml:space="preserve">
+    <value>{0} (已匯入)</value>
+  </data>
+  <data name="Ui_StatusImportSuccess" xml:space="preserve">
+    <value>已從 {0} 匯入清單。</value>
+  </data>
+  <data name="Ui_DialogImportSuccessTitle" xml:space="preserve">
+    <value>匯入成功</value>
+  </data>
+  <data name="Ui_DialogImportFailedTitle" xml:space="preserve">
+    <value>匯入失敗</value>
+  </data>
+  <data name="Ui_DialogExportTitle" xml:space="preserve">
+    <value>匯出軟體清單</value>
+  </data>
+  <data name="Ui_StatusExportSuccess" xml:space="preserve">
+    <value>已匯出至 {0}。</value>
+  </data>
+  <data name="Ui_DialogExportSuccessTitle" xml:space="preserve">
+    <value>匯出成功</value>
+  </data>
+  <data name="Ui_DialogExportFailedTitle" xml:space="preserve">
+    <value>匯出失敗</value>
+  </data>
+  <data name="Ui_DialogCannotOpenDataFolder" xml:space="preserve">
+    <value>無法開啟資料夾：{0}</value>
+  </data>
+  <data name="Ui_DialogCannotOpen" xml:space="preserve">
+    <value>無法開啟</value>
+  </data>
+  <data name="Ui_DialogStoreInstallHint" xml:space="preserve">
+    <value>請在 Microsoft Store 中搜尋「App Installer」。
+
+{0}</value>
+  </data>
+  <data name="Ui_DialogRestartAdminTitle" xml:space="preserve">
+    <value>以系統管理員身分執行</value>
+  </data>
+  <data name="Ui_DialogRestartAdminPrompt" xml:space="preserve">
+    <value>應用程式將會重新啟動並取得系統管理員權限。
+
+僅在某些安裝程式需要管理員權限時才需要。是否繼續？</value>
+  </data>
+  <data name="Ui_DialogCannotExecute" xml:space="preserve">
+    <value>無法執行</value>
+  </data>
+  <data name="Ui_DialogCannotDetermineAppPath" xml:space="preserve">
+    <value>無法確定應用程式路徑。</value>
+  </data>
+  <data name="Ui_DialogCancelled" xml:space="preserve">
+    <value>已取消</value>
+  </data>
+  <data name="Ui_DialogAdminElevationCancelled" xml:space="preserve">
+    <value>未提升為系統管理員權限。應用程式繼續正常執行。</value>
+  </data>
+  <data name="Ui_DataErrorSaveFailed" xml:space="preserve">
+    <value>無法將變更儲存至 {0}。請檢查寫入權限、可用空間或 USB 連線後重試。詳細資訊：{1}</value>
+  </data>
+  <data name="Ui_DialogInstallingTitle" xml:space="preserve">
+    <value>正在安裝</value>
+  </data>
+  <data name="Ui_DialogCloseWhileInstallingPrompt" xml:space="preserve">
+    <value>軟體正在安裝中。現在關閉應用程式將會取消剩餘的套件。
+
+確定要結束嗎？</value>
+  </data>
 </root>

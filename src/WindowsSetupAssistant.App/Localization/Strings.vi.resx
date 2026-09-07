@@ -195,4 +195,426 @@
   <data name="Ui_EditorTitleAdd" xml:space="preserve"><value>Thêm phần mềm mới</value></data>
   <data name="Ui_EditorTitleEdit" xml:space="preserve"><value>Sửa phần mềm</value></data>
   <data name="Ui_DataFileLabel" xml:space="preserve"><value>Dữ liệu:</value></data>
+  <data name="Ui_StatusOutcomeSucceeded" xml:space="preserve">
+    <value>Đã cài xong</value>
+  </data>
+  <data name="Ui_StatusOutcomeUpgraded" xml:space="preserve">
+    <value>Đã nâng cấp</value>
+  </data>
+  <data name="Ui_StatusOutcomeSkipped" xml:space="preserve">
+    <value>Bỏ qua (đã có)</value>
+  </data>
+  <data name="Ui_StatusOutcomeAlreadyInstalled" xml:space="preserve">
+    <value>Đã là bản mới nhất</value>
+  </data>
+  <data name="Ui_StatusOutcomeFailed" xml:space="preserve">
+    <value>Thất bại</value>
+  </data>
+  <data name="Ui_StatusOutcomeCancelled" xml:space="preserve">
+    <value>Đã huỷ</value>
+  </data>
+  <data name="Ui_StatusOutcomeUnknown" xml:space="preserve">
+    <value>Không rõ</value>
+  </data>
+  <data name="Ui_StatusStateInstalled" xml:space="preserve">
+    <value>Đã cài</value>
+  </data>
+  <data name="Ui_StatusStateInstalledVersion" xml:space="preserve">
+    <value>Đã cài ({0})</value>
+  </data>
+  <data name="Ui_StatusStateNotInstalled" xml:space="preserve">
+    <value>Chưa cài</value>
+  </data>
+  <data name="Ui_StatusStateChecking" xml:space="preserve">
+    <value>Đang kiểm tra...</value>
+  </data>
+  <data name="Ui_StatusStateNotChecked" xml:space="preserve">
+    <value>Chưa kiểm tra</value>
+  </data>
+  <data name="Ui_CategoryAll" xml:space="preserve">
+    <value>Tất cả nhóm</value>
+  </data>
+  <data name="Ui_CategoryBrowser" xml:space="preserve">
+    <value>Trình duyệt</value>
+  </data>
+  <data name="Ui_CategoryDevelopment" xml:space="preserve">
+    <value>Lập trình</value>
+  </data>
+  <data name="Ui_CategoryOffice" xml:space="preserve">
+    <value>Văn phòng</value>
+  </data>
+  <data name="Ui_CategoryEntertainment" xml:space="preserve">
+    <value>Giải trí</value>
+  </data>
+  <data name="Ui_CategoryUtility" xml:space="preserve">
+    <value>Tiện ích</value>
+  </data>
+  <data name="Ui_CategoryOther" xml:space="preserve">
+    <value>Khác</value>
+  </data>
+  <data name="Ui_PackageEditorEditTitle" xml:space="preserve">
+    <value>Sửa phần mềm</value>
+  </data>
+  <data name="Ui_PackageEditorAddTitle" xml:space="preserve">
+    <value>Thêm phần mềm</value>
+  </data>
+  <data name="Ui_PackageEditorNameRequired" xml:space="preserve">
+    <value>Vui lòng nhập tên phần mềm.</value>
+  </data>
+  <data name="Ui_InstallConfirmHeadline" xml:space="preserve">
+    <value>Sắp cài {0} phần mềm</value>
+  </data>
+  <data name="Ui_InstallConfirmDetailInstalled" xml:space="preserve">
+    <value>Trong đó có {0} phần mềm đã có sẵn trên máy.</value>
+  </data>
+  <data name="Ui_InstallConfirmDetailSequential" xml:space="preserve">
+    <value>Các phần mềm sẽ được cài lần lượt, không song song.</value>
+  </data>
+  <data name="Ui_LogFileCannotWrite" xml:space="preserve">
+    <value>Không ghi được file log (thư mục chỉ đọc).</value>
+  </data>
+  <data name="Ui_LogFileDescription" xml:space="preserve">
+    <value>File log: {0}</value>
+  </data>
+  <data name="Ui_LogDialogTitle" xml:space="preserve">
+    <value>Nhật ký</value>
+  </data>
+  <data name="Ui_LogCopied" xml:space="preserve">
+    <value>Đã sao chép toàn bộ nhật ký vào clipboard.</value>
+  </data>
+  <data name="Ui_LogCopyFailed" xml:space="preserve">
+    <value>Không sao chép được: {0}</value>
+  </data>
+  <data name="Ui_LogOpenFolderFailed" xml:space="preserve">
+    <value>Không mở được thư mục log: {0}</value>
+  </data>
+  <data name="Ui_ScanResultHeadline" xml:space="preserve">
+    <value>Đã quét {0} phần mềm trên {1}</value>
+  </data>
+  <data name="Ui_ScanResultAutomaticHeader" xml:space="preserve">
+    <value>Cài tự động ({0})</value>
+  </data>
+  <data name="Ui_ScanResultManualHeader" xml:space="preserve">
+    <value>Ghi chú cài tay ({0})</value>
+  </data>
+  <data name="Ui_ScanResultSystemLabel" xml:space="preserve">
+    <value>Hiện cả app hệ thống ({0})</value>
+  </data>
+  <data name="Ui_ScanResultProfileBaseName" xml:space="preserve">
+    <value>Sao lưu {0}</value>
+  </data>
+  <data name="Ui_SearchAlreadyInList" xml:space="preserve">
+    <value>Đã có trong danh sách</value>
+  </data>
+  <data name="Ui_SearchInitialPrompt" xml:space="preserve">
+    <value>Nhập từ khoá rồi bấm Tìm kiếm để tra cứu trong kho WinGet.</value>
+  </data>
+  <data name="Ui_SearchCleared" xml:space="preserve">
+    <value>Đã xoá kết quả.</value>
+  </data>
+  <data name="Ui_SearchSearching" xml:space="preserve">
+    <value>Đang tìm trong kho WinGet...</value>
+  </data>
+  <data name="Ui_SearchNoResults" xml:space="preserve">
+    <value>Không tìm thấy phần mềm nào khớp với từ khoá.</value>
+  </data>
+  <data name="Ui_SearchResultsFound" xml:space="preserve">
+    <value>Tìm thấy {0} kết quả. Bấm &quot;Thêm&quot; để đưa vào danh sách cài đặt.</value>
+  </data>
+  <data name="Ui_SearchFailed" xml:space="preserve">
+    <value>Tìm kiếm thất bại: {0}</value>
+  </data>
+  <data name="Ui_StatusReady" xml:space="preserve">
+    <value>Sẵn sàng.</value>
+  </data>
+  <data name="Ui_SelectionSummary" xml:space="preserve">
+    <value>{0} phần mềm - đã chọn {1} - đã cài {2}</value>
+  </data>
+  <data name="Ui_ThemeSwitchLight" xml:space="preserve">
+    <value>Giao diện Sáng</value>
+  </data>
+  <data name="Ui_ThemeSwitchDark" xml:space="preserve">
+    <value>Giao diện Tối</value>
+  </data>
+  <data name="Ui_AdminRunningAsAdmin" xml:space="preserve">
+    <value>Đang chạy với quyền Administrator</value>
+  </data>
+  <data name="Ui_AdminRunningAsUser" xml:space="preserve">
+    <value>Đang chạy với quyền người dùng thường</value>
+  </data>
+  <data name="Ui_StatusLoadingCatalog" xml:space="preserve">
+    <value>Đang tải danh sách phần mềm...</value>
+  </data>
+  <data name="Ui_StatusLoadedFrom" xml:space="preserve">
+    <value>Đã tải dữ liệu từ {0}</value>
+  </data>
+  <data name="Ui_DataErrorLoadFailed" xml:space="preserve">
+    <value>Không đọc được danh sách tại {0}. Dữ liệu cũ được giữ nguyên; ứng dụng sẽ không tự ghi đè file này. Kiểm tra file, quyền truy cập hoặc kết nối USB rồi mở lại ứng dụng. Chi tiết: {1}</value>
+  </data>
+  <data name="Ui_StatusLoadFailedAutoSaveDisabled" xml:space="preserve">
+    <value>Chưa tải được dữ liệu — đã tắt tự động lưu để bảo vệ danh sách cũ.</value>
+  </data>
+  <data name="Ui_DialogStartupError" xml:space="preserve">
+    <value>Lỗi khởi động</value>
+  </data>
+  <data name="Ui_StatusCheckingWinget" xml:space="preserve">
+    <value>Đang kiểm tra WinGet...</value>
+  </data>
+  <data name="Ui_StatusWingetReady" xml:space="preserve">
+    <value>WinGet sẵn sàng ({0}).</value>
+  </data>
+  <data name="Ui_StatusWingetNotReady" xml:space="preserve">
+    <value>Chưa dùng được WinGet - xem cảnh báo phía trên.</value>
+  </data>
+  <data name="Ui_DialogNoProfile" xml:space="preserve">
+    <value>Chưa có cấu hình</value>
+  </data>
+  <data name="Ui_DialogNoProfilePrompt" xml:space="preserve">
+    <value>Hãy tạo một cấu hình trước khi thêm phần mềm.</value>
+  </data>
+  <data name="Ui_DialogAlreadyExists" xml:space="preserve">
+    <value>Đã có sẵn</value>
+  </data>
+  <data name="Ui_DialogPackageAlreadyInProfile" xml:space="preserve">
+    <value>{0} đã nằm trong danh sách của cấu hình này.</value>
+  </data>
+  <data name="Ui_DialogPackageAlreadyInList" xml:space="preserve">
+    <value>{0} đã nằm trong danh sách.</value>
+  </data>
+  <data name="Ui_StatusPackageAdded" xml:space="preserve">
+    <value>Đã thêm {0}.</value>
+  </data>
+  <data name="Ui_DialogDuplicatePackageId" xml:space="preserve">
+    <value>Trùng Package Id</value>
+  </data>
+  <data name="Ui_DialogDuplicatePackageIdPrompt" xml:space="preserve">
+    <value>Đã có phần mềm khác dùng Package Id này trong cấu hình.</value>
+  </data>
+  <data name="Ui_StatusPackageUpdated" xml:space="preserve">
+    <value>Đã cập nhật {0}.</value>
+  </data>
+  <data name="Ui_DialogDeletePackage" xml:space="preserve">
+    <value>Xoá phần mềm</value>
+  </data>
+  <data name="Ui_DialogDeletePackageConfirm" xml:space="preserve">
+    <value>Xoá &quot;{0}&quot; khỏi danh sách?</value>
+  </data>
+  <data name="Ui_StatusPackageDeleted" xml:space="preserve">
+    <value>Đã xoá {0}.</value>
+  </data>
+  <data name="Ui_StatusCheckingInstalled" xml:space="preserve">
+    <value>Đang kiểm tra phần mềm đã cài trên máy...</value>
+  </data>
+  <data name="Ui_StatusCheckedInstalledSummary" xml:space="preserve">
+    <value>Đã kiểm tra: {0}/{1} phần mềm có sẵn trên máy.</value>
+  </data>
+  <data name="Ui_DialogCheckCompleted" xml:space="preserve">
+    <value>Kiểm tra hoàn tất</value>
+  </data>
+  <data name="Ui_StatusCheckInstalledFailed" xml:space="preserve">
+    <value>Không kiểm tra được trạng thái cài đặt.</value>
+  </data>
+  <data name="Ui_DialogError" xml:space="preserve">
+    <value>Lỗi</value>
+  </data>
+  <data name="Ui_DialogNoSoftwareSelected" xml:space="preserve">
+    <value>Chưa chọn phần mềm</value>
+  </data>
+  <data name="Ui_DialogNoSoftwareSelectedPrompt" xml:space="preserve">
+    <value>Hãy tick chọn ít nhất một phần mềm để cài.</value>
+  </data>
+  <data name="Ui_StatusInstallCancelledNoop" xml:space="preserve">
+    <value>Đã huỷ - chưa cài gì cả.</value>
+  </data>
+  <data name="Ui_DialogRetry" xml:space="preserve">
+    <value>Thử lại</value>
+  </data>
+  <data name="Ui_DialogRetryFailedConfirm" xml:space="preserve">
+    <value>Cài lại {0} phần mềm bị lỗi?</value>
+  </data>
+  <data name="Ui_StatusPreparing" xml:space="preserve">
+    <value>Đang chuẩn bị...</value>
+  </data>
+  <data name="Ui_DialogInstallError" xml:space="preserve">
+    <value>Lỗi cài đặt</value>
+  </data>
+  <data name="Ui_InstallSummaryCancelled" xml:space="preserve">
+    <value>Quá trình cài đặt đã bị huỷ.</value>
+  </data>
+  <data name="Ui_InstallSummaryFinished" xml:space="preserve">
+    <value>Đã cài xong.</value>
+  </data>
+  <data name="Ui_InstallSummarySucceeded" xml:space="preserve">
+    <value>Thành công: {0}</value>
+  </data>
+  <data name="Ui_InstallSummarySkipped" xml:space="preserve">
+    <value>Bỏ qua (đã có): {0}</value>
+  </data>
+  <data name="Ui_InstallSummaryFailed" xml:space="preserve">
+    <value>Thất bại: {0}</value>
+  </data>
+  <data name="Ui_InstallSummaryCancelledCount" xml:space="preserve">
+    <value>Bị huỷ: {0}</value>
+  </data>
+  <data name="Ui_InstallSummaryTotalDuration" xml:space="preserve">
+    <value>Tổng thời gian: {0} phút</value>
+  </data>
+  <data name="Ui_InstallSummaryFailedPackages" xml:space="preserve">
+    <value>Các phần mềm lỗi:</value>
+  </data>
+  <data name="Ui_InstallSummaryFailedHint" xml:space="preserve">
+    <value>Bạn có thể bấm &quot;Thử lại phần lỗi&quot; hoặc xem tab Nhật ký để biết chi tiết.</value>
+  </data>
+  <data name="Ui_StatusInstallCancelled" xml:space="preserve">
+    <value>Đã huỷ quá trình cài đặt.</value>
+  </data>
+  <data name="Ui_StatusInstallCompleted" xml:space="preserve">
+    <value>Hoàn tất: {0} thành công, {1} thất bại.</value>
+  </data>
+  <data name="Ui_DialogInstallResultTitle" xml:space="preserve">
+    <value>Kết quả cài đặt</value>
+  </data>
+  <data name="Ui_StatusCancelling" xml:space="preserve">
+    <value>Đang huỷ... chờ gói hiện tại dừng lại.</value>
+  </data>
+  <data name="Ui_DialogNewProfileTitle" xml:space="preserve">
+    <value>Cấu hình mới</value>
+  </data>
+  <data name="Ui_DialogProfileNamePrompt" xml:space="preserve">
+    <value>Tên cấu hình:</value>
+  </data>
+  <data name="Ui_DialogNewProfileDefault" xml:space="preserve">
+    <value>Cấu hình mới</value>
+  </data>
+  <data name="Ui_StatusProfileCreated" xml:space="preserve">
+    <value>Đã tạo cấu hình &quot;{0}&quot;.</value>
+  </data>
+  <data name="Ui_DialogRenameProfileTitle" xml:space="preserve">
+    <value>Đổi tên cấu hình</value>
+  </data>
+  <data name="Ui_DialogNewNamePrompt" xml:space="preserve">
+    <value>Tên mới:</value>
+  </data>
+  <data name="Ui_ProfileCopySuffix" xml:space="preserve">
+    <value>{0} (bản sao)</value>
+  </data>
+  <data name="Ui_StatusProfileDuplicated" xml:space="preserve">
+    <value>Đã nhân bản thành &quot;{0}&quot;.</value>
+  </data>
+  <data name="Ui_DialogDeleteProfileTitle" xml:space="preserve">
+    <value>Xoá cấu hình</value>
+  </data>
+  <data name="Ui_DialogDeleteProfileConfirm" xml:space="preserve">
+    <value>Xoá cấu hình &quot;{0}&quot; cùng {1} phần mềm bên trong?</value>
+  </data>
+  <data name="Ui_StatusProfileDeleted" xml:space="preserve">
+    <value>Đã xoá cấu hình &quot;{0}&quot;.</value>
+  </data>
+  <data name="Ui_StatusScanningMachine" xml:space="preserve">
+    <value>Đang quét phần mềm trên máy...</value>
+  </data>
+  <data name="Ui_StatusScanCancelled" xml:space="preserve">
+    <value>Đã huỷ quét.</value>
+  </data>
+  <data name="Ui_DialogScanFailed" xml:space="preserve">
+    <value>Quét thất bại</value>
+  </data>
+  <data name="Ui_DialogScanFinished" xml:space="preserve">
+    <value>Quét xong</value>
+  </data>
+  <data name="Ui_DialogNoSoftwareFound" xml:space="preserve">
+    <value>Không tìm thấy phần mềm nào trên máy này.</value>
+  </data>
+  <data name="Ui_DialogSaveBackupTitle" xml:space="preserve">
+    <value>Lưu bản sao lưu phần mềm</value>
+  </data>
+  <data name="Ui_DialogBackupSuccess" xml:space="preserve">
+    <value>Sao lưu thành công</value>
+  </data>
+  <data name="Ui_DialogBackupSavedFiles" xml:space="preserve">
+    <value>Đã ghi:
+{0}
+{1}</value>
+  </data>
+  <data name="Ui_DialogWriteFileFailed" xml:space="preserve">
+    <value>Ghi file thất bại</value>
+  </data>
+  <data name="Ui_DialogOpenJsonTitle" xml:space="preserve">
+    <value>Chọn file JSON danh sách phần mềm</value>
+  </data>
+  <data name="Ui_DialogImportTitle" xml:space="preserve">
+    <value>Nhập danh sách</value>
+  </data>
+  <data name="Ui_DialogImportPrompt" xml:space="preserve">
+    <value>File có {0} cấu hình.
+
+Chọn Yes để THAY THẾ toàn bộ danh sách hiện tại.
+Chọn No để THÊM các cấu hình này vào danh sách hiện có.</value>
+  </data>
+  <data name="Ui_ProfileImportSuffix" xml:space="preserve">
+    <value>{0} (nhập)</value>
+  </data>
+  <data name="Ui_StatusImportSuccess" xml:space="preserve">
+    <value>Đã nhập danh sách từ {0}.</value>
+  </data>
+  <data name="Ui_DialogImportSuccessTitle" xml:space="preserve">
+    <value>Nhập thành công</value>
+  </data>
+  <data name="Ui_DialogImportFailedTitle" xml:space="preserve">
+    <value>Nhập thất bại</value>
+  </data>
+  <data name="Ui_DialogExportTitle" xml:space="preserve">
+    <value>Xuất danh sách phần mềm</value>
+  </data>
+  <data name="Ui_StatusExportSuccess" xml:space="preserve">
+    <value>Đã xuất ra {0}.</value>
+  </data>
+  <data name="Ui_DialogExportSuccessTitle" xml:space="preserve">
+    <value>Xuất thành công</value>
+  </data>
+  <data name="Ui_DialogExportFailedTitle" xml:space="preserve">
+    <value>Xuất thất bại</value>
+  </data>
+  <data name="Ui_DialogCannotOpenDataFolder" xml:space="preserve">
+    <value>Không mở được thư mục dữ liệu: {0}</value>
+  </data>
+  <data name="Ui_DialogCannotOpen" xml:space="preserve">
+    <value>Không mở được</value>
+  </data>
+  <data name="Ui_DialogStoreInstallHint" xml:space="preserve">
+    <value>Hãy tìm &quot;App Installer&quot; trong Microsoft Store.
+
+{0}</value>
+  </data>
+  <data name="Ui_DialogRestartAdminTitle" xml:space="preserve">
+    <value>Chạy với quyền Administrator</value>
+  </data>
+  <data name="Ui_DialogRestartAdminPrompt" xml:space="preserve">
+    <value>Ứng dụng sẽ đóng và mở lại với quyền Administrator.
+
+Chỉ cần thiết khi một số trình cài đặt yêu cầu quyền quản trị. Tiếp tục?</value>
+  </data>
+  <data name="Ui_DialogCannotExecute" xml:space="preserve">
+    <value>Không thực hiện được</value>
+  </data>
+  <data name="Ui_DialogCannotDetermineAppPath" xml:space="preserve">
+    <value>Không xác định được đường dẫn ứng dụng.</value>
+  </data>
+  <data name="Ui_DialogCancelled" xml:space="preserve">
+    <value>Đã huỷ</value>
+  </data>
+  <data name="Ui_DialogAdminElevationCancelled" xml:space="preserve">
+    <value>Không nâng quyền Administrator. Ứng dụng vẫn chạy bình thường.</value>
+  </data>
+  <data name="Ui_DataErrorSaveFailed" xml:space="preserve">
+    <value>Chưa lưu được thay đổi vào {0}. Kiểm tra quyền ghi, dung lượng trống hoặc kết nối USB rồi thử lại. Chi tiết: {1}</value>
+  </data>
+  <data name="Ui_DialogInstallingTitle" xml:space="preserve">
+    <value>Đang cài đặt</value>
+  </data>
+  <data name="Ui_DialogCloseWhileInstallingPrompt" xml:space="preserve">
+    <value>Đang cài đặt phần mềm. Đóng ứng dụng bây giờ sẽ huỷ các gói còn lại.
+
+Bạn có chắc muốn thoát?</value>
+  </data>
 </root>

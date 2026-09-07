@@ -1,3 +1,6 @@
+using WindowsSetupAssistant.App.Localization;
+using WindowsSetupAssistant.Application.Abstractions;
+using WindowsSetupAssistant.Domain.Localization;
 using WindowsSetupAssistant.App.Mvvm;
 using WindowsSetupAssistant.Domain.Enums;
 
@@ -11,21 +14,29 @@ public sealed class InstallConfirmViewModel : ObservableObject
 {
     private bool _upgradeExisting;
 
-    public InstallConfirmViewModel(IReadOnlyList<SoftwarePackageViewModel> packages, ExistingPackageAction defaultAction)
+    private readonly IStringLocalizer _localizer;
+
+    public InstallConfirmViewModel(IReadOnlyList<SoftwarePackageViewModel> packages, ExistingPackageAction defaultAction, IStringLocalizer localizer)
     {
         Packages = packages;
         _upgradeExisting = defaultAction == ExistingPackageAction.Upgrade;
+        _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
+    }
+
+    public InstallConfirmViewModel(IReadOnlyList<SoftwarePackageViewModel> packages, ExistingPackageAction defaultAction)
+        : this(packages, defaultAction, LocalizationSource.Instance.Localizer)
+    {
     }
 
     public IReadOnlyList<SoftwarePackageViewModel> Packages { get; }
 
     public int AlreadyInstalledCount => Packages.Count(p => p.InstallState == InstallState.Installed);
 
-    public string Headline => $"Sắp cài {Packages.Count} phần mềm";
+    public string Headline => _localizer.Format(LocalizedText.Of(UiKeys.InstallConfirmHeadline, Packages.Count));
 
     public string Detail => AlreadyInstalledCount > 0
-        ? $"Trong đó có {AlreadyInstalledCount} phần mềm đã có sẵn trên máy."
-        : "Các phần mềm sẽ được cài lần lượt, không song song.";
+        ? _localizer.Format(LocalizedText.Of(UiKeys.InstallConfirmDetailInstalled, AlreadyInstalledCount))
+        : _localizer[UiKeys.InstallConfirmDetailSequential];
 
     /// <summary>true = nâng cấp gói đã tồn tại, false = bỏ qua.</summary>
     public bool UpgradeExisting

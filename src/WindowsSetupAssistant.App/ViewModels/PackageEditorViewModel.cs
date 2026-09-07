@@ -1,3 +1,5 @@
+using WindowsSetupAssistant.App.Localization;
+using WindowsSetupAssistant.Application.Abstractions;
 using WindowsSetupAssistant.App.Mvvm;
 using WindowsSetupAssistant.Domain.Entities;
 using WindowsSetupAssistant.Domain.Enums;
@@ -14,8 +16,11 @@ public sealed class PackageEditorViewModel : ObservableObject
     private string _notes = string.Empty;
     private string _errorMessage = string.Empty;
 
-    public PackageEditorViewModel(SoftwarePackage? existing = null)
+    private readonly IStringLocalizer _localizer;
+
+    public PackageEditorViewModel(SoftwarePackage? existing, IStringLocalizer localizer)
     {
+        _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
         IsEditing = existing is not null;
 
         if (existing is not null)
@@ -23,15 +28,24 @@ public sealed class PackageEditorViewModel : ObservableObject
             _name = existing.Name;
             _packageId = existing.PackageId;
             _notes = existing.Notes ?? string.Empty;
-            _category = CategoryNames.All.FirstOrDefault(c => c.Value == existing.Category) ?? CategoryNames.All[0];
+            _category = Categories.FirstOrDefault(c => c.Value == existing.Category) ?? Categories[0];
         }
+        else
+        {
+            _category = Categories[0];
+        }
+    }
+
+    public PackageEditorViewModel(SoftwarePackage? existing = null)
+        : this(existing, LocalizationSource.Instance.Localizer)
+    {
     }
 
     public bool IsEditing { get; }
 
-    public string Title => IsEditing ? "Sửa phần mềm" : "Thêm phần mềm";
+    public string Title => IsEditing ? _localizer[UiKeys.PackageEditorEditTitle] : _localizer[UiKeys.PackageEditorAddTitle];
 
-    public IReadOnlyList<CategoryOption> Categories => CategoryNames.All;
+    public IReadOnlyList<CategoryOption> Categories => CategoryNames.GetAll(_localizer);
 
     public string Name
     {
@@ -76,7 +90,7 @@ public sealed class PackageEditorViewModel : ObservableObject
     {
         if (string.IsNullOrWhiteSpace(Name))
         {
-            ErrorMessage = "Vui lòng nhập tên phần mềm.";
+            ErrorMessage = _localizer[UiKeys.PackageEditorNameRequired];
             return false;
         }
 

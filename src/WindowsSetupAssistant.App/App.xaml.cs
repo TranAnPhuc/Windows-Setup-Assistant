@@ -56,7 +56,8 @@ public partial class App : WpfApplication
 
         // --- Presentation ---
         var dialogService = new DialogService();
-        var logViewModel = new LogViewModel(logger, dialogService, logger.LogFilePath);
+        var localizer = LocalizationSource.Instance.Localizer;
+        var logViewModel = new LogViewModel(logger, dialogService, logger.LogFilePath, localizer);
 
         _mainViewModel = new MainViewModel(
             repository,
@@ -69,7 +70,8 @@ public partial class App : WpfApplication
             themeManager,
             settingsStore,
             settings,
-            logViewModel);
+            logViewModel,
+            localizer);
 
         AsyncRelayCommand.UnhandledExceptionHandler = exception =>
         {

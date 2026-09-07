@@ -1,3 +1,6 @@
+using WindowsSetupAssistant.App.Localization;
+using WindowsSetupAssistant.Application.Abstractions;
+using WindowsSetupAssistant.Domain.Localization;
 using WindowsSetupAssistant.App.Mvvm;
 using WindowsSetupAssistant.Domain.Entities;
 using WindowsSetupAssistant.Domain.Enums;
@@ -18,10 +21,23 @@ public sealed class SoftwarePackageViewModel : ObservableObject
     private InstallationResult? _lastResult;
     private string? _installedVersion;
 
-    public SoftwarePackageViewModel(SoftwarePackage model, Action? onSelectionChanged = null)
+    private readonly IStringLocalizer _localizer;
+
+    public SoftwarePackageViewModel(SoftwarePackage model, Action? onSelectionChanged, IStringLocalizer localizer)
     {
         Model = model ?? throw new ArgumentNullException(nameof(model));
         OnSelectionChanged = onSelectionChanged;
+        _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
+    }
+
+    public SoftwarePackageViewModel(SoftwarePackage model, IStringLocalizer localizer)
+        : this(model, null, localizer)
+    {
+    }
+
+    public SoftwarePackageViewModel(SoftwarePackage model, Action? onSelectionChanged = null)
+        : this(model, onSelectionChanged, LocalizationSource.Instance.Localizer)
+    {
     }
 
     public SoftwarePackage Model { get; }
@@ -36,7 +52,7 @@ public sealed class SoftwarePackageViewModel : ObservableObject
 
     public SoftwareCategory Category => Model.Category;
 
-    public string CategoryDisplayName => CategoryNames.Display(Model.Category);
+    public string CategoryDisplayName => CategoryNames.Display(Model.Category, _localizer);
 
     public string? Notes => Model.Notes;
 
@@ -108,24 +124,24 @@ public sealed class SoftwarePackageViewModel : ObservableObject
             {
                 return _lastResult.Outcome switch
                 {
-                    InstallOutcome.Succeeded => "Đã cài xong",
-                    InstallOutcome.Upgraded => "Đã nâng cấp",
-                    InstallOutcome.Skipped => "Bỏ qua (đã có)",
-                    InstallOutcome.AlreadyInstalled => "Đã là bản mới nhất",
-                    InstallOutcome.Failed => "Thất bại",
-                    InstallOutcome.Cancelled => "Đã huỷ",
-                    _ => "Không rõ"
+                    InstallOutcome.Succeeded => _localizer[UiKeys.StatusOutcomeSucceeded],
+                    InstallOutcome.Upgraded => _localizer[UiKeys.StatusOutcomeUpgraded],
+                    InstallOutcome.Skipped => _localizer[UiKeys.StatusOutcomeSkipped],
+                    InstallOutcome.AlreadyInstalled => _localizer[UiKeys.StatusOutcomeAlreadyInstalled],
+                    InstallOutcome.Failed => _localizer[UiKeys.StatusOutcomeFailed],
+                    InstallOutcome.Cancelled => _localizer[UiKeys.StatusOutcomeCancelled],
+                    _ => _localizer[UiKeys.StatusOutcomeUnknown]
                 };
             }
 
             return InstallState switch
             {
                 InstallState.Installed => string.IsNullOrWhiteSpace(InstalledVersion)
-                    ? "Đã cài"
-                    : $"Đã cài ({InstalledVersion})",
-                InstallState.NotInstalled => "Chưa cài",
-                InstallState.Checking => "Đang kiểm tra...",
-                _ => "Chưa kiểm tra"
+                    ? _localizer[UiKeys.StatusStateInstalled]
+                    : _localizer.Format(LocalizedText.Of(UiKeys.StatusStateInstalledVersion, InstalledVersion)),
+                InstallState.NotInstalled => _localizer[UiKeys.StatusStateNotInstalled],
+                InstallState.Checking => _localizer[UiKeys.StatusStateChecking],
+                _ => _localizer[UiKeys.StatusStateNotChecked]
             };
         }
     }
@@ -173,20 +189,26 @@ public sealed class SoftwarePackageViewModel : ObservableObject
 /// <summary>Tên hiển thị tiếng Việt cho từng nhóm phần mềm.</summary>
 public static class CategoryNames
 {
-    public static string Display(SoftwareCategory category) => category switch
+    public static string Display(SoftwareCategory category, IStringLocalizer localizer) => category switch
     {
-        SoftwareCategory.Browser => "Trình duyệt",
-        SoftwareCategory.Development => "Lập trình",
-        SoftwareCategory.Office => "Văn phòng",
-        SoftwareCategory.Entertainment => "Giải trí",
-        SoftwareCategory.Utility => "Tiện ích",
-        _ => "Khác"
+        SoftwareCategory.Browser => localizer[UiKeys.CategoryBrowser],
+        SoftwareCategory.Development => localizer[UiKeys.CategoryDevelopment],
+        SoftwareCategory.Office => localizer[UiKeys.CategoryOffice],
+        SoftwareCategory.Entertainment => localizer[UiKeys.CategoryEntertainment],
+        SoftwareCategory.Utility => localizer[UiKeys.CategoryUtility],
+        _ => localizer[UiKeys.CategoryOther]
     };
 
-    public static IReadOnlyList<CategoryOption> All { get; } = Enum
+    public static string Display(SoftwareCategory category) =>
+        Display(category, LocalizationSource.Instance.Localizer);
+
+    public static IReadOnlyList<CategoryOption> GetAll(IStringLocalizer localizer) => Enum
         .GetValues<SoftwareCategory>()
-        .Select(c => new CategoryOption(c, Display(c)))
+        .Select(c => new CategoryOption(c, Display(c, localizer)))
         .ToList();
+
+    public static IReadOnlyList<CategoryOption> All =>
+        GetAll(LocalizationSource.Instance.Localizer);
 }
 
 public sealed record CategoryOption(SoftwareCategory Value, string DisplayName)

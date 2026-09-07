@@ -1,3 +1,4 @@
+using WindowsSetupAssistant.Domain.Localization;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -42,6 +43,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     private readonly AppSettings _settings;
     private readonly IMachineScanService? _scanService;
     private readonly IBackupExporter? _backupExporter;
+    private readonly IStringLocalizer _localizer;
 
     private SoftwareCatalog _catalog = new();
     private InstallationProfile? _selectedProfile;
@@ -59,7 +61,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
     private string _filterText = string.Empty;
     private CategoryFilterOption _categoryFilter;
-    private string _statusMessage = "Sẵn sàng.";
+    private string _statusMessage;
     private bool _isBusy;
     private bool _isInstalling;
     private double _progressValue;
@@ -78,7 +80,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         ThemeManager themeManager,
         SettingsStore settingsStore,
         AppSettings settings,
-        LogViewModel logViewModel) : this(repository, wingetService, queueService, null, null, logger, dialogService, themeManager, settingsStore, settings, logViewModel)
+        LogViewModel logViewModel) : this(repository, wingetService, queueService, null, null, logger, dialogService, themeManager, settingsStore, settings, logViewModel, LocalizationSource.Instance.Localizer)
     {
     }
 
@@ -93,7 +95,23 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         ThemeManager themeManager,
         SettingsStore settingsStore,
         AppSettings settings,
-        LogViewModel logViewModel)
+        LogViewModel logViewModel) : this(repository, wingetService, queueService, scanService, backupExporter, logger, dialogService, themeManager, settingsStore, settings, logViewModel, LocalizationSource.Instance.Localizer)
+    {
+    }
+
+    public MainViewModel(
+        IProfileRepository repository,
+        IWingetService wingetService,
+        InstallationQueueService queueService,
+        IMachineScanService? scanService,
+        IBackupExporter? backupExporter,
+        IAppLogger logger,
+        IDialogService dialogService,
+        ThemeManager themeManager,
+        SettingsStore settingsStore,
+        AppSettings settings,
+        LogViewModel logViewModel,
+        IStringLocalizer localizer)
     {
         _repository = repository;
         _wingetService = wingetService;
@@ -105,6 +123,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         _settings = settings;
         _scanService = scanService;
         _backupExporter = backupExporter;
+        _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
+        _statusMessage = _localizer[UiKeys.StatusReady];
 
         _selectedLanguage = LanguageCatalog.Supported
             .FirstOrDefault(l => string.Equals(l.Code, settings.Language, StringComparison.OrdinalIgnoreCase))
@@ -116,13 +136,14 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             AddPackageFromSearch,
             IsPackageInCurrentProfile,
             () => !_isClosing && !IsInstalling && IsWingetAvailable,
-            () => !_isClosing && !IsInstalling);
+            () => !_isClosing && !IsInstalling,
+            _localizer);
 
         CategoryFilters = new List<CategoryFilterOption>
         {
-            new(null, "Tất cả nhóm")
+            new(null, _localizer[UiKeys.CategoryAll])
         }
-        .Concat(CategoryNames.All.Select(c => new CategoryFilterOption(c.Value, c.DisplayName)))
+        .Concat(CategoryNames.GetAll(_localizer).Select(c => new CategoryFilterOption(c.Value, c.DisplayName)))
         .ToList();
 
         _categoryFilter = CategoryFilters[0];
@@ -417,11 +438,11 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     public int InstalledCount => Packages.Count(p => p.InstallState == InstallState.Installed);
 
     public string SummaryText =>
-        $"{TotalCount} phần mềm - đã chọn {SelectedCount} - đã cài {InstalledCount}";
+        _localizer.Format(LocalizedText.Of(UiKeys.SelectionSummary, TotalCount, SelectedCount, InstalledCount));
 
     public bool HasFailedResults => Packages.Any(p => p.HasError);
 
-    public string ThemeButtonText => _themeManager.CurrentTheme == AppTheme.Dark ? "Giao diện Sáng" : "Giao diện Tối";
+    public string ThemeButtonText => _themeManager.CurrentTheme == AppTheme.Dark ? _localizer[UiKeys.ThemeSwitchLight] : _localizer[UiKeys.ThemeSwitchDark];
 
     public static bool IsAdministrator
     {
@@ -440,15 +461,15 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     }
 
     public string PrivilegeText => IsAdministrator
-        ? "Đang chạy với quyền Administrator"
-        : "Đang chạy với quyền người dùng thường";
+        ? _localizer[UiKeys.AdminRunningAsAdmin]
+        : _localizer[UiKeys.AdminRunningAsUser];
 
     // ---------------------------------------------------------------- Khởi động
 
     private async Task InitializeAsync()
     {
         IsBusy = true;
-        StatusMessage = "Đang tải danh sách phần mềm...";
+        StatusMessage = _localizer[UiKeys.StatusLoadingCatalog];
 
         try
         {
@@ -461,7 +482,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             _catalogLoaded = true;
             ReloadProfiles();
 
-            StatusMessage = $"Đã tải dữ liệu từ {_repository.DataFilePath}";
+            StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusLoadedFrom, _repository.DataFilePath));
 
             await CheckWingetAsync().ConfigureAwait(true);
 
@@ -481,15 +502,13 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         }
         catch (Exception ex)
         {
-            _logger.Error($"Khởi động thất bại: {ex.Message}", details: ex.ToString());
+            _logger.Error($"Startup failed: {ex.Message}", details: ex.ToString());
             if (!_catalogLoaded)
             {
-                DataErrorMessage = $"Không đọc được danh sách tại {DataFilePath}. " +
-                    "Dữ liệu cũ được giữ nguyên; ứng dụng sẽ không tự ghi đè file này. " +
-                    $"Kiểm tra file, quyền truy cập hoặc kết nối USB rồi mở lại ứng dụng. Chi tiết: {ex.Message}";
-                StatusMessage = "Chưa tải được dữ liệu — đã tắt tự động lưu để bảo vệ danh sách cũ.";
+                DataErrorMessage = _localizer.Format(LocalizedText.Of(UiKeys.DataErrorLoadFailed, DataFilePath, ex.Message));
+                StatusMessage = _localizer[UiKeys.StatusLoadFailedAutoSaveDisabled];
             }
-            _dialogService.ShowError("Lỗi khởi động", ex.Message);
+            _dialogService.ShowError(_localizer[UiKeys.DialogStartupError], ex.Message);
         }
         finally
         {
@@ -499,7 +518,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
     private async Task CheckWingetAsync()
     {
-        StatusMessage = "Đang kiểm tra WinGet...";
+        StatusMessage = _localizer[UiKeys.StatusCheckingWinget];
 
         var availability = await _wingetService.CheckAvailabilityAsync(_lifetimeCts.Token).ConfigureAwait(true);
 
@@ -507,15 +526,14 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
         if (availability.IsAvailable)
         {
-            StatusMessage = $"WinGet sẵn sàng ({availability.Version}).";
+            StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusWingetReady, availability.Version));
             WingetWarning = string.Empty;
             return;
         }
 
-        WingetWarning = availability.ErrorMessage ??
-            "Không dùng được WinGet. Hãy cài Microsoft App Installer từ Microsoft Store.";
+        WingetWarning = availability.ErrorMessage ?? _localizer[UiKeys.WarningWingetUnavailable];
 
-        StatusMessage = "Chưa dùng được WinGet - xem cảnh báo phía trên.";
+        StatusMessage = _localizer[UiKeys.StatusWingetNotReady];
         _logger.Warning(WingetWarning);
     }
 
@@ -604,7 +622,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             return;
         }
 
-        var editor = new PackageEditorViewModel();
+        var editor = new PackageEditorViewModel(null, _localizer);
 
         if (!_dialogService.ShowPackageEditor(editor))
         {
@@ -618,13 +636,13 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     {
         if (SelectedProfile is null)
         {
-            _dialogService.ShowInfo("Chưa có cấu hình", "Hãy tạo một cấu hình trước khi thêm phần mềm.");
+            _dialogService.ShowInfo(_localizer[UiKeys.DialogNoProfile], _localizer[UiKeys.DialogNoProfilePrompt]);
             return;
         }
 
         if (IsPackageInCurrentProfile(info.PackageId))
         {
-            _dialogService.ShowInfo("Đã có sẵn", $"{info.PackageId} đã nằm trong danh sách của cấu hình này.");
+            _dialogService.ShowInfo(_localizer[UiKeys.DialogAlreadyExists], _localizer.Format(LocalizedText.Of(UiKeys.DialogPackageAlreadyInProfile, info.PackageId)));
             return;
         }
 
@@ -659,7 +677,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
         if (IsPackageInCurrentProfile(package.PackageId))
         {
-            _dialogService.ShowInfo("Đã có sẵn", $"{package.PackageId} đã nằm trong danh sách.");
+            _dialogService.ShowInfo(_localizer[UiKeys.DialogAlreadyExists], _localizer.Format(LocalizedText.Of(UiKeys.DialogPackageAlreadyInList, package.PackageId)));
             return;
         }
 
@@ -675,8 +693,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         RaiseCountsChanged();
         SaveCatalogInBackground();
 
-        StatusMessage = $"Đã thêm {package.Name}.";
-        _logger.Information($"Thêm phần mềm vào danh sách: {package.Name} ({package.PackageId}).");
+        StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusPackageAdded, package.Name));
+        _logger.Information($"Added package to list: {package.Name} ({package.PackageId}).");
 
         // Biết ngay gói vừa thêm đã có trên máy hay chưa.
         _ = UpdateSingleInstallStateAsync(viewModel);
@@ -689,7 +707,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             return;
         }
 
-        var editor = new PackageEditorViewModel(SelectedPackage.Model);
+        var editor = new PackageEditorViewModel(SelectedPackage.Model, _localizer);
 
         if (!_dialogService.ShowPackageEditor(editor))
         {
@@ -702,7 +720,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
         if (duplicated)
         {
-            _dialogService.ShowError("Trùng Package Id", "Đã có phần mềm khác dùng Package Id này trong cấu hình.");
+            _dialogService.ShowError(_localizer[UiKeys.DialogDuplicatePackageId], _localizer[UiKeys.DialogDuplicatePackageIdPrompt]);
             return;
         }
 
@@ -722,7 +740,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         Search.RefreshAlreadyInListFlags();
         RaiseCountsChanged();
         SaveCatalogInBackground();
-        StatusMessage = $"Đã cập nhật {SelectedPackage.Name}.";
+        StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusPackageUpdated, SelectedPackage.Name));
 
         if (packageIdChanged)
         {
@@ -739,7 +757,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
         var package = SelectedPackage;
 
-        if (!_dialogService.Confirm("Xoá phần mềm", $"Xoá \"{package.Name}\" khỏi danh sách?"))
+        if (!_dialogService.Confirm(_localizer[UiKeys.DialogDeletePackage], _localizer.Format(LocalizedText.Of(UiKeys.DialogDeletePackageConfirm, package.Name))))
         {
             return;
         }
@@ -755,7 +773,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         RaiseCountsChanged();
         SaveCatalogInBackground();
 
-        StatusMessage = $"Đã xoá {package.Name}.";
+        StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusPackageDeleted, package.Name));
     }
 
     private bool CanMovePackage(int offset)
@@ -892,7 +910,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         }
 
         IsBusy = true;
-        StatusMessage = "Đang kiểm tra phần mềm đã cài trên máy...";
+        StatusMessage = _localizer[UiKeys.StatusCheckingInstalled];
 
         foreach (var package in Packages)
         {
@@ -924,11 +942,11 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             _installedScanCompleted = true;
             RaiseCountsChanged();
 
-            StatusMessage = $"Đã kiểm tra: {InstalledCount}/{TotalCount} phần mềm có sẵn trên máy.";
+            StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusCheckedInstalledSummary, InstalledCount, TotalCount));
 
             if (showDialog)
             {
-                _dialogService.ShowInfo("Kiểm tra hoàn tất", StatusMessage);
+                _dialogService.ShowInfo(_localizer[UiKeys.DialogCheckCompleted], StatusMessage);
             }
         }
         catch (OperationCanceledException) when (_isClosing || _disposed)
@@ -942,12 +960,12 @@ public sealed class MainViewModel : ObservableObject, IDisposable
                 package.InstallState = InstallState.Unknown;
             }
 
-            _logger.Error($"Không kiểm tra được phần mềm đã cài: {ex.Message}");
-            StatusMessage = "Không kiểm tra được trạng thái cài đặt.";
+            _logger.Error($"Check installed packages failed: {ex.Message}");
+            StatusMessage = _localizer[UiKeys.StatusCheckInstalledFailed];
 
             if (showDialog)
             {
-                _dialogService.ShowError("Lỗi", ex.Message);
+                _dialogService.ShowError(_localizer[UiKeys.DialogError], ex.Message);
             }
         }
         finally
@@ -984,7 +1002,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
         if (selected.Count == 0)
         {
-            _dialogService.ShowInfo("Chưa chọn phần mềm", "Hãy tick chọn ít nhất một phần mềm để cài.");
+            _dialogService.ShowInfo(_localizer[UiKeys.DialogNoSoftwareSelected], _localizer[UiKeys.DialogNoSoftwareSelectedPrompt]);
             return;
         }
 
@@ -992,7 +1010,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
         if (!_dialogService.ShowInstallConfirmation(confirm))
         {
-            StatusMessage = "Đã huỷ - chưa cài gì cả.";
+            StatusMessage = _localizer[UiKeys.StatusInstallCancelledNoop];
             return;
         }
 
@@ -1011,7 +1029,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             return;
         }
 
-        if (!_dialogService.Confirm("Thử lại", $"Cài lại {failed.Count} phần mềm bị lỗi?"))
+        if (!_dialogService.Confirm(_localizer[UiKeys.DialogRetry], _localizer.Format(LocalizedText.Of(UiKeys.DialogRetryFailedConfirm, failed.Count))))
         {
             return;
         }
@@ -1034,7 +1052,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         Results.Clear();
         ProgressValue = 0;
         ProgressText = $"0/{packages.Count}";
-        CurrentPackageText = "Đang chuẩn bị...";
+        CurrentPackageText = _localizer[UiKeys.StatusPreparing];
 
         foreach (var package in packages)
         {
@@ -1076,10 +1094,10 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         }
         catch (Exception ex)
         {
-            _logger.Error($"Hàng đợi cài đặt gặp lỗi: {ex.Message}", details: ex.ToString());
+            _logger.Error($"Install queue error: {ex.Message}", details: ex.ToString());
             if (!_isClosing && !_disposed)
             {
-                _dialogService.ShowError("Lỗi cài đặt", ex.Message);
+                _dialogService.ShowError(_localizer[UiKeys.DialogInstallError], ex.Message);
             }
         }
         finally
@@ -1129,31 +1147,31 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     {
         var lines = new List<string>
         {
-            summary.WasCancelled ? "Quá trình cài đặt đã bị huỷ." : "Đã cài xong.",
+            summary.WasCancelled ? _localizer[UiKeys.InstallSummaryCancelled] : _localizer[UiKeys.InstallSummaryFinished],
             string.Empty,
-            $"Thành công: {summary.SucceededCount}",
-            $"Bỏ qua (đã có): {summary.SkippedCount}",
-            $"Thất bại: {summary.FailedCount}",
-            $"Bị huỷ: {summary.CancelledCount}",
-            $"Tổng thời gian: {summary.TotalDuration.TotalMinutes:F1} phút"
+            _localizer.Format(LocalizedText.Of(UiKeys.InstallSummarySucceeded, summary.SucceededCount)),
+            _localizer.Format(LocalizedText.Of(UiKeys.InstallSummarySkipped, summary.SkippedCount)),
+            _localizer.Format(LocalizedText.Of(UiKeys.InstallSummaryFailed, summary.FailedCount)),
+            _localizer.Format(LocalizedText.Of(UiKeys.InstallSummaryCancelledCount, summary.CancelledCount)),
+            _localizer.Format(LocalizedText.Of(UiKeys.InstallSummaryTotalDuration, $"{summary.TotalDuration.TotalMinutes:F1}"))
         };
 
         if (summary.FailedCount > 0)
         {
             lines.Add(string.Empty);
-            lines.Add("Các phần mềm lỗi:");
+            lines.Add(_localizer[UiKeys.InstallSummaryFailedPackages]);
             lines.AddRange(summary.Results
                 .Where(r => r.Outcome == InstallOutcome.Failed)
                 .Select(r => $"  - {r.DisplayName}: {r.Message}"));
             lines.Add(string.Empty);
-            lines.Add("Bạn có thể bấm \"Thử lại phần lỗi\" hoặc xem tab Nhật ký để biết chi tiết.");
+            lines.Add(_localizer[UiKeys.InstallSummaryFailedHint]);
         }
 
         StatusMessage = summary.WasCancelled
-            ? "Đã huỷ quá trình cài đặt."
-            : $"Hoàn tất: {summary.SucceededCount} thành công, {summary.FailedCount} thất bại.";
+            ? _localizer[UiKeys.StatusInstallCancelled]
+            : _localizer.Format(LocalizedText.Of(UiKeys.StatusInstallCompleted, summary.SucceededCount, summary.FailedCount));
 
-        _dialogService.ShowInfo("Kết quả cài đặt", string.Join(Environment.NewLine, lines));
+        _dialogService.ShowInfo(_localizer[UiKeys.DialogInstallResultTitle], string.Join(Environment.NewLine, lines));
     }
 
     private void CancelInstall()
@@ -1164,8 +1182,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         }
 
         _installCts.Cancel();
-        CurrentPackageText = "Đang huỷ... chờ gói hiện tại dừng lại.";
-        _logger.Warning("Người dùng yêu cầu huỷ quá trình cài đặt.");
+        CurrentPackageText = _localizer[UiKeys.StatusCancelling];
+        _logger.Warning("User requested cancellation of installation.");
     }
 
     // ---------------------------------------------------------------- Cấu hình
@@ -1173,7 +1191,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     private void NewProfile()
     {
         var name = _dialogService.ShowTextInput(
-            new TextInputViewModel("Cấu hình mới", "Tên cấu hình:", "Cấu hình mới"));
+            new TextInputViewModel(_localizer[UiKeys.DialogNewProfileTitle], _localizer[UiKeys.DialogProfileNamePrompt], _localizer[UiKeys.DialogNewProfileDefault]));
 
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -1187,7 +1205,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         SelectedProfile = profile;
 
         SaveCatalogInBackground();
-        StatusMessage = $"Đã tạo cấu hình \"{name}\".";
+        StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusProfileCreated, name));
     }
 
     private void RenameProfile()
@@ -1198,7 +1216,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         }
 
         var name = _dialogService.ShowTextInput(
-            new TextInputViewModel("Đổi tên cấu hình", "Tên mới:", SelectedProfile.Name));
+            new TextInputViewModel(_localizer[UiKeys.DialogRenameProfileTitle], _localizer[UiKeys.DialogNewNamePrompt], SelectedProfile.Name));
 
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -1227,7 +1245,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
         var copy = SelectedProfile.Clone();
         copy.Id = Guid.NewGuid();
-        copy.Name = $"{SelectedProfile.Name} (bản sao)";
+        copy.Name = _localizer.Format(LocalizedText.Of(UiKeys.ProfileCopySuffix, SelectedProfile.Name));
         copy.CreatedAt = DateTimeOffset.Now;
         copy.UpdatedAt = DateTimeOffset.Now;
 
@@ -1241,7 +1259,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         SelectedProfile = copy;
 
         SaveCatalogInBackground();
-        StatusMessage = $"Đã nhân bản thành \"{copy.Name}\".";
+        StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusProfileDuplicated, copy.Name));
     }
 
     private void DeleteProfile()
@@ -1253,8 +1271,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
         var profile = SelectedProfile;
 
-        if (!_dialogService.Confirm("Xoá cấu hình",
-                $"Xoá cấu hình \"{profile.Name}\" cùng {profile.Packages.Count} phần mềm bên trong?"))
+        if (!_dialogService.Confirm(_localizer[UiKeys.DialogDeleteProfileTitle],
+                _localizer.Format(LocalizedText.Of(UiKeys.DialogDeleteProfileConfirm, profile.Name, profile.Packages.Count))))
         {
             return;
         }
@@ -1264,7 +1282,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         SelectedProfile = Profiles.FirstOrDefault();
 
         SaveCatalogInBackground();
-        StatusMessage = $"Đã xoá cấu hình \"{profile.Name}\".";
+        StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusProfileDeleted, profile.Name));
     }
 
     // ---------------------------------------------------------------- Import / Export
@@ -1273,31 +1291,31 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     {
         if (_scanService is null || _backupExporter is null) return;
         IsBusy = true;
-        StatusMessage = "Đang quét phần mềm trên máy...";
+        StatusMessage = _localizer[UiKeys.StatusScanningMachine];
         MachineSnapshot snapshot;
         try { snapshot = await _scanService.ScanAsync(_lifetimeCts.Token).ConfigureAwait(true); }
-        catch (OperationCanceledException) { StatusMessage = "Đã huỷ quét."; return; }
-        catch (Exception ex) { _logger.Error($"Quét máy thất bại: {ex.Message}"); _dialogService.ShowError("Quét thất bại", ex.Message); return; }
+        catch (OperationCanceledException) { StatusMessage = _localizer[UiKeys.StatusScanCancelled]; return; }
+        catch (Exception ex) { _logger.Error($"Scan machine failed: {ex.Message}"); _dialogService.ShowError(_localizer[UiKeys.DialogScanFailed], ex.Message); return; }
         finally { IsBusy = false; }
-        if (snapshot.Entries.Count == 0) { _dialogService.ShowInfo("Quét xong", "Không tìm thấy phần mềm nào trên máy này."); return; }
+        if (snapshot.Entries.Count == 0) { _dialogService.ShowInfo(_localizer[UiKeys.DialogScanFinished], _localizer[UiKeys.DialogNoSoftwareFound]); return; }
         var review = new ScanResultViewModel(snapshot);
         if (!_dialogService.ShowScanResult(review) || !review.HasAnySelected) return;
         var profile = review.BuildProfile(_catalog.Profiles.Select(p => p.Name));
         _catalog.Profiles.Add(profile); Profiles.Add(profile); SelectedProfile = profile;
         await SaveCatalogAsync().ConfigureAwait(true);
-        var path = _dialogService.SaveJsonFile("Lưu bản sao lưu phần mềm", $"sao-luu-{snapshot.MachineName}-{snapshot.ScannedAt:yyyyMMdd-HHmm}.json");
+        var path = _dialogService.SaveJsonFile(_localizer[UiKeys.DialogSaveBackupTitle], $"sao-luu-{snapshot.MachineName}-{snapshot.ScannedAt:yyyyMMdd-HHmm}.json");
         if (path is null) return;
         try
         {
             var paths = await _backupExporter.ExportAsync(profile, path, _catalog.SchemaVersion, _lifetimeCts.Token).ConfigureAwait(true);
-            _dialogService.ShowInfo("Sao lưu thành công", $"Đã ghi:\n{paths.JsonPath}\n{paths.CsvPath}");
+            _dialogService.ShowInfo(_localizer[UiKeys.DialogBackupSuccess], _localizer.Format(LocalizedText.Of(UiKeys.DialogBackupSavedFiles, paths.JsonPath, paths.CsvPath)));
         }
-        catch (Exception ex) { _logger.Error($"Ghi file sao lưu thất bại: {ex.Message}"); _dialogService.ShowError("Ghi file thất bại", ex.Message); }
+        catch (Exception ex) { _logger.Error($"Write backup file failed: {ex.Message}"); _dialogService.ShowError(_localizer[UiKeys.DialogWriteFileFailed], ex.Message); }
     }
 
     private async Task ImportAsync()
     {
-        var path = _dialogService.OpenJsonFile("Chọn file JSON danh sách phần mềm");
+        var path = _dialogService.OpenJsonFile(_localizer[UiKeys.DialogOpenJsonTitle]);
 
         if (path is null)
         {
@@ -1309,10 +1327,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             var imported = await _repository.ImportAsync(path).ConfigureAwait(true);
 
             var replace = _dialogService.Confirm(
-                "Nhập danh sách",
-                $"File có {imported.Profiles.Count} cấu hình.\n\n" +
-                "Chọn Yes để THAY THẾ toàn bộ danh sách hiện tại.\n" +
-                "Chọn No để THÊM các cấu hình này vào danh sách hiện có.");
+                _localizer[UiKeys.DialogImportTitle],
+                _localizer.Format(LocalizedText.Of(UiKeys.DialogImportPrompt, imported.Profiles.Count)));
 
             if (replace)
             {
@@ -1326,7 +1342,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
                     if (_catalog.Profiles.Any(p => p.Name == profile.Name))
                     {
-                        profile.Name = $"{profile.Name} (nhập)";
+                        profile.Name = _localizer.Format(LocalizedText.Of(UiKeys.ProfileImportSuffix, profile.Name));
                     }
 
                     _catalog.Profiles.Add(profile);
@@ -1336,8 +1352,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             await _repository.SaveAsync(_catalog).ConfigureAwait(true);
             ReloadProfiles();
 
-            StatusMessage = $"Đã nhập danh sách từ {path}.";
-            _dialogService.ShowInfo("Nhập thành công", StatusMessage);
+            StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusImportSuccess, path));
+            _dialogService.ShowInfo(_localizer[UiKeys.DialogImportSuccessTitle], StatusMessage);
 
             if (IsWingetAvailable)
             {
@@ -1346,8 +1362,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         }
         catch (Exception ex)
         {
-            _logger.Error($"Nhập danh sách thất bại: {ex.Message}");
-            _dialogService.ShowError("Nhập thất bại", ex.Message);
+            _logger.Error($"Import list failed: {ex.Message}");
+            _dialogService.ShowError(_localizer[UiKeys.DialogImportFailedTitle], ex.Message);
         }
     }
 
@@ -1357,7 +1373,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             ? $"{MakeSafeFileName(SelectedProfile.Name)}.json"
             : "software-list.json";
 
-        var path = _dialogService.SaveJsonFile("Xuất danh sách phần mềm", suggestedName);
+        var path = _dialogService.SaveJsonFile(_localizer[UiKeys.DialogExportTitle], suggestedName);
 
         if (path is null)
         {
@@ -1377,13 +1393,13 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
             await _repository.ExportAsync(catalog, path).ConfigureAwait(true);
 
-            StatusMessage = $"Đã xuất ra {path}.";
-            _dialogService.ShowInfo("Xuất thành công", StatusMessage);
+            StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusExportSuccess, path));
+            _dialogService.ShowInfo(_localizer[UiKeys.DialogExportSuccessTitle], StatusMessage);
         }
         catch (Exception ex)
         {
-            _logger.Error($"Xuất danh sách thất bại: {ex.Message}");
-            _dialogService.ShowError("Xuất thất bại", ex.Message);
+            _logger.Error($"Export list failed: {ex.Message}");
+            _dialogService.ShowError(_localizer[UiKeys.DialogExportFailedTitle], ex.Message);
         }
     }
 
@@ -1416,7 +1432,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         }
         catch (Exception ex)
         {
-            _dialogService.ShowError("Lỗi", $"Không mở được thư mục dữ liệu: {ex.Message}");
+            _dialogService.ShowError(_localizer[UiKeys.DialogError], _localizer.Format(LocalizedText.Of(UiKeys.DialogCannotOpenDataFolder, ex.Message)));
         }
     }
 
@@ -1443,7 +1459,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             }
             catch (Exception ex)
             {
-                _dialogService.ShowError("Không mở được", $"Hãy tìm \"App Installer\" trong Microsoft Store.\n\n{ex.Message}");
+                _dialogService.ShowError(_localizer[UiKeys.DialogCannotOpen], _localizer.Format(LocalizedText.Of(UiKeys.DialogStoreInstallHint, ex.Message)));
             }
         }
     }
@@ -1458,9 +1474,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     private void RestartAsAdministrator()
     {
         if (!_dialogService.Confirm(
-                "Chạy với quyền Administrator",
-                "Ứng dụng sẽ đóng và mở lại với quyền Administrator.\n\n" +
-                "Chỉ cần thiết khi một số trình cài đặt yêu cầu quyền quản trị. Tiếp tục?"))
+                _localizer[UiKeys.DialogRestartAdminTitle],
+                _localizer[UiKeys.DialogRestartAdminPrompt]))
         {
             return;
         }
@@ -1469,7 +1484,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
         if (string.IsNullOrWhiteSpace(executablePath))
         {
-            _dialogService.ShowError("Không thực hiện được", "Không xác định được đường dẫn ứng dụng.");
+            _dialogService.ShowError(_localizer[UiKeys.DialogCannotExecute], _localizer[UiKeys.DialogCannotDetermineAppPath]);
             return;
         }
 
@@ -1487,8 +1502,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         catch (Exception ex)
         {
             // Người dùng bấm "No" ở hộp thoại UAC cũng rơi vào đây.
-            _logger.Warning($"Không khởi động lại với quyền Administrator: {ex.Message}");
-            _dialogService.ShowInfo("Đã huỷ", "Không nâng quyền Administrator. Ứng dụng vẫn chạy bình thường.");
+            _logger.Warning($"Could not restart as Administrator: {ex.Message}");
+            _dialogService.ShowInfo(_localizer[UiKeys.DialogCancelled], _localizer[UiKeys.DialogAdminElevationCancelled]);
         }
     }
 
@@ -1561,9 +1576,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         }
         catch (Exception ex)
         {
-            _logger.Error($"Không lưu được danh sách: {ex.Message}");
-            DataErrorMessage = $"Chưa lưu được thay đổi vào {DataFilePath}. " +
-                $"Kiểm tra quyền ghi, dung lượng trống hoặc kết nối USB rồi thử lại. Chi tiết: {ex.Message}";
+            _logger.Error($"Save list failed: {ex.Message}");
+            DataErrorMessage = _localizer.Format(LocalizedText.Of(UiKeys.DataErrorSaveFailed, DataFilePath, ex.Message));
             return false;
         }
     }
@@ -1577,8 +1591,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         }
 
         if (IsInstalling && !_dialogService.Confirm(
-                "Đang cài đặt",
-                "Đang cài đặt phần mềm. Đóng ứng dụng bây giờ sẽ huỷ các gói còn lại.\n\nBạn có chắc muốn thoát?"))
+                _localizer[UiKeys.DialogInstallingTitle],
+                _localizer[UiKeys.DialogCloseWhileInstallingPrompt]))
         {
             return false;
         }

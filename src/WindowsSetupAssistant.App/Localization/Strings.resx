@@ -195,4 +195,426 @@
   <data name="Ui_EditorTitleAdd" xml:space="preserve"><value>Add new software</value></data>
   <data name="Ui_EditorTitleEdit" xml:space="preserve"><value>Edit software</value></data>
   <data name="Ui_DataFileLabel" xml:space="preserve"><value>Data:</value></data>
+  <data name="Ui_StatusOutcomeSucceeded" xml:space="preserve">
+    <value>Installed</value>
+  </data>
+  <data name="Ui_StatusOutcomeUpgraded" xml:space="preserve">
+    <value>Upgraded</value>
+  </data>
+  <data name="Ui_StatusOutcomeSkipped" xml:space="preserve">
+    <value>Skipped (already exists)</value>
+  </data>
+  <data name="Ui_StatusOutcomeAlreadyInstalled" xml:space="preserve">
+    <value>Already up to date</value>
+  </data>
+  <data name="Ui_StatusOutcomeFailed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="Ui_StatusOutcomeCancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="Ui_StatusOutcomeUnknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="Ui_StatusStateInstalled" xml:space="preserve">
+    <value>Installed</value>
+  </data>
+  <data name="Ui_StatusStateInstalledVersion" xml:space="preserve">
+    <value>Installed ({0})</value>
+  </data>
+  <data name="Ui_StatusStateNotInstalled" xml:space="preserve">
+    <value>Not installed</value>
+  </data>
+  <data name="Ui_StatusStateChecking" xml:space="preserve">
+    <value>Checking...</value>
+  </data>
+  <data name="Ui_StatusStateNotChecked" xml:space="preserve">
+    <value>Not checked</value>
+  </data>
+  <data name="Ui_CategoryAll" xml:space="preserve">
+    <value>All categories</value>
+  </data>
+  <data name="Ui_CategoryBrowser" xml:space="preserve">
+    <value>Browser</value>
+  </data>
+  <data name="Ui_CategoryDevelopment" xml:space="preserve">
+    <value>Development</value>
+  </data>
+  <data name="Ui_CategoryOffice" xml:space="preserve">
+    <value>Office</value>
+  </data>
+  <data name="Ui_CategoryEntertainment" xml:space="preserve">
+    <value>Entertainment</value>
+  </data>
+  <data name="Ui_CategoryUtility" xml:space="preserve">
+    <value>Utility</value>
+  </data>
+  <data name="Ui_CategoryOther" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="Ui_PackageEditorEditTitle" xml:space="preserve">
+    <value>Edit Software</value>
+  </data>
+  <data name="Ui_PackageEditorAddTitle" xml:space="preserve">
+    <value>Add Software</value>
+  </data>
+  <data name="Ui_PackageEditorNameRequired" xml:space="preserve">
+    <value>Please enter the software name.</value>
+  </data>
+  <data name="Ui_InstallConfirmHeadline" xml:space="preserve">
+    <value>About to install {0} packages</value>
+  </data>
+  <data name="Ui_InstallConfirmDetailInstalled" xml:space="preserve">
+    <value>Including {0} packages already installed on this machine.</value>
+  </data>
+  <data name="Ui_InstallConfirmDetailSequential" xml:space="preserve">
+    <value>Packages will be installed sequentially, not in parallel.</value>
+  </data>
+  <data name="Ui_LogFileCannotWrite" xml:space="preserve">
+    <value>Cannot write log file (read-only directory).</value>
+  </data>
+  <data name="Ui_LogFileDescription" xml:space="preserve">
+    <value>Log file: {0}</value>
+  </data>
+  <data name="Ui_LogDialogTitle" xml:space="preserve">
+    <value>Logs</value>
+  </data>
+  <data name="Ui_LogCopied" xml:space="preserve">
+    <value>Copied all logs to clipboard.</value>
+  </data>
+  <data name="Ui_LogCopyFailed" xml:space="preserve">
+    <value>Failed to copy: {0}</value>
+  </data>
+  <data name="Ui_LogOpenFolderFailed" xml:space="preserve">
+    <value>Failed to open log folder: {0}</value>
+  </data>
+  <data name="Ui_ScanResultHeadline" xml:space="preserve">
+    <value>Scanned {0} packages on {1}</value>
+  </data>
+  <data name="Ui_ScanResultAutomaticHeader" xml:space="preserve">
+    <value>Automatic install ({0})</value>
+  </data>
+  <data name="Ui_ScanResultManualHeader" xml:space="preserve">
+    <value>Manual install notes ({0})</value>
+  </data>
+  <data name="Ui_ScanResultSystemLabel" xml:space="preserve">
+    <value>Show system components ({0})</value>
+  </data>
+  <data name="Ui_ScanResultProfileBaseName" xml:space="preserve">
+    <value>Backup {0}</value>
+  </data>
+  <data name="Ui_SearchAlreadyInList" xml:space="preserve">
+    <value>Already in list</value>
+  </data>
+  <data name="Ui_SearchInitialPrompt" xml:space="preserve">
+    <value>Enter keywords and click Search to look up packages in WinGet.</value>
+  </data>
+  <data name="Ui_SearchCleared" xml:space="preserve">
+    <value>Results cleared.</value>
+  </data>
+  <data name="Ui_SearchSearching" xml:space="preserve">
+    <value>Searching WinGet repository...</value>
+  </data>
+  <data name="Ui_SearchNoResults" xml:space="preserve">
+    <value>No software found matching the keywords.</value>
+  </data>
+  <data name="Ui_SearchResultsFound" xml:space="preserve">
+    <value>Found {0} results. Click &quot;Add&quot; to include in installation list.</value>
+  </data>
+  <data name="Ui_SearchFailed" xml:space="preserve">
+    <value>Search failed: {0}</value>
+  </data>
+  <data name="Ui_StatusReady" xml:space="preserve">
+    <value>Ready.</value>
+  </data>
+  <data name="Ui_SelectionSummary" xml:space="preserve">
+    <value>{0} software - {1} selected - {2} installed</value>
+  </data>
+  <data name="Ui_ThemeSwitchLight" xml:space="preserve">
+    <value>Light Theme</value>
+  </data>
+  <data name="Ui_ThemeSwitchDark" xml:space="preserve">
+    <value>Dark Theme</value>
+  </data>
+  <data name="Ui_AdminRunningAsAdmin" xml:space="preserve">
+    <value>Running as Administrator</value>
+  </data>
+  <data name="Ui_AdminRunningAsUser" xml:space="preserve">
+    <value>Running as standard user</value>
+  </data>
+  <data name="Ui_StatusLoadingCatalog" xml:space="preserve">
+    <value>Loading software catalog...</value>
+  </data>
+  <data name="Ui_StatusLoadedFrom" xml:space="preserve">
+    <value>Loaded data from {0}</value>
+  </data>
+  <data name="Ui_DataErrorLoadFailed" xml:space="preserve">
+    <value>Could not read catalog at {0}. Existing data is preserved; the application will not overwrite this file. Check file permissions or USB connection and reopen the application. Details: {1}</value>
+  </data>
+  <data name="Ui_StatusLoadFailedAutoSaveDisabled" xml:space="preserve">
+    <value>Failed to load data — auto-save disabled to protect existing catalog.</value>
+  </data>
+  <data name="Ui_DialogStartupError" xml:space="preserve">
+    <value>Startup Error</value>
+  </data>
+  <data name="Ui_StatusCheckingWinget" xml:space="preserve">
+    <value>Checking WinGet...</value>
+  </data>
+  <data name="Ui_StatusWingetReady" xml:space="preserve">
+    <value>WinGet ready ({0}).</value>
+  </data>
+  <data name="Ui_StatusWingetNotReady" xml:space="preserve">
+    <value>WinGet is unavailable - see warning above.</value>
+  </data>
+  <data name="Ui_DialogNoProfile" xml:space="preserve">
+    <value>No Profile</value>
+  </data>
+  <data name="Ui_DialogNoProfilePrompt" xml:space="preserve">
+    <value>Please create a profile before adding software.</value>
+  </data>
+  <data name="Ui_DialogAlreadyExists" xml:space="preserve">
+    <value>Already Exists</value>
+  </data>
+  <data name="Ui_DialogPackageAlreadyInProfile" xml:space="preserve">
+    <value>{0} is already in this profile's list.</value>
+  </data>
+  <data name="Ui_DialogPackageAlreadyInList" xml:space="preserve">
+    <value>{0} is already in the list.</value>
+  </data>
+  <data name="Ui_StatusPackageAdded" xml:space="preserve">
+    <value>Added {0}.</value>
+  </data>
+  <data name="Ui_DialogDuplicatePackageId" xml:space="preserve">
+    <value>Duplicate Package ID</value>
+  </data>
+  <data name="Ui_DialogDuplicatePackageIdPrompt" xml:space="preserve">
+    <value>Another package already uses this Package ID in this profile.</value>
+  </data>
+  <data name="Ui_StatusPackageUpdated" xml:space="preserve">
+    <value>Updated {0}.</value>
+  </data>
+  <data name="Ui_DialogDeletePackage" xml:space="preserve">
+    <value>Delete Software</value>
+  </data>
+  <data name="Ui_DialogDeletePackageConfirm" xml:space="preserve">
+    <value>Delete &quot;{0}&quot; from list?</value>
+  </data>
+  <data name="Ui_StatusPackageDeleted" xml:space="preserve">
+    <value>Deleted {0}.</value>
+  </data>
+  <data name="Ui_StatusCheckingInstalled" xml:space="preserve">
+    <value>Checking installed software on machine...</value>
+  </data>
+  <data name="Ui_StatusCheckedInstalledSummary" xml:space="preserve">
+    <value>Checked: {0}/{1} software already installed.</value>
+  </data>
+  <data name="Ui_DialogCheckCompleted" xml:space="preserve">
+    <value>Check Completed</value>
+  </data>
+  <data name="Ui_StatusCheckInstalledFailed" xml:space="preserve">
+    <value>Could not check installation status.</value>
+  </data>
+  <data name="Ui_DialogError" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Ui_DialogNoSoftwareSelected" xml:space="preserve">
+    <value>No Software Selected</value>
+  </data>
+  <data name="Ui_DialogNoSoftwareSelectedPrompt" xml:space="preserve">
+    <value>Please select at least one software package to install.</value>
+  </data>
+  <data name="Ui_StatusInstallCancelledNoop" xml:space="preserve">
+    <value>Cancelled - nothing was installed.</value>
+  </data>
+  <data name="Ui_DialogRetry" xml:space="preserve">
+    <value>Retry</value>
+  </data>
+  <data name="Ui_DialogRetryFailedConfirm" xml:space="preserve">
+    <value>Reinstall {0} failed packages?</value>
+  </data>
+  <data name="Ui_StatusPreparing" xml:space="preserve">
+    <value>Preparing...</value>
+  </data>
+  <data name="Ui_DialogInstallError" xml:space="preserve">
+    <value>Installation Error</value>
+  </data>
+  <data name="Ui_InstallSummaryCancelled" xml:space="preserve">
+    <value>Installation process was cancelled.</value>
+  </data>
+  <data name="Ui_InstallSummaryFinished" xml:space="preserve">
+    <value>Installation finished.</value>
+  </data>
+  <data name="Ui_InstallSummarySucceeded" xml:space="preserve">
+    <value>Succeeded: {0}</value>
+  </data>
+  <data name="Ui_InstallSummarySkipped" xml:space="preserve">
+    <value>Skipped (already exists): {0}</value>
+  </data>
+  <data name="Ui_InstallSummaryFailed" xml:space="preserve">
+    <value>Failed: {0}</value>
+  </data>
+  <data name="Ui_InstallSummaryCancelledCount" xml:space="preserve">
+    <value>Cancelled: {0}</value>
+  </data>
+  <data name="Ui_InstallSummaryTotalDuration" xml:space="preserve">
+    <value>Total duration: {0} minutes</value>
+  </data>
+  <data name="Ui_InstallSummaryFailedPackages" xml:space="preserve">
+    <value>Failed packages:</value>
+  </data>
+  <data name="Ui_InstallSummaryFailedHint" xml:space="preserve">
+    <value>You can click &quot;Retry failed&quot; or check the Logs tab for details.</value>
+  </data>
+  <data name="Ui_StatusInstallCancelled" xml:space="preserve">
+    <value>Installation cancelled.</value>
+  </data>
+  <data name="Ui_StatusInstallCompleted" xml:space="preserve">
+    <value>Completed: {0} succeeded, {1} failed.</value>
+  </data>
+  <data name="Ui_DialogInstallResultTitle" xml:space="preserve">
+    <value>Installation Results</value>
+  </data>
+  <data name="Ui_StatusCancelling" xml:space="preserve">
+    <value>Cancelling... waiting for current package to finish.</value>
+  </data>
+  <data name="Ui_DialogNewProfileTitle" xml:space="preserve">
+    <value>New Profile</value>
+  </data>
+  <data name="Ui_DialogProfileNamePrompt" xml:space="preserve">
+    <value>Profile name:</value>
+  </data>
+  <data name="Ui_DialogNewProfileDefault" xml:space="preserve">
+    <value>New Profile</value>
+  </data>
+  <data name="Ui_StatusProfileCreated" xml:space="preserve">
+    <value>Created profile &quot;{0}&quot;.</value>
+  </data>
+  <data name="Ui_DialogRenameProfileTitle" xml:space="preserve">
+    <value>Rename Profile</value>
+  </data>
+  <data name="Ui_DialogNewNamePrompt" xml:space="preserve">
+    <value>New name:</value>
+  </data>
+  <data name="Ui_ProfileCopySuffix" xml:space="preserve">
+    <value>{0} (copy)</value>
+  </data>
+  <data name="Ui_StatusProfileDuplicated" xml:space="preserve">
+    <value>Duplicated as &quot;{0}&quot;.</value>
+  </data>
+  <data name="Ui_DialogDeleteProfileTitle" xml:space="preserve">
+    <value>Delete Profile</value>
+  </data>
+  <data name="Ui_DialogDeleteProfileConfirm" xml:space="preserve">
+    <value>Delete profile &quot;{0}&quot; and {1} packages inside?</value>
+  </data>
+  <data name="Ui_StatusProfileDeleted" xml:space="preserve">
+    <value>Deleted profile &quot;{0}&quot;.</value>
+  </data>
+  <data name="Ui_StatusScanningMachine" xml:space="preserve">
+    <value>Scanning installed software...</value>
+  </data>
+  <data name="Ui_StatusScanCancelled" xml:space="preserve">
+    <value>Scan cancelled.</value>
+  </data>
+  <data name="Ui_DialogScanFailed" xml:space="preserve">
+    <value>Scan Failed</value>
+  </data>
+  <data name="Ui_DialogScanFinished" xml:space="preserve">
+    <value>Scan Finished</value>
+  </data>
+  <data name="Ui_DialogNoSoftwareFound" xml:space="preserve">
+    <value>No software found on this machine.</value>
+  </data>
+  <data name="Ui_DialogSaveBackupTitle" xml:space="preserve">
+    <value>Save Software Backup</value>
+  </data>
+  <data name="Ui_DialogBackupSuccess" xml:space="preserve">
+    <value>Backup Successful</value>
+  </data>
+  <data name="Ui_DialogBackupSavedFiles" xml:space="preserve">
+    <value>Saved:
+{0}
+{1}</value>
+  </data>
+  <data name="Ui_DialogWriteFileFailed" xml:space="preserve">
+    <value>Failed to Write File</value>
+  </data>
+  <data name="Ui_DialogOpenJsonTitle" xml:space="preserve">
+    <value>Select Software List JSON File</value>
+  </data>
+  <data name="Ui_DialogImportTitle" xml:space="preserve">
+    <value>Import List</value>
+  </data>
+  <data name="Ui_DialogImportPrompt" xml:space="preserve">
+    <value>File contains {0} profiles.
+
+Select Yes to REPLACE the current list entirely.
+Select No to ADD these profiles to the existing list.</value>
+  </data>
+  <data name="Ui_ProfileImportSuffix" xml:space="preserve">
+    <value>{0} (imported)</value>
+  </data>
+  <data name="Ui_StatusImportSuccess" xml:space="preserve">
+    <value>Imported list from {0}.</value>
+  </data>
+  <data name="Ui_DialogImportSuccessTitle" xml:space="preserve">
+    <value>Import Successful</value>
+  </data>
+  <data name="Ui_DialogImportFailedTitle" xml:space="preserve">
+    <value>Import Failed</value>
+  </data>
+  <data name="Ui_DialogExportTitle" xml:space="preserve">
+    <value>Export Software List</value>
+  </data>
+  <data name="Ui_StatusExportSuccess" xml:space="preserve">
+    <value>Exported to {0}.</value>
+  </data>
+  <data name="Ui_DialogExportSuccessTitle" xml:space="preserve">
+    <value>Export Successful</value>
+  </data>
+  <data name="Ui_DialogExportFailedTitle" xml:space="preserve">
+    <value>Export Failed</value>
+  </data>
+  <data name="Ui_DialogCannotOpenDataFolder" xml:space="preserve">
+    <value>Could not open data folder: {0}</value>
+  </data>
+  <data name="Ui_DialogCannotOpen" xml:space="preserve">
+    <value>Could Not Open</value>
+  </data>
+  <data name="Ui_DialogStoreInstallHint" xml:space="preserve">
+    <value>Please search for &quot;App Installer&quot; in Microsoft Store.
+
+{0}</value>
+  </data>
+  <data name="Ui_DialogRestartAdminTitle" xml:space="preserve">
+    <value>Run as Administrator</value>
+  </data>
+  <data name="Ui_DialogRestartAdminPrompt" xml:space="preserve">
+    <value>The application will restart with Administrator privileges.
+
+Only necessary if certain installers require administrative rights. Continue?</value>
+  </data>
+  <data name="Ui_DialogCannotExecute" xml:space="preserve">
+    <value>Action Failed</value>
+  </data>
+  <data name="Ui_DialogCannotDetermineAppPath" xml:space="preserve">
+    <value>Could not determine application path.</value>
+  </data>
+  <data name="Ui_DialogCancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="Ui_DialogAdminElevationCancelled" xml:space="preserve">
+    <value>Did not elevate to Administrator. Application continues running normally.</value>
+  </data>
+  <data name="Ui_DataErrorSaveFailed" xml:space="preserve">
+    <value>Could not save changes to {0}. Check write permissions, free disk space or USB connection and try again. Details: {1}</value>
+  </data>
+  <data name="Ui_DialogInstallingTitle" xml:space="preserve">
+    <value>Installing</value>
+  </data>
+  <data name="Ui_DialogCloseWhileInstallingPrompt" xml:space="preserve">
+    <value>Software installation is in progress. Closing the application now will cancel remaining packages.
+
+Are you sure you want to exit?</value>
+  </data>
 </root>

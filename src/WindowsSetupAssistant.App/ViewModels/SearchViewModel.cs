@@ -1,3 +1,5 @@
+using WindowsSetupAssistant.App.Localization;
+using WindowsSetupAssistant.Domain.Localization;
 using System.Collections.ObjectModel;
 using WindowsSetupAssistant.App.Mvvm;
 using WindowsSetupAssistant.Application.Abstractions;
@@ -9,9 +11,19 @@ namespace WindowsSetupAssistant.App.ViewModels;
 /// <summary>Một dòng kết quả tìm kiếm từ nguồn WinGet.</summary>
 public sealed class SearchResultViewModel : ObservableObject
 {
+    private readonly IStringLocalizer _localizer;
     private bool _isAlreadyInList;
 
-    public SearchResultViewModel(WingetPackageInfo info) => Info = info;
+    public SearchResultViewModel(WingetPackageInfo info, IStringLocalizer localizer)
+    {
+        Info = info;
+        _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
+    }
+
+    public SearchResultViewModel(WingetPackageInfo info)
+        : this(info, LocalizationSource.Instance.Localizer)
+    {
+    }
 
     public WingetPackageInfo Info { get; }
 
@@ -35,7 +47,7 @@ public sealed class SearchResultViewModel : ObservableObject
         }
     }
 
-    public string StatusText => IsAlreadyInList ? "Đã có trong danh sách" : string.Empty;
+    public string StatusText => IsAlreadyInList ? _localizer[UiKeys.SearchAlreadyInList] : string.Empty;
 }
 
 /// <summary>
@@ -52,7 +64,8 @@ public sealed class SearchViewModel : ObservableObject, IDisposable
 
     private CancellationTokenSource? _searchCts;
     private string _searchText = string.Empty;
-    private string _statusMessage = "Nhập từ khoá rồi bấm Tìm kiếm để tra cứu trong kho WinGet.";
+    private readonly IStringLocalizer _localizer;
+    private string _statusMessage;
     private bool _isSearching;
     private bool _disposed;
 
@@ -61,13 +74,16 @@ public sealed class SearchViewModel : ObservableObject, IDisposable
         Action<WingetPackageInfo> onAddPackage,
         Func<string, bool> isAlreadyInList,
         Func<bool> canUseWinget,
-        Func<bool> canAddPackage)
+        Func<bool> canAddPackage,
+        IStringLocalizer localizer)
     {
         _wingetService = wingetService;
         _onAddPackage = onAddPackage;
         _isAlreadyInList = isAlreadyInList;
         _canUseWinget = canUseWinget;
         _canAddPackage = canAddPackage;
+        _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
+        _statusMessage = _localizer[UiKeys.SearchInitialPrompt];
 
         SearchCommand = new AsyncRelayCommand(
             SearchAsync,
@@ -80,8 +96,18 @@ public sealed class SearchViewModel : ObservableObject, IDisposable
             CancelPendingSearch();
             Results.Clear();
             SearchText = string.Empty;
-            StatusMessage = "Đã xoá kết quả.";
+            StatusMessage = _localizer[UiKeys.SearchCleared];
         });
+    }
+
+    public SearchViewModel(
+        IWingetService wingetService,
+        Action<WingetPackageInfo> onAddPackage,
+        Func<string, bool> isAlreadyInList,
+        Func<bool> canUseWinget,
+        Func<bool> canAddPackage)
+        : this(wingetService, onAddPackage, isAlreadyInList, canUseWinget, canAddPackage, LocalizationSource.Instance.Localizer)
+    {
     }
 
     public ObservableCollection<SearchResultViewModel> Results { get; } = new();
@@ -150,7 +176,7 @@ public sealed class SearchViewModel : ObservableObject, IDisposable
         var token = _searchCts.Token;
 
         IsSearching = true;
-        StatusMessage = "Đang tìm trong kho WinGet...";
+        StatusMessage = _localizer[UiKeys.SearchSearching];
         Results.Clear();
 
         try
@@ -164,15 +190,15 @@ public sealed class SearchViewModel : ObservableObject, IDisposable
 
             foreach (var package in packages)
             {
-                Results.Add(new SearchResultViewModel(package)
+                Results.Add(new SearchResultViewModel(package, _localizer)
                 {
                     IsAlreadyInList = _isAlreadyInList(package.PackageId)
                 });
             }
 
             StatusMessage = Results.Count == 0
-                ? "Không tìm thấy phần mềm nào khớp với từ khoá."
-                : $"Tìm thấy {Results.Count} kết quả. Bấm \"Thêm\" để đưa vào danh sách cài đặt.";
+                ? _localizer[UiKeys.SearchNoResults]
+                : _localizer.Format(LocalizedText.Of(UiKeys.SearchResultsFound, Results.Count));
         }
         catch (OperationCanceledException)
         {
@@ -184,7 +210,7 @@ public sealed class SearchViewModel : ObservableObject, IDisposable
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Tìm kiếm thất bại: {ex.Message}";
+            StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.SearchFailed, ex.Message));
         }
         finally
         {
