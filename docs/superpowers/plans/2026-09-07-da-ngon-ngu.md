@@ -674,8 +674,21 @@ Tạo `Strings.vi.resx` với **cùng bộ khoá**, giá trị là các câu ti�
 (ví dụ `Msg_PackageIdEmpty` = `Package Id không được để trống.`), và `Strings.zh-Hant.resx` với
 bản dịch tiếng Trung phồn thể.
 
-> Ở task này chỉ cần đủ khoá đã khai báo trong `UiKeys` và các khoá `MessageKeys` xuất hiện trong
-> `Strings.resx` ở trên. Các task sau sẽ bổ sung dần; test đối chiếu bảo đảm ba file luôn khớp nhau.
+> **BẮT BUỘC dịch hết ngay ở task này:** test `EveryMessageKeyConstantExistsInAllLanguages` ở Bước 1
+> đối chiếu **toàn bộ** hằng `MessageKeys` mà Task 1 đã khai báo. Thiếu một khoá ở bất kỳ ngôn ngữ
+> nào là test đỏ, nên cả ba file phải có đủ mọi khoá `MessageKeys` (khoảng 80 khoá) cộng với các
+> khoá `UiKeys` đã khai báo ở Bước 4.
+>
+> Đây là phần việc lớn nhất của task, nhưng là dữ liệu thuần: **giá trị tiếng Việt lấy nguyên văn
+> từ chuỗi đang có trong mã nguồn hiện tại** (xem `WingetExitCodes.Describe`, `InstallationQueueService`,
+> `JsonProfileRepository`, `WingetService`, `PackageIdValidator`, `SearchQueryValidator`,
+> `MachineScanService`), rồi dịch sang tiếng Anh và tiếng Trung phồn thể.
+>
+> Dịch hết một lượt ở đây tốt hơn rải rác qua nhiều task: người dịch làm một mạch, và lưới an toàn
+> có hiệu lực ngay từ task này thay vì phải chờ.
+>
+> Các khoá `UiKeys` cho giao diện sẽ được bổ sung dần ở Task 6, 7, 9 — mỗi lần thêm hằng thì thêm
+> giá trị vào cả ba file cùng lúc.
 
 Đăng ký file vào csproj — thêm vào `WindowsSetupAssistant.App.csproj`:
 
