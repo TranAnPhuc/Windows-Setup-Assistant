@@ -194,4 +194,5 @@
   <data name="Ui_BtnSaveBackup" xml:space="preserve"><value>Lưu bản sao lưu</value></data>
   <data name="Ui_EditorTitleAdd" xml:space="preserve"><value>Thêm phần mềm mới</value></data>
   <data name="Ui_EditorTitleEdit" xml:space="preserve"><value>Sửa phần mềm</value></data>
+  <data name="Ui_DataFileLabel" xml:space="preserve"><value>Dữ liệu:</value></data>
 </root>

@@ -194,4 +194,5 @@
   <data name="Ui_BtnSaveBackup" xml:space="preserve"><value>Save backup</value></data>
   <data name="Ui_EditorTitleAdd" xml:space="preserve"><value>Add new software</value></data>
   <data name="Ui_EditorTitleEdit" xml:space="preserve"><value>Edit software</value></data>
+  <data name="Ui_DataFileLabel" xml:space="preserve"><value>Data:</value></data>
 </root>

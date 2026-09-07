@@ -414,8 +414,11 @@
                 <TextBlock Grid.Column="0" VerticalAlignment="Center"
                            TextTrimming="CharacterEllipsis"
                            Style="{StaticResource MutedText}"
-                           Text="{Binding DataFilePath, StringFormat='Dữ liệu: {0}'}"
-                           ToolTip="{Binding DataFilePath}" />
+                           ToolTip="{Binding DataFilePath}">
+                    <Run Text="{loc:Text Ui_DataFileLabel}" />
+                    <Run Text=" " />
+                    <Run Text="{Binding DataFilePath, Mode=OneWay}" />
+                </TextBlock>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Text="{Binding PrivilegeText}" Style="{StaticResource MutedText}"

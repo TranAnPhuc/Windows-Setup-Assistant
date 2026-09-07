@@ -194,4 +194,5 @@
   <data name="Ui_BtnSaveBackup" xml:space="preserve"><value>儲存備份</value></data>
   <data name="Ui_EditorTitleAdd" xml:space="preserve"><value>新增軟體</value></data>
   <data name="Ui_EditorTitleEdit" xml:space="preserve"><value>編輯軟體</value></data>
+  <data name="Ui_DataFileLabel" xml:space="preserve"><value>資料：</value></data>
 </root>
