@@ -7,7 +7,7 @@
         xmlns:loc="clr-namespace:WindowsSetupAssistant.App.Localization"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
-        Title="Windows Setup Assistant"
+        Title="{loc:Text Ui_AppTitle}"
         Icon="pack://application:,,,/WindowsSetupAssistant;component/Assets/AppIcon.ico"
         Height="780" Width="1200"
         MinHeight="620" MinWidth="980"
@@ -32,20 +32,20 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                <TextBlock Text="Windows Setup Assistant" Style="{StaticResource PageTitleText}" />
-                <TextBlock Text="Cài hàng loạt phần mềm bằng WinGet sau khi cài lại Windows"
+                <TextBlock Text="{loc:Text Ui_AppTitle}" Style="{StaticResource PageTitleText}" />
+                <TextBlock Text="{loc:Text Ui_AppSubtitle}"
                            Style="{StaticResource MutedText}" />
             </StackPanel>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock Text="Cấu hình:" VerticalAlignment="Center" Margin="0,0,8,0"
+                <TextBlock Text="{loc:Text Ui_ProfileLabel}" VerticalAlignment="Center" Margin="0,0,8,0"
                            Foreground="{DynamicResource MutedTextBrush}" />
 
                 <ComboBox Width="200"
                           ItemsSource="{Binding Profiles}"
                           SelectedItem="{Binding SelectedProfile}"
                           IsEnabled="{Binding IsInstalling, Converter={StaticResource InverseBoolean}}"
-                          ToolTip="Chọn bộ phần mềm muốn dùng">
+                          ToolTip="{loc:Text Ui_ProfileTooltip}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Name}" />
@@ -53,10 +53,10 @@
                     </ComboBox.ItemTemplate>
                 </ComboBox>
 
-                <Button Content="Mới" Command="{Binding NewProfileCommand}" Margin="6,0,0,0" ToolTip="Tạo cấu hình mới" />
-                <Button Content="Đổi tên" Command="{Binding RenameProfileCommand}" Margin="6,0,0,0" />
-                <Button Content="Nhân bản" Command="{Binding DuplicateProfileCommand}" Margin="6,0,0,0" />
-                <Button Content="Xoá" Command="{Binding DeleteProfileCommand}" Margin="6,0,0,0"
+                <Button Content="{loc:Text Ui_ProfileNew}" Command="{Binding NewProfileCommand}" Margin="6,0,0,0" ToolTip="{loc:Text Ui_ProfileNewTooltip}" />
+                <Button Content="{loc:Text Ui_ProfileRename}" Command="{Binding RenameProfileCommand}" Margin="6,0,0,0" />
+                <Button Content="{loc:Text Ui_ProfileDuplicate}" Command="{Binding DuplicateProfileCommand}" Margin="6,0,0,0" />
+                <Button Content="{loc:Text Ui_ProfileDelete}" Command="{Binding DeleteProfileCommand}" Margin="6,0,0,0"
                         Style="{StaticResource DangerButton}" />
 
                 <Border Width="1" Background="{DynamicResource AppBorderBrush}" Margin="12,2" />
@@ -89,16 +89,16 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0">
-                    <TextBlock Text="Chưa dùng được WinGet"
+                    <TextBlock Text="{loc:Text Ui_WarningWingetUnavailable}"
                                FontWeight="SemiBold"
                                Foreground="{DynamicResource WarningBrush}" />
                     <TextBlock Text="{Binding WingetWarning}" Style="{StaticResource MutedText}" Margin="0,4,0,0" />
                     <TextBlock Style="{StaticResource MutedText}" Margin="0,4,0,0"
-                               Text="Cách khắc phục: cài ứng dụng &quot;App Installer&quot; của Microsoft từ Microsoft Store, sau đó mở lại ứng dụng này." />
+                               Text="{loc:Text Ui_WarningWingetHelp}" />
                 </StackPanel>
 
                 <Button Grid.Column="1"
-                        Content="Mở Microsoft Store"
+                        Content="{loc:Text Ui_BtnOpenStore}"
                         VerticalAlignment="Center"
                         Margin="12,0,0,0"
                         Command="{Binding OpenAppInstallerPageCommand}" />
@@ -109,7 +109,7 @@
         <TabControl Grid.Row="2">
 
             <!-- ~~~~~ Tab 1: Danh sách phần mềm ~~~~~ -->
-            <TabItem Header="Danh sách phần mềm">
+            <TabItem Header="{loc:Text Ui_TabSoftwareList}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -128,7 +128,7 @@
 
                         <TextBox Grid.Column="0" Width="240"
                                  Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged, Delay=200}"
-                                 ToolTip="Lọc theo tên hoặc Package Id" />
+                                 ToolTip="{loc:Text Ui_FilterPlaceholder}" />
 
                         <ComboBox Grid.Column="1" Width="150" Margin="8,0,0,0"
                                   ItemsSource="{Binding CategoryFilters}"
@@ -136,19 +136,19 @@
                                   DisplayMemberPath="DisplayName" />
 
                         <StackPanel Grid.Column="3" Orientation="Horizontal">
-                            <Button Content="Chọn tất cả" Command="{Binding SelectAllCommand}" />
-                            <Button Content="Bỏ chọn" Command="{Binding SelectNoneCommand}" Margin="6,0,0,0" />
-                            <Button Content="Đảo chọn" Command="{Binding InvertSelectionCommand}" Margin="6,0,0,0" />
-                            <Button Content="Chỉ cái chưa cài" Command="{Binding SelectNotInstalledCommand}" Margin="6,0,0,0" />
+                            <Button Content="{loc:Text Ui_BtnSelectAll}" Command="{Binding SelectAllCommand}" />
+                            <Button Content="{loc:Text Ui_BtnSelectNone}" Command="{Binding SelectNoneCommand}" Margin="6,0,0,0" />
+                            <Button Content="{loc:Text Ui_BtnInvertSelection}" Command="{Binding InvertSelectionCommand}" Margin="6,0,0,0" />
+                            <Button Content="{loc:Text Ui_BtnSelectNotInstalled}" Command="{Binding SelectNotInstalledCommand}" Margin="6,0,0,0" />
 
                             <Border Width="1" Background="{DynamicResource AppBorderBrush}" Margin="10,2" />
 
-                            <Button Content="Thêm" Command="{Binding AddPackageCommand}" Style="{StaticResource PrimaryButton}" />
-                            <Button Content="Sửa" Command="{Binding EditPackageCommand}" Margin="6,0,0,0" />
-                            <Button Content="Xoá" Command="{Binding DeletePackageCommand}" Margin="6,0,0,0"
+                            <Button Content="{loc:Text Ui_BtnAdd}" Command="{Binding AddPackageCommand}" Style="{StaticResource PrimaryButton}" />
+                            <Button Content="{loc:Text Ui_BtnEdit}" Command="{Binding EditPackageCommand}" Margin="6,0,0,0" />
+                            <Button Content="{loc:Text Ui_BtnDelete}" Command="{Binding DeletePackageCommand}" Margin="6,0,0,0"
                                     Style="{StaticResource DangerButton}" />
-                            <Button Content="↑" Command="{Binding MoveUpCommand}" Margin="6,0,0,0" Width="34" ToolTip="Di chuyển lên" />
-                            <Button Content="↓" Command="{Binding MoveDownCommand}" Margin="4,0,0,0" Width="34" ToolTip="Di chuyển xuống" />
+                            <Button Content="{loc:Text Ui_BtnMoveUp}" Command="{Binding MoveUpCommand}" Margin="6,0,0,0" Width="34" ToolTip="{loc:Text Ui_BtnMoveUpTooltip}" />
+                            <Button Content="{loc:Text Ui_BtnMoveDown}" Command="{Binding MoveDownCommand}" Margin="4,0,0,0" Width="34" ToolTip="{loc:Text Ui_BtnMoveDownTooltip}" />
                         </StackPanel>
                     </Grid>
 
@@ -163,25 +163,25 @@
                         </DataGrid.InputBindings>
 
                         <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Cài" Width="52">
+                            <DataGridTemplateColumn Header="{loc:Text Ui_ColumnInstall}" Width="52">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
                                                   IsEnabled="{Binding DataContext.IsNotInstalling, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                   HorizontalAlignment="Center"
-                                                  ToolTip="Chọn để đưa vào lượt cài đặt" />
+                                                  ToolTip="{loc:Text Ui_ColumnInstallTooltip}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTextColumn Header="Tên phần mềm" Binding="{Binding Name}" Width="2*" />
+                            <DataGridTextColumn Header="{loc:Text Ui_ColumnName}" Binding="{Binding Name}" Width="2*" />
 
-                            <DataGridTextColumn Header="WinGet Package Id" Binding="{Binding PackageId}" Width="2*"
+                            <DataGridTextColumn Header="{loc:Text Ui_ColumnPackageId}" Binding="{Binding PackageId}" Width="2*"
                                                 FontFamily="Consolas" />
 
-                            <DataGridTextColumn Header="Nhóm" Binding="{Binding CategoryDisplayName}" Width="110" />
+                            <DataGridTextColumn Header="{loc:Text Ui_ColumnCategory}" Binding="{Binding CategoryDisplayName}" Width="110" />
 
-                            <DataGridTemplateColumn Header="Trạng thái" Width="170">
+                            <DataGridTemplateColumn Header="{loc:Text Ui_ColumnStatus}" Width="170">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding StatusText}"
@@ -192,7 +192,7 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTextColumn Header="Ghi chú" Binding="{Binding Notes}" Width="*" />
+                            <DataGridTextColumn Header="{loc:Text Ui_ColumnNotes}" Binding="{Binding Notes}" Width="*" />
                         </DataGrid.Columns>
                     </DataGrid>
 
@@ -214,26 +214,26 @@
                             </StackPanel>
 
                             <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                                <Button Content="Quét &amp; sao lưu máy này"
+                                <Button Content="{loc:Text Ui_BtnScanAndBackup}"
                                         Command="{Binding ScanAndBackupCommand}"
                                         Margin="0,0,8,0"
                                         Style="{StaticResource PrimaryButton}"
-                                        ToolTip="Quét phần mềm đang có trên máy và lưu lại trước khi cài lại Windows" />
-                                <Button Content="Kiểm tra đã cài"
+                                        ToolTip="{loc:Text Ui_BtnScanAndBackupTooltip}" />
+                                <Button Content="{loc:Text Ui_BtnCheckInstalled}"
                                         Command="{Binding RefreshInstalledCommand}"
-                                        ToolTip="Hỏi WinGet xem phần mềm nào đã có trên máy" />
+                                        ToolTip="{loc:Text Ui_BtnCheckInstalledTooltip}" />
 
-                                <Button Content="Thử lại phần lỗi"
+                                <Button Content="{loc:Text Ui_BtnRetryFailed}"
                                         Command="{Binding RetryFailedCommand}"
                                         Margin="8,0,0,0" />
 
-                                <Button Content="Huỷ cài đặt"
+                                <Button Content="{loc:Text Ui_BtnCancelInstall}"
                                         Command="{Binding CancelInstallCommand}"
                                         Margin="8,0,0,0"
                                         Style="{StaticResource DangerButton}"
                                         Visibility="{Binding IsInstalling, Converter={StaticResource BoolToVisibility}}" />
 
-                                <Button Content="Bắt đầu cài đặt"
+                                <Button Content="{loc:Text Ui_BtnStartInstall}"
                                         Command="{Binding InstallSelectedCommand}"
                                         Margin="8,0,0,0"
                                         Style="{StaticResource PrimaryButton}" />
@@ -263,7 +263,7 @@
             </TabItem>
 
             <!-- ~~~~~ Tab 2: Tìm trên WinGet ~~~~~ -->
-            <TabItem Header="Tìm trên WinGet">
+            <TabItem Header="{loc:Text Ui_TabSearchWinget}">
                 <Grid DataContext="{Binding Search}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -280,17 +280,17 @@
 
                         <TextBox Grid.Column="0"
                                  Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                                 ToolTip="Ví dụ: chrome, visual studio code, 7-zip">
+                                 ToolTip="{loc:Text Ui_SearchPlaceholder}">
                             <TextBox.InputBindings>
                                 <KeyBinding Key="Return" Command="{Binding SearchCommand}" />
                             </TextBox.InputBindings>
                         </TextBox>
 
-                        <Button Grid.Column="1" Content="Tìm kiếm" Margin="8,0,0,0"
+                        <Button Grid.Column="1" Content="{loc:Text Ui_BtnSearch}" Margin="8,0,0,0"
                                 Style="{StaticResource PrimaryButton}"
                                 Command="{Binding SearchCommand}" />
 
-                        <Button Grid.Column="2" Content="Xoá kết quả" Margin="8,0,0,0"
+                        <Button Grid.Column="2" Content="{loc:Text Ui_BtnClearSearch}" Margin="8,0,0,0"
                                 Command="{Binding ClearCommand}" />
                     </Grid>
 
@@ -299,16 +299,16 @@
 
                     <DataGrid Grid.Row="2" ItemsSource="{Binding Results}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Tên phần mềm" Binding="{Binding Name}" Width="2*" />
-                            <DataGridTextColumn Header="WinGet Package Id" Binding="{Binding PackageId}" Width="2*"
+                            <DataGridTextColumn Header="{loc:Text Ui_ColumnName}" Binding="{Binding Name}" Width="2*" />
+                            <DataGridTextColumn Header="{loc:Text Ui_ColumnPackageId}" Binding="{Binding PackageId}" Width="2*"
                                                 FontFamily="Consolas" />
-                            <DataGridTextColumn Header="Phiên bản" Binding="{Binding Version}" Width="130" />
-                            <DataGridTextColumn Header="Nguồn" Binding="{Binding Source}" Width="90" />
+                            <DataGridTextColumn Header="{loc:Text Ui_ColumnVersion}" Binding="{Binding Version}" Width="130" />
+                            <DataGridTextColumn Header="{loc:Text Ui_ColumnSource}" Binding="{Binding Source}" Width="90" />
                             <DataGridTemplateColumn Header="" Width="190">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Grid>
-                                            <Button Content="Thêm vào danh sách"
+                                            <Button Content="{loc:Text Ui_BtnAddToProfile}"
                                                     Padding="10,4"
                                                     HorizontalAlignment="Left"
                                                     Command="{Binding DataContext.Search.AddCommand,
@@ -330,13 +330,13 @@
             </TabItem>
 
             <!-- ~~~~~ Tab 3: Kết quả cài đặt ~~~~~ -->
-            <TabItem Header="Kết quả cài đặt">
+            <TabItem Header="{loc:Text Ui_TabInstallResults}">
                 <DataGrid ItemsSource="{Binding Results}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Phần mềm" Binding="{Binding DisplayName}" Width="1.6*" />
-                        <DataGridTextColumn Header="Package Id" Binding="{Binding PackageId}" Width="1.6*"
+                        <DataGridTextColumn Header="{loc:Text Ui_ColumnName}" Binding="{Binding DisplayName}" Width="1.6*" />
+                        <DataGridTextColumn Header="{loc:Text Ui_ColumnPackageId}" Binding="{Binding PackageId}" Width="1.6*"
                                             FontFamily="Consolas" />
-                        <DataGridTemplateColumn Header="Kết quả" Width="130">
+                        <DataGridTemplateColumn Header="{loc:Text Ui_ColumnResultOutcome}" Width="130">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Outcome, Converter={StaticResource InstallOutcome}}"
@@ -345,19 +345,19 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTextColumn Header="Exit code"
+                        <DataGridTextColumn Header="{loc:Text Ui_ColumnResultExitCode}"
                                             Binding="{Binding ExitCode, Converter={StaticResource ExitCode}}"
                                             Width="160" FontFamily="Consolas" />
-                        <DataGridTextColumn Header="Thời gian"
+                        <DataGridTextColumn Header="{loc:Text Ui_ColumnResultDuration}"
                                             Binding="{Binding Duration, Converter={StaticResource Duration}}"
                                             Width="110" />
-                        <DataGridTextColumn Header="Thông báo" Binding="{Binding Message}" Width="2.4*" />
+                        <DataGridTextColumn Header="{loc:Text Ui_ColumnResultMessage}" Binding="{Binding Message}" Width="2.4*" />
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
 
             <!-- ~~~~~ Tab 4: Nhật ký ~~~~~ -->
-            <TabItem Header="Nhật ký">
+            <TabItem Header="{loc:Text Ui_TabLogs}">
                 <Grid DataContext="{Binding Logs}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -366,18 +366,18 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-                        <Button Content="Xoá nhật ký" Command="{Binding ClearCommand}" />
-                        <Button Content="Sao chép tất cả" Command="{Binding CopyCommand}" Margin="8,0,0,0" />
-                        <Button Content="Mở thư mục log" Command="{Binding OpenLogFolderCommand}" Margin="8,0,0,0" />
-                        <CheckBox Content="Tự cuộn xuống dòng mới" IsChecked="{Binding AutoScroll}" Margin="16,0,0,0" />
+                        <Button Content="{loc:Text Ui_BtnClearLogs}" Command="{Binding ClearCommand}" />
+                        <Button Content="{loc:Text Ui_BtnCopyAllLogs}" Command="{Binding CopyCommand}" Margin="8,0,0,0" />
+                        <Button Content="{loc:Text Ui_BtnOpenLogFolder}" Command="{Binding OpenLogFolderCommand}" Margin="8,0,0,0" />
+                        <CheckBox Content="{loc:Text Ui_ChkAutoScroll}" IsChecked="{Binding AutoScroll}" Margin="16,0,0,0" />
                     </StackPanel>
 
                     <DataGrid Grid.Row="1" x:Name="LogGrid" ItemsSource="{Binding Entries}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Thời điểm"
+                            <DataGridTextColumn Header="{loc:Text Ui_ColumnLogTime}"
                                                 Binding="{Binding Timestamp, StringFormat='{}{0:HH:mm:ss}'}"
                                                 Width="90" FontFamily="Consolas" />
-                            <DataGridTemplateColumn Header="Mức" Width="90">
+                            <DataGridTemplateColumn Header="{loc:Text Ui_ColumnLogLevel}" Width="90">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding Level}"
@@ -386,10 +386,10 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="Nội dung" Binding="{Binding Message}" Width="2*" />
-                            <DataGridTextColumn Header="Câu lệnh" Binding="{Binding Command}" Width="2*"
+                            <DataGridTextColumn Header="{loc:Text Ui_ColumnLogMessage}" Binding="{Binding Message}" Width="2*" />
+                            <DataGridTextColumn Header="{loc:Text Ui_ColumnLogCommand}" Binding="{Binding Command}" Width="2*"
                                                 FontFamily="Consolas" />
-                            <DataGridTextColumn Header="Exit code"
+                            <DataGridTextColumn Header="{loc:Text Ui_ColumnResultExitCode}"
                                                 Binding="{Binding ExitCode, Converter={StaticResource ExitCode}}"
                                                 Width="150" FontFamily="Consolas" />
                         </DataGrid.Columns>
@@ -420,14 +420,14 @@
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Text="{Binding PrivilegeText}" Style="{StaticResource MutedText}"
                                VerticalAlignment="Center" Margin="0,0,10,0" />
-                    <Button Content="Chạy bằng quyền Admin" Command="{Binding RestartAsAdminCommand}" />
+                    <Button Content="{loc:Text Ui_BtnRestartAsAdmin}" Command="{Binding RestartAsAdminCommand}" />
                 </StackPanel>
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
-                    <Button Content="Mở thư mục dữ liệu" Command="{Binding OpenDataFolderCommand}" />
-                    <Button Content="Nhập JSON" Command="{Binding ImportCommand}" Margin="6,0,0,0" />
-                    <Button Content="Xuất tất cả" Command="{Binding ExportCommand}" Margin="6,0,0,0" />
-                    <Button Content="Xuất cấu hình này" Command="{Binding ExportProfileCommand}" Margin="6,0,0,0" />
+                    <Button Content="{loc:Text Ui_BtnOpenDataFolder}" Command="{Binding OpenDataFolderCommand}" />
+                    <Button Content="{loc:Text Ui_BtnImportJson}" Command="{Binding ImportCommand}" Margin="6,0,0,0" />
+                    <Button Content="{loc:Text Ui_BtnExportAll}" Command="{Binding ExportCommand}" Margin="6,0,0,0" />
+                    <Button Content="{loc:Text Ui_BtnExportCurrent}" Command="{Binding ExportProfileCommand}" Margin="6,0,0,0" />
                 </StackPanel>
             </Grid>
         </Border>

@@ -112,4 +112,62 @@
   <data name="Msg_CommandFailed" xml:space="preserve"><value>Command execution failed.</value></data>
   <data name="Msg_AppStarted" xml:space="preserve"><value>Application started.</value></data>
   <data name="Msg_UnhandledError" xml:space="preserve"><value>An unexpected error occurred: {0}</value></data>
+  <data name="Ui_ProfileTooltip" xml:space="preserve"><value>Choose software profile to use</value></data>
+  <data name="Ui_ProfileNewTooltip" xml:space="preserve"><value>Create new profile</value></data>
+  <data name="Ui_WarningWingetUnavailable" xml:space="preserve"><value>WinGet is not available</value></data>
+  <data name="Ui_WarningWingetHelp" xml:space="preserve"><value>Fix: Install Microsoft &quot;App Installer&quot; from the Microsoft Store, then reopen this application.</value></data>
+  <data name="Ui_BtnOpenStore" xml:space="preserve"><value>Open Microsoft Store</value></data>
+  <data name="Ui_TabSoftwareList" xml:space="preserve"><value>Software list</value></data>
+  <data name="Ui_FilterPlaceholder" xml:space="preserve"><value>Filter by name or Package Id</value></data>
+  <data name="Ui_BtnSelectAll" xml:space="preserve"><value>Select all</value></data>
+  <data name="Ui_BtnSelectNone" xml:space="preserve"><value>Deselect all</value></data>
+  <data name="Ui_BtnInvertSelection" xml:space="preserve"><value>Invert selection</value></data>
+  <data name="Ui_BtnSelectNotInstalled" xml:space="preserve"><value>Only uninstalled</value></data>
+  <data name="Ui_BtnAdd" xml:space="preserve"><value>Add</value></data>
+  <data name="Ui_BtnEdit" xml:space="preserve"><value>Edit</value></data>
+  <data name="Ui_BtnDelete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Ui_BtnMoveUp" xml:space="preserve"><value>↑</value></data>
+  <data name="Ui_BtnMoveUpTooltip" xml:space="preserve"><value>Move up</value></data>
+  <data name="Ui_BtnMoveDown" xml:space="preserve"><value>↓</value></data>
+  <data name="Ui_BtnMoveDownTooltip" xml:space="preserve"><value>Move down</value></data>
+  <data name="Ui_ColumnInstall" xml:space="preserve"><value>Install</value></data>
+  <data name="Ui_ColumnInstallTooltip" xml:space="preserve"><value>Select to include in installation</value></data>
+  <data name="Ui_ColumnName" xml:space="preserve"><value>Software name</value></data>
+  <data name="Ui_ColumnPackageId" xml:space="preserve"><value>WinGet Package Id</value></data>
+  <data name="Ui_ColumnCategory" xml:space="preserve"><value>Category</value></data>
+  <data name="Ui_ColumnStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="Ui_ColumnNotes" xml:space="preserve"><value>Notes</value></data>
+  <data name="Ui_BtnScanAndBackup" xml:space="preserve"><value>Scan &amp; backup this machine</value></data>
+  <data name="Ui_BtnScanAndBackupTooltip" xml:space="preserve"><value>Scan software on this machine and save before reinstalling Windows</value></data>
+  <data name="Ui_BtnCheckInstalled" xml:space="preserve"><value>Check installed</value></data>
+  <data name="Ui_BtnCheckInstalledTooltip" xml:space="preserve"><value>Ask WinGet which software is already on this machine</value></data>
+  <data name="Ui_BtnRetryFailed" xml:space="preserve"><value>Retry failed</value></data>
+  <data name="Ui_BtnCancelInstall" xml:space="preserve"><value>Cancel install</value></data>
+  <data name="Ui_BtnStartInstall" xml:space="preserve"><value>Start installing</value></data>
+  <data name="Ui_TabSearchWinget" xml:space="preserve"><value>Search WinGet</value></data>
+  <data name="Ui_SearchPlaceholder" xml:space="preserve"><value>Example: chrome, visual studio code, 7-zip</value></data>
+  <data name="Ui_BtnSearch" xml:space="preserve"><value>Search</value></data>
+  <data name="Ui_BtnClearSearch" xml:space="preserve"><value>Clear results</value></data>
+  <data name="Ui_ColumnVersion" xml:space="preserve"><value>Version</value></data>
+  <data name="Ui_ColumnSource" xml:space="preserve"><value>Source</value></data>
+  <data name="Ui_BtnAddToProfile" xml:space="preserve"><value>Add to list</value></data>
+  <data name="Ui_TabInstallResults" xml:space="preserve"><value>Installation results</value></data>
+  <data name="Ui_ColumnResultOutcome" xml:space="preserve"><value>Result</value></data>
+  <data name="Ui_ColumnResultExitCode" xml:space="preserve"><value>Exit code</value></data>
+  <data name="Ui_ColumnResultDuration" xml:space="preserve"><value>Duration</value></data>
+  <data name="Ui_ColumnResultMessage" xml:space="preserve"><value>Message</value></data>
+  <data name="Ui_TabLogs" xml:space="preserve"><value>Logs</value></data>
+  <data name="Ui_BtnClearLogs" xml:space="preserve"><value>Clear logs</value></data>
+  <data name="Ui_BtnCopyAllLogs" xml:space="preserve"><value>Copy all</value></data>
+  <data name="Ui_BtnOpenLogFolder" xml:space="preserve"><value>Open log folder</value></data>
+  <data name="Ui_ChkAutoScroll" xml:space="preserve"><value>Auto scroll to bottom</value></data>
+  <data name="Ui_ColumnLogTime" xml:space="preserve"><value>Time</value></data>
+  <data name="Ui_ColumnLogLevel" xml:space="preserve"><value>Level</value></data>
+  <data name="Ui_ColumnLogMessage" xml:space="preserve"><value>Content</value></data>
+  <data name="Ui_ColumnLogCommand" xml:space="preserve"><value>Command</value></data>
+  <data name="Ui_BtnRestartAsAdmin" xml:space="preserve"><value>Run as Administrator</value></data>
+  <data name="Ui_BtnOpenDataFolder" xml:space="preserve"><value>Open data folder</value></data>
+  <data name="Ui_BtnImportJson" xml:space="preserve"><value>Import JSON</value></data>
+  <data name="Ui_BtnExportAll" xml:space="preserve"><value>Export all</value></data>
+  <data name="Ui_BtnExportCurrent" xml:space="preserve"><value>Export this profile</value></data>
 </root>

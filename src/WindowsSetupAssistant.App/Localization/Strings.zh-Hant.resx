@@ -112,4 +112,62 @@
   <data name="Msg_CommandFailed" xml:space="preserve"><value>命令執行失敗。</value></data>
   <data name="Msg_AppStarted" xml:space="preserve"><value>應用程式已啟動。</value></data>
   <data name="Msg_UnhandledError" xml:space="preserve"><value>發生非預期的錯誤：{0}</value></data>
+  <data name="Ui_ProfileTooltip" xml:space="preserve"><value>選擇要使用的軟體組合</value></data>
+  <data name="Ui_ProfileNewTooltip" xml:space="preserve"><value>建立新設定檔</value></data>
+  <data name="Ui_WarningWingetUnavailable" xml:space="preserve"><value>WinGet 尚無法使用</value></data>
+  <data name="Ui_WarningWingetHelp" xml:space="preserve"><value>解決方法：從 Microsoft Store 安裝 Microsoft 的「App Installer」應用程式，然後重新開啟此應用程式。</value></data>
+  <data name="Ui_BtnOpenStore" xml:space="preserve"><value>開啟 Microsoft Store</value></data>
+  <data name="Ui_TabSoftwareList" xml:space="preserve"><value>軟體清單</value></data>
+  <data name="Ui_FilterPlaceholder" xml:space="preserve"><value>依名稱或 Package Id 篩選</value></data>
+  <data name="Ui_BtnSelectAll" xml:space="preserve"><value>全選</value></data>
+  <data name="Ui_BtnSelectNone" xml:space="preserve"><value>取消全選</value></data>
+  <data name="Ui_BtnInvertSelection" xml:space="preserve"><value>反向選取</value></data>
+  <data name="Ui_BtnSelectNotInstalled" xml:space="preserve"><value>僅未安裝</value></data>
+  <data name="Ui_BtnAdd" xml:space="preserve"><value>新增</value></data>
+  <data name="Ui_BtnEdit" xml:space="preserve"><value>編輯</value></data>
+  <data name="Ui_BtnDelete" xml:space="preserve"><value>刪除</value></data>
+  <data name="Ui_BtnMoveUp" xml:space="preserve"><value>↑</value></data>
+  <data name="Ui_BtnMoveUpTooltip" xml:space="preserve"><value>上移</value></data>
+  <data name="Ui_BtnMoveDown" xml:space="preserve"><value>↓</value></data>
+  <data name="Ui_BtnMoveDownTooltip" xml:space="preserve"><value>下移</value></data>
+  <data name="Ui_ColumnInstall" xml:space="preserve"><value>安裝</value></data>
+  <data name="Ui_ColumnInstallTooltip" xml:space="preserve"><value>選取以納入安裝</value></data>
+  <data name="Ui_ColumnName" xml:space="preserve"><value>軟體名稱</value></data>
+  <data name="Ui_ColumnPackageId" xml:space="preserve"><value>WinGet Package Id</value></data>
+  <data name="Ui_ColumnCategory" xml:space="preserve"><value>分類</value></data>
+  <data name="Ui_ColumnStatus" xml:space="preserve"><value>狀態</value></data>
+  <data name="Ui_ColumnNotes" xml:space="preserve"><value>備註</value></data>
+  <data name="Ui_BtnScanAndBackup" xml:space="preserve"><value>掃描並備份此電腦</value></data>
+  <data name="Ui_BtnScanAndBackupTooltip" xml:space="preserve"><value>在重灌 Windows 之前掃描並儲存此電腦上現有的軟體</value></data>
+  <data name="Ui_BtnCheckInstalled" xml:space="preserve"><value>檢查已安裝</value></data>
+  <data name="Ui_BtnCheckInstalledTooltip" xml:space="preserve"><value>詢問 WinGet 此電腦上已安裝哪些軟體</value></data>
+  <data name="Ui_BtnRetryFailed" xml:space="preserve"><value>重試失敗項目</value></data>
+  <data name="Ui_BtnCancelInstall" xml:space="preserve"><value>取消安裝</value></data>
+  <data name="Ui_BtnStartInstall" xml:space="preserve"><value>開始安裝</value></data>
+  <data name="Ui_TabSearchWinget" xml:space="preserve"><value>在 WinGet 上搜尋</value></data>
+  <data name="Ui_SearchPlaceholder" xml:space="preserve"><value>例如：chrome, visual studio code, 7-zip</value></data>
+  <data name="Ui_BtnSearch" xml:space="preserve"><value>搜尋</value></data>
+  <data name="Ui_BtnClearSearch" xml:space="preserve"><value>清除結果</value></data>
+  <data name="Ui_ColumnVersion" xml:space="preserve"><value>版本</value></data>
+  <data name="Ui_ColumnSource" xml:space="preserve"><value>來源</value></data>
+  <data name="Ui_BtnAddToProfile" xml:space="preserve"><value>新增至清單</value></data>
+  <data name="Ui_TabInstallResults" xml:space="preserve"><value>安裝結果</value></data>
+  <data name="Ui_ColumnResultOutcome" xml:space="preserve"><value>結果</value></data>
+  <data name="Ui_ColumnResultExitCode" xml:space="preserve"><value>Exit code</value></data>
+  <data name="Ui_ColumnResultDuration" xml:space="preserve"><value>時間</value></data>
+  <data name="Ui_ColumnResultMessage" xml:space="preserve"><value>訊息</value></data>
+  <data name="Ui_TabLogs" xml:space="preserve"><value>記錄</value></data>
+  <data name="Ui_BtnClearLogs" xml:space="preserve"><value>清除記錄</value></data>
+  <data name="Ui_BtnCopyAllLogs" xml:space="preserve"><value>複製全部</value></data>
+  <data name="Ui_BtnOpenLogFolder" xml:space="preserve"><value>開啟記錄資料夾</value></data>
+  <data name="Ui_ChkAutoScroll" xml:space="preserve"><value>自動捲動至新行</value></data>
+  <data name="Ui_ColumnLogTime" xml:space="preserve"><value>時間</value></data>
+  <data name="Ui_ColumnLogLevel" xml:space="preserve"><value>等級</value></data>
+  <data name="Ui_ColumnLogMessage" xml:space="preserve"><value>內容</value></data>
+  <data name="Ui_ColumnLogCommand" xml:space="preserve"><value>命令</value></data>
+  <data name="Ui_BtnRestartAsAdmin" xml:space="preserve"><value>以系統管理員身分執行</value></data>
+  <data name="Ui_BtnOpenDataFolder" xml:space="preserve"><value>開啟資料資料夾</value></data>
+  <data name="Ui_BtnImportJson" xml:space="preserve"><value>匯入 JSON</value></data>
+  <data name="Ui_BtnExportAll" xml:space="preserve"><value>全部匯出</value></data>
+  <data name="Ui_BtnExportCurrent" xml:space="preserve"><value>匯出此設定檔</value></data>
 </root>

@@ -112,4 +112,62 @@
   <data name="Msg_CommandFailed" xml:space="preserve"><value>Lệnh thực thi thất bại.</value></data>
   <data name="Msg_AppStarted" xml:space="preserve"><value>Ứng dụng đã khởi động.</value></data>
   <data name="Msg_UnhandledError" xml:space="preserve"><value>Đã xảy ra lỗi không mong đợi: {0}</value></data>
+  <data name="Ui_ProfileTooltip" xml:space="preserve"><value>Chọn bộ phần mềm muốn dùng</value></data>
+  <data name="Ui_ProfileNewTooltip" xml:space="preserve"><value>Tạo cấu hình mới</value></data>
+  <data name="Ui_WarningWingetUnavailable" xml:space="preserve"><value>Chưa dùng được WinGet</value></data>
+  <data name="Ui_WarningWingetHelp" xml:space="preserve"><value>Cách khắc phục: cài ứng dụng &quot;App Installer&quot; của Microsoft từ Microsoft Store, sau đó mở lại ứng dụng này.</value></data>
+  <data name="Ui_BtnOpenStore" xml:space="preserve"><value>Mở Microsoft Store</value></data>
+  <data name="Ui_TabSoftwareList" xml:space="preserve"><value>Danh sách phần mềm</value></data>
+  <data name="Ui_FilterPlaceholder" xml:space="preserve"><value>Lọc theo tên hoặc Package Id</value></data>
+  <data name="Ui_BtnSelectAll" xml:space="preserve"><value>Chọn tất cả</value></data>
+  <data name="Ui_BtnSelectNone" xml:space="preserve"><value>Bỏ chọn</value></data>
+  <data name="Ui_BtnInvertSelection" xml:space="preserve"><value>Đảo chọn</value></data>
+  <data name="Ui_BtnSelectNotInstalled" xml:space="preserve"><value>Chỉ cái chưa cài</value></data>
+  <data name="Ui_BtnAdd" xml:space="preserve"><value>Thêm</value></data>
+  <data name="Ui_BtnEdit" xml:space="preserve"><value>Sửa</value></data>
+  <data name="Ui_BtnDelete" xml:space="preserve"><value>Xoá</value></data>
+  <data name="Ui_BtnMoveUp" xml:space="preserve"><value>↑</value></data>
+  <data name="Ui_BtnMoveUpTooltip" xml:space="preserve"><value>Di chuyển lên</value></data>
+  <data name="Ui_BtnMoveDown" xml:space="preserve"><value>↓</value></data>
+  <data name="Ui_BtnMoveDownTooltip" xml:space="preserve"><value>Di chuyển xuống</value></data>
+  <data name="Ui_ColumnInstall" xml:space="preserve"><value>Cài</value></data>
+  <data name="Ui_ColumnInstallTooltip" xml:space="preserve"><value>Chọn để đưa vào lượt cài đặt</value></data>
+  <data name="Ui_ColumnName" xml:space="preserve"><value>Tên phần mềm</value></data>
+  <data name="Ui_ColumnPackageId" xml:space="preserve"><value>WinGet Package Id</value></data>
+  <data name="Ui_ColumnCategory" xml:space="preserve"><value>Nhóm</value></data>
+  <data name="Ui_ColumnStatus" xml:space="preserve"><value>Trạng thái</value></data>
+  <data name="Ui_ColumnNotes" xml:space="preserve"><value>Ghi chú</value></data>
+  <data name="Ui_BtnScanAndBackup" xml:space="preserve"><value>Quét &amp; sao lưu máy này</value></data>
+  <data name="Ui_BtnScanAndBackupTooltip" xml:space="preserve"><value>Quét phần mềm đang có trên máy và lưu lại trước khi cài lại Windows</value></data>
+  <data name="Ui_BtnCheckInstalled" xml:space="preserve"><value>Kiểm tra đã cài</value></data>
+  <data name="Ui_BtnCheckInstalledTooltip" xml:space="preserve"><value>Hỏi WinGet xem phần mềm nào đã có trên máy</value></data>
+  <data name="Ui_BtnRetryFailed" xml:space="preserve"><value>Thử lại phần lỗi</value></data>
+  <data name="Ui_BtnCancelInstall" xml:space="preserve"><value>Huỷ cài đặt</value></data>
+  <data name="Ui_BtnStartInstall" xml:space="preserve"><value>Bắt đầu cài đặt</value></data>
+  <data name="Ui_TabSearchWinget" xml:space="preserve"><value>Tìm trên WinGet</value></data>
+  <data name="Ui_SearchPlaceholder" xml:space="preserve"><value>Ví dụ: chrome, visual studio code, 7-zip</value></data>
+  <data name="Ui_BtnSearch" xml:space="preserve"><value>Tìm kiếm</value></data>
+  <data name="Ui_BtnClearSearch" xml:space="preserve"><value>Xoá kết quả</value></data>
+  <data name="Ui_ColumnVersion" xml:space="preserve"><value>Phiên bản</value></data>
+  <data name="Ui_ColumnSource" xml:space="preserve"><value>Nguồn</value></data>
+  <data name="Ui_BtnAddToProfile" xml:space="preserve"><value>Thêm vào danh sách</value></data>
+  <data name="Ui_TabInstallResults" xml:space="preserve"><value>Kết quả cài đặt</value></data>
+  <data name="Ui_ColumnResultOutcome" xml:space="preserve"><value>Kết quả</value></data>
+  <data name="Ui_ColumnResultExitCode" xml:space="preserve"><value>Exit code</value></data>
+  <data name="Ui_ColumnResultDuration" xml:space="preserve"><value>Thời gian</value></data>
+  <data name="Ui_ColumnResultMessage" xml:space="preserve"><value>Thông báo</value></data>
+  <data name="Ui_TabLogs" xml:space="preserve"><value>Nhật ký</value></data>
+  <data name="Ui_BtnClearLogs" xml:space="preserve"><value>Xoá nhật ký</value></data>
+  <data name="Ui_BtnCopyAllLogs" xml:space="preserve"><value>Sao chép tất cả</value></data>
+  <data name="Ui_BtnOpenLogFolder" xml:space="preserve"><value>Mở thư mục log</value></data>
+  <data name="Ui_ChkAutoScroll" xml:space="preserve"><value>Tự cuộn xuống dòng mới</value></data>
+  <data name="Ui_ColumnLogTime" xml:space="preserve"><value>Thời điểm</value></data>
+  <data name="Ui_ColumnLogLevel" xml:space="preserve"><value>Mức</value></data>
+  <data name="Ui_ColumnLogMessage" xml:space="preserve"><value>Nội dung</value></data>
+  <data name="Ui_ColumnLogCommand" xml:space="preserve"><value>Câu lệnh</value></data>
+  <data name="Ui_BtnRestartAsAdmin" xml:space="preserve"><value>Chạy bằng quyền Admin</value></data>
+  <data name="Ui_BtnOpenDataFolder" xml:space="preserve"><value>Mở thư mục dữ liệu</value></data>
+  <data name="Ui_BtnImportJson" xml:space="preserve"><value>Nhập JSON</value></data>
+  <data name="Ui_BtnExportAll" xml:space="preserve"><value>Xuất tất cả</value></data>
+  <data name="Ui_BtnExportCurrent" xml:space="preserve"><value>Xuất cấu hình này</value></data>
 </root>
