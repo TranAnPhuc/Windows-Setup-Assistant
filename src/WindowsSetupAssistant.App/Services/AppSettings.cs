@@ -14,6 +14,9 @@ public sealed class AppSettings
 
     /// <summary>Có tự kiểm tra phần mềm đã cài khi khởi động hay không.</summary>
     public bool CheckInstalledOnStartup { get; set; } = true;
+
+    /// <summary>Mã ngôn ngữ đã chọn. Rỗng nghĩa là chưa chọn - sẽ dò theo Windows.</summary>
+    public string Language { get; set; } = string.Empty;
 }
 
 public enum AppTheme
