@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a2c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a2c561934e089</value></resheader>
+
+  <!-- UI Keys -->
+  <data name="Ui_AppTitle" xml:space="preserve"><value>Windows Setup Assistant</value></data>
+  <data name="Ui_AppSubtitle" xml:space="preserve"><value>Install software in bulk with WinGet after reinstalling Windows</value></data>
+  <data name="Ui_ProfileLabel" xml:space="preserve"><value>Profile:</value></data>
+  <data name="Ui_ProfileNew" xml:space="preserve"><value>New</value></data>
+  <data name="Ui_ProfileRename" xml:space="preserve"><value>Rename</value></data>
+  <data name="Ui_ProfileDuplicate" xml:space="preserve"><value>Duplicate</value></data>
+  <data name="Ui_ProfileDelete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Ui_ThemeDark" xml:space="preserve"><value>Dark theme</value></data>
+  <data name="Ui_ThemeLight" xml:space="preserve"><value>Light theme</value></data>
+  <data name="Ui_LanguageLabel" xml:space="preserve"><value>Language:</value></data>
+
+  <!-- Validation -->
+  <data name="Msg_PackageIdEmpty" xml:space="preserve"><value>Package Id must not be empty.</value></data>
+  <data name="Msg_PackageIdTooLong" xml:space="preserve"><value>Package Id is too long (maximum {0} characters).</value></data>
+  <data name="Msg_PackageIdStartsWithDash" xml:space="preserve"><value>Package Id must not start with '-' because it would be read as a command-line switch.</value></data>
+  <data name="Msg_PackageIdInvalidCharacters" xml:space="preserve"><value>Package Id may only contain letters, digits and . _ - + (for example Google.Chrome).</value></data>
+  <data name="Msg_SearchQueryEmpty" xml:space="preserve"><value>Search query must not be empty.</value></data>
+  <data name="Msg_SearchQueryTooLong" xml:space="preserve"><value>Search query is too long (maximum {0} characters).</value></data>
+  <data name="Msg_SearchQueryStartsWithDash" xml:space="preserve"><value>Search query must not start with '-' because it would be read as a command-line switch.</value></data>
+  <data name="Msg_SearchQueryControlCharacters" xml:space="preserve"><value>Search query contains invalid control characters.</value></data>
+
+  <!-- Installation outcomes & messages -->
+  <data name="Msg_InstallSucceeded" xml:space="preserve"><value>Installed successfully.</value></data>
+  <data name="Msg_UpgradeSucceeded" xml:space="preserve"><value>Upgraded successfully.</value></data>
+  <data name="Msg_SkippedAlreadyInstalled" xml:space="preserve"><value>Already installed - skipped per your selection.</value></data>
+  <data name="Msg_InstallFailed" xml:space="preserve"><value>Installation failed.</value></data>
+  <data name="Msg_CancelledBeforeStart" xml:space="preserve"><value>Cancelled before starting.</value></data>
+  <data name="Msg_CancelledByUser" xml:space="preserve"><value>Installation cancelled by user.</value></data>
+  <data name="Msg_UnexpectedError" xml:space="preserve"><value>Unexpected error: {0}</value></data>
+  <data name="Msg_WingetNotResponding" xml:space="preserve"><value>WinGet is not responding. Try opening Terminal and running 'winget --version'.</value></data>
+  <data name="Msg_WingetExecutableMissing" xml:space="preserve"><value>winget.exe not found. Please install Microsoft App Installer first.</value></data>
+
+  <!-- Installation queue -->
+  <data name="Msg_QueueStarted" xml:space="preserve"><value>Installation queue started: {0} packages.</value></data>
+  <data name="Msg_QueueFinished" xml:space="preserve"><value>Queue finished after {0}s: {1} succeeded, {2} skipped, {3} failed, {4} cancelled.</value></data>
+  <data name="Msg_QueueStoppedOnFirstError" xml:space="preserve"><value>Stop on first error is enabled - queue stopped.</value></data>
+  <data name="Msg_QueueProcessing" xml:space="preserve"><value>({0}/{1}) Processing {2}...</value></data>
+  <data name="Msg_QueueItemDone" xml:space="preserve"><value>({0}/{1}) {2}: {3}</value></data>
+  <data name="Msg_QueueCompleted" xml:space="preserve"><value>Completed.</value></data>
+  <data name="Msg_QueueCancelled" xml:space="preserve"><value>Installation was cancelled.</value></data>
+  <data name="Msg_InstalledStateCheckFailed" xml:space="preserve"><value>Failed to check installation status of {0}: {1}</value></data>
+
+  <!-- WinGet Exit Codes -->
+  <data name="Msg_ExitSuccess" xml:space="preserve"><value>Success.</value></data>
+  <data name="Msg_ExitNoApplicationsFound" xml:space="preserve"><value>No packages found in WinGet source. Please check the Package Id.</value></data>
+  <data name="Msg_ExitAlreadyInstalled" xml:space="preserve"><value>Software is already installed on this machine.</value></data>
+  <data name="Msg_ExitNoUpgrade" xml:space="preserve"><value>No newer version available - current version is already up to date.</value></data>
+  <data name="Msg_ExitRequiresAdmin" xml:space="preserve"><value>This command requires Administrator rights. Please relaunch with 'Run as administrator'.</value></data>
+  <data name="Msg_ExitAccessDenied" xml:space="preserve"><value>Access denied. Administrator rights may be required.</value></data>
+  <data name="Msg_ExitProhibitsElevation" xml:space="preserve"><value>This package installer does not allow running as Administrator. Run without elevation.</value></data>
+  <data name="Msg_ExitDownloadFailed" xml:space="preserve"><value>Failed to download installer. Check network connection and retry.</value></data>
+  <data name="Msg_ExitZeroByteFile" xml:space="preserve"><value>Downloaded file is empty (0 bytes). Network connection may be experiencing issues.</value></data>
+  <data name="Msg_ExitNoNetwork" xml:space="preserve"><value>This package requires an Internet connection to install.</value></data>
+  <data name="Msg_ExitHashMismatch" xml:space="preserve"><value>Installer hash mismatch with manifest - stopped for safety.</value></data>
+  <data name="Msg_ExitNoApplicableInstaller" xml:space="preserve"><value>No applicable installer found for this system architecture or Windows version.</value></data>
+  <data name="Msg_ExitNoSources" xml:space="preserve"><value>WinGet has no sources defined. Run 'winget source reset --force' and retry.</value></data>
+  <data name="Msg_ExitSourceOpenFailed" xml:space="preserve"><value>Failed to open WinGet source. Check your network connection.</value></data>
+  <data name="Msg_ExitServiceUnavailable" xml:space="preserve"><value>Required service is busy or unavailable. Please try again later.</value></data>
+  <data name="Msg_ExitMultipleFound" xml:space="preserve"><value>Multiple packages matched the criteria. Please use a more specific Package Id.</value></data>
+  <data name="Msg_ExitInstallInProgress" xml:space="preserve"><value>Another installation is already in progress. Please try again later.</value></data>
+  <data name="Msg_ExitPackageInUse" xml:space="preserve"><value>Application is running or file is in use. Please close it and retry.</value></data>
+  <data name="Msg_ExitMissingDependency" xml:space="preserve"><value>Missing system dependencies required for this package.</value></data>
+  <data name="Msg_ExitDiskFull" xml:space="preserve"><value>Disk is full. Free up space and retry.</value></data>
+  <data name="Msg_ExitInsufficientMemory" xml:space="preserve"><value>Insufficient memory to install. Close some applications and retry.</value></data>
+  <data name="Msg_ExitRebootRequired" xml:space="preserve"><value>Installation completed, but a reboot is required to finish.</value></data>
+  <data name="Msg_ExitCancelled" xml:space="preserve"><value>Installation was cancelled.</value></data>
+  <data name="Msg_ExitDowngrade" xml:space="preserve"><value>A higher version is already installed on this machine.</value></data>
+  <data name="Msg_ExitBlockedByPolicy" xml:space="preserve"><value>Blocked by organization policy (Group Policy).</value></data>
+  <data name="Msg_ExitInvalidArguments" xml:space="preserve"><value>Invalid command line arguments - installed WinGet version may be too old.</value></data>
+  <data name="Msg_ExitCustomInstallerError" xml:space="preserve"><value>Package installer returned a custom error.</value></data>
+  <data name="Msg_ExitInternalError" xml:space="preserve"><value>WinGet encountered an internal error.</value></data>
+  <data name="Msg_ExitCommandFailed" xml:space="preserve"><value>WinGet command execution failed.</value></data>
+  <data name="Msg_ExitUnknown" xml:space="preserve"><value>WinGet exited with error code 0x{0:X8}.</value></data>
+
+  <!-- Data / Storage -->
+  <data name="Msg_SeedCatalogCreated" xml:space="preserve"><value>Created seed catalog at {0}.</value></data>
+  <data name="Msg_CatalogFileCorrupted" xml:space="preserve"><value>Catalog file unreadable at {0}; keeping existing file without overwriting.</value></data>
+  <data name="Msg_CatalogReadFailed" xml:space="preserve"><value>Failed to load catalog from {0}; stopping to prevent overwriting unread data.</value></data>
+  <data name="Msg_CatalogExported" xml:space="preserve"><value>Catalog exported to {0}.</value></data>
+  <data name="Msg_CatalogImported" xml:space="preserve"><value>Imported {0} profiles from {1}.</value></data>
+  <data name="Msg_ImportFileNotFound" xml:space="preserve"><value>File to import not found.</value></data>
+  <data name="Msg_ImportInvalidJson" xml:space="preserve"><value>Invalid JSON file: {0}</value></data>
+  <data name="Msg_ImportNoProfiles" xml:space="preserve"><value>File contains no profiles.</value></data>
+  <data name="Msg_PackageDroppedInvalidId" xml:space="preserve"><value>Ignored item with invalid Package Id: {0}</value></data>
+  <data name="Msg_SaveFailed" xml:space="preserve"><value>Save failed: {0}</value></data>
+
+  <!-- WinGet / Environment -->
+  <data name="Msg_WingetDetected" xml:space="preserve"><value>Detected WinGet {0}.</value></data>
+  <data name="Msg_WingetNotFound" xml:space="preserve"><value>WinGet was not found on this machine. Please install 'App Installer' from the Microsoft Store (or download official .msixbundle from GitHub: microsoft/winget-cli/releases) and restart the application.</value></data>
+  <data name="Msg_WingetCheckFailed" xml:space="preserve"><value>Failed to check WinGet: {0}</value></data>
+  <data name="Msg_WingetReturnedError" xml:space="preserve"><value>Executed winget but returned error: {0}</value></data>
+  <data name="Msg_WingetSearchFailed" xml:space="preserve"><value>WinGet search failed.</value></data>
+  <data name="Msg_WingetSearchTimeout" xml:space="preserve"><value>WinGet did not respond during search. Check network connection and retry.</value></data>
+  <data name="Msg_InstalledListFailed" xml:space="preserve"><value>Failed to get installed packages list: {0}</value></data>
+  <data name="Msg_InstalledListTimeout" xml:space="preserve"><value>WinGet did not respond while listing installed software.</value></data>
+
+  <!-- Scan and backup -->
+  <data name="Msg_ScanStarted" xml:space="preserve"><value>Started scanning installed software on this machine...</value></data>
+  <data name="Msg_ScanFinished" xml:space="preserve"><value>Scanned {0} software on this machine.</value></data>
+  <data name="Msg_ScanFailed" xml:space="preserve"><value>Software scan failed: {0}</value></data>
+
+  <!-- General logging -->
+  <data name="Msg_CommandSucceeded" xml:space="preserve"><value>Command executed successfully.</value></data>
+  <data name="Msg_CommandFailed" xml:space="preserve"><value>Command execution failed.</value></data>
+  <data name="Msg_AppStarted" xml:space="preserve"><value>Application started.</value></data>
+  <data name="Msg_UnhandledError" xml:space="preserve"><value>An unexpected error occurred: {0}</value></data>
+</root>

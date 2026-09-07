@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a2c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a2c561934e089</value></resheader>
+
+  <!-- UI Keys -->
+  <data name="Ui_AppTitle" xml:space="preserve"><value>Windows Setup Assistant</value></data>
+  <data name="Ui_AppSubtitle" xml:space="preserve"><value>重灌 Windows 後使用 WinGet 批次安裝軟體</value></data>
+  <data name="Ui_ProfileLabel" xml:space="preserve"><value>設定檔：</value></data>
+  <data name="Ui_ProfileNew" xml:space="preserve"><value>新增</value></data>
+  <data name="Ui_ProfileRename" xml:space="preserve"><value>重新命名</value></data>
+  <data name="Ui_ProfileDuplicate" xml:space="preserve"><value>複製</value></data>
+  <data name="Ui_ProfileDelete" xml:space="preserve"><value>刪除</value></data>
+  <data name="Ui_ThemeDark" xml:space="preserve"><value>深色主題</value></data>
+  <data name="Ui_ThemeLight" xml:space="preserve"><value>淺色主題</value></data>
+  <data name="Ui_LanguageLabel" xml:space="preserve"><value>語言：</value></data>
+
+  <!-- Validation -->
+  <data name="Msg_PackageIdEmpty" xml:space="preserve"><value>Package Id 不可為空。</value></data>
+  <data name="Msg_PackageIdTooLong" xml:space="preserve"><value>Package Id 太長（最多 {0} 個字元）。</value></data>
+  <data name="Msg_PackageIdStartsWithDash" xml:space="preserve"><value>Package Id 不得以連字號「-」開頭，否則會被視為命令列參數。</value></data>
+  <data name="Msg_PackageIdInvalidCharacters" xml:space="preserve"><value>Package Id 只能包含英文字母、數字與 . _ - +（例如 Google.Chrome）。</value></data>
+  <data name="Msg_SearchQueryEmpty" xml:space="preserve"><value>搜尋關鍵字不可為空。</value></data>
+  <data name="Msg_SearchQueryTooLong" xml:space="preserve"><value>搜尋關鍵字太長（最多 {0} 個字元）。</value></data>
+  <data name="Msg_SearchQueryStartsWithDash" xml:space="preserve"><value>搜尋關鍵字不得以連字號「-」開頭，否則會被視為命令列參數。</value></data>
+  <data name="Msg_SearchQueryControlCharacters" xml:space="preserve"><value>搜尋關鍵字包含無效的控制字元。</value></data>
+
+  <!-- Installation outcomes & messages -->
+  <data name="Msg_InstallSucceeded" xml:space="preserve"><value>安裝成功。</value></data>
+  <data name="Msg_UpgradeSucceeded" xml:space="preserve"><value>升級成功。</value></data>
+  <data name="Msg_SkippedAlreadyInstalled" xml:space="preserve"><value>已安裝 - 依您的選擇略過。</value></data>
+  <data name="Msg_InstallFailed" xml:space="preserve"><value>安裝失敗。</value></data>
+  <data name="Msg_CancelledBeforeStart" xml:space="preserve"><value>開始前已取消。</value></data>
+  <data name="Msg_CancelledByUser" xml:space="preserve"><value>使用者已取消安裝過程。</value></data>
+  <data name="Msg_UnexpectedError" xml:space="preserve"><value>非預期的錯誤：{0}</value></data>
+  <data name="Msg_WingetNotResponding" xml:space="preserve"><value>WinGet 沒有回應。請嘗試開啟終端機並執行「winget --version」。</value></data>
+  <data name="Msg_WingetExecutableMissing" xml:space="preserve"><value>找不到 winget.exe。請先安裝 Microsoft App Installer。</value></data>
+
+  <!-- Installation queue -->
+  <data name="Msg_QueueStarted" xml:space="preserve"><value>開始安裝佇列：{0} 個軟體。</value></data>
+  <data name="Msg_QueueFinished" xml:space="preserve"><value>佇列在 {0} 秒後結束：{1} 個成功，{2} 個略過，{3} 個失敗，{4} 個取消。</value></data>
+  <data name="Msg_QueueStoppedOnFirstError" xml:space="preserve"><value>已啟用遇到第一個錯誤時停止 - 佇列已停止。</value></data>
+  <data name="Msg_QueueProcessing" xml:space="preserve"><value>({0}/{1}) 正在處理 {2}...</value></data>
+  <data name="Msg_QueueItemDone" xml:space="preserve"><value>({0}/{1}) {2}: {3}</value></data>
+  <data name="Msg_QueueCompleted" xml:space="preserve"><value>完成。</value></data>
+  <data name="Msg_QueueCancelled" xml:space="preserve"><value>已取消安裝過程。</value></data>
+  <data name="Msg_InstalledStateCheckFailed" xml:space="preserve"><value>無法檢查 {0} 的安裝狀態：{1}</value></data>
+
+  <!-- WinGet Exit Codes -->
+  <data name="Msg_ExitSuccess" xml:space="preserve"><value>成功。</value></data>
+  <data name="Msg_ExitNoApplicationsFound" xml:space="preserve"><value>在 WinGet 來源中找不到此套件。請檢查 Package Id。</value></data>
+  <data name="Msg_ExitAlreadyInstalled" xml:space="preserve"><value>此軟體已安裝在此電腦上。</value></data>
+  <data name="Msg_ExitNoUpgrade" xml:space="preserve"><value>沒有可用的新版本 - 目前版本已是最新版本。</value></data>
+  <data name="Msg_ExitRequiresAdmin" xml:space="preserve"><value>此命令需要系統管理員權限。請以「以系統管理員身分執行」重新啟動應用程式。</value></data>
+  <data name="Msg_ExitAccessDenied" xml:space="preserve"><value>存取遭拒。可能需要系統管理員權限。</value></data>
+  <data name="Msg_ExitProhibitsElevation" xml:space="preserve"><value>此軟體的安裝程式不允許在系統管理員權限下執行。請以一般使用者身分執行。</value></data>
+  <data name="Msg_ExitDownloadFailed" xml:space="preserve"><value>下載安裝程式失敗。請檢查網路連線後再試一次。</value></data>
+  <data name="Msg_ExitZeroByteFile" xml:space="preserve"><value>下載的檔案為空（0 位元組）。網路連線可能出現問題。</value></data>
+  <data name="Msg_ExitNoNetwork" xml:space="preserve"><value>此軟體需要網際網路連線才能安裝。</value></data>
+  <data name="Msg_ExitHashMismatch" xml:space="preserve"><value>下載檔案的雜湊值與資訊清單不符 - 為求安全已停止。</value></data>
+  <data name="Msg_ExitNoApplicableInstaller" xml:space="preserve"><value>找不到適用於此系統架構或 Windows 版本的安裝程式。</value></data>
+  <data name="Msg_ExitNoSources" xml:space="preserve"><value>WinGet 尚未定義任何來源。請執行「winget source reset --force」後再試一次。</value></data>
+  <data name="Msg_ExitSourceOpenFailed" xml:space="preserve"><value>無法開啟 WinGet 來源。請檢查網路連線。</value></data>
+  <data name="Msg_ExitServiceUnavailable" xml:space="preserve"><value>所需的服務忙碌或無法使用。請稍後再試。</value></data>
+  <data name="Msg_ExitMultipleFound" xml:space="preserve"><value>有多個套件符合條件。請使用更精確的 Package Id。</value></data>
+  <data name="Msg_ExitInstallInProgress" xml:space="preserve"><value>另一個安裝程序正在進行中。請稍後再試。</value></data>
+  <data name="Msg_ExitPackageInUse" xml:space="preserve"><value>軟體正在執行或檔案正在使用中。請關閉應用程式後再試一次。</value></data>
+  <data name="Msg_ExitMissingDependency" xml:space="preserve"><value>系統缺少此套件所需的相依元件。</value></data>
+  <data name="Msg_ExitDiskFull" xml:space="preserve"><value>磁碟空間已滿。請釋放空間後再試一次。</value></data>
+  <data name="Msg_ExitInsufficientMemory" xml:space="preserve"><value>記憶體不足以進行安裝。請關閉部分應用程式後再試一次。</value></data>
+  <data name="Msg_ExitRebootRequired" xml:space="preserve"><value>安裝已完成，但需要重新啟動電腦才能生效。</value></data>
+  <data name="Msg_ExitCancelled" xml:space="preserve"><value>安裝程序已取消。</value></data>
+  <data name="Msg_ExitDowngrade" xml:space="preserve"><value>電腦上已安裝較新的版本。</value></data>
+  <data name="Msg_ExitBlockedByPolicy" xml:space="preserve"><value>遭到組織原則（群組原則）封鎖。</value></data>
+  <data name="Msg_ExitInvalidArguments" xml:space="preserve"><value>命令列參數無效 - 此電腦上的 WinGet 版本可能過舊。</value></data>
+  <data name="Msg_ExitCustomInstallerError" xml:space="preserve"><value>軟體的安裝程式回傳自訂錯誤。</value></data>
+  <data name="Msg_ExitInternalError" xml:space="preserve"><value>WinGet 發生內部錯誤。</value></data>
+  <data name="Msg_ExitCommandFailed" xml:space="preserve"><value>WinGet 執行命令失敗。</value></data>
+  <data name="Msg_ExitUnknown" xml:space="preserve"><value>WinGet 結束，錯誤碼為 0x{0:X8}。</value></data>
+
+  <!-- Data / Storage -->
+  <data name="Msg_SeedCatalogCreated" xml:space="preserve"><value>已在 {0} 建立範本清單。</value></data>
+  <data name="Msg_CatalogFileCorrupted" xml:space="preserve"><value>無法讀取位於 {0} 的資料檔案；保留原檔案，不以範本資料覆寫。</value></data>
+  <data name="Msg_CatalogReadFailed" xml:space="preserve"><value>無法載入位於 {0} 的資料；停止載入以避免覆寫未讀取的資料。</value></data>
+  <data name="Msg_CatalogExported" xml:space="preserve"><value>已將清單匯出至 {0}。</value></data>
+  <data name="Msg_CatalogImported" xml:space="preserve"><value>已從 {1} 匯入 {0} 個設定檔。</value></data>
+  <data name="Msg_ImportFileNotFound" xml:space="preserve"><value>找不到要匯入的檔案。</value></data>
+  <data name="Msg_ImportInvalidJson" xml:space="preserve"><value>無效的 JSON 檔案：{0}</value></data>
+  <data name="Msg_ImportNoProfiles" xml:space="preserve"><value>檔案中未包含任何設定檔。</value></data>
+  <data name="Msg_PackageDroppedInvalidId" xml:space="preserve"><value>已略過包含無效 Package Id 的項目：{0}</value></data>
+  <data name="Msg_SaveFailed" xml:space="preserve"><value>儲存失敗：{0}</value></data>
+
+  <!-- WinGet / Environment -->
+  <data name="Msg_WingetDetected" xml:space="preserve"><value>已偵測到 WinGet {0}。</value></data>
+  <data name="Msg_WingetNotFound" xml:space="preserve"><value>在此電腦上找不到 WinGet。請從 Microsoft Store 安裝「App Installer」（或從 GitHub: microsoft/winget-cli/releases 下載官方 .msixbundle）後重新開啟應用程式。</value></data>
+  <data name="Msg_WingetCheckFailed" xml:space="preserve"><value>無法檢查 WinGet：{0}</value></data>
+  <data name="Msg_WingetReturnedError" xml:space="preserve"><value>成功執行 winget 但傳回錯誤：{0}</value></data>
+  <data name="Msg_WingetSearchFailed" xml:space="preserve"><value>WinGet 搜尋失敗。</value></data>
+  <data name="Msg_WingetSearchTimeout" xml:space="preserve"><value>WinGet 在搜尋時沒有回應。請檢查網路連線後再試一次。</value></data>
+  <data name="Msg_InstalledListFailed" xml:space="preserve"><value>無法取得已安裝軟體清單：{0}</value></data>
+  <data name="Msg_InstalledListTimeout" xml:space="preserve"><value>WinGet 在列出已安裝軟體時沒有回應。</value></data>
+
+  <!-- Scan and backup -->
+  <data name="Msg_ScanStarted" xml:space="preserve"><value>開始掃描此電腦上已安裝的軟體...</value></data>
+  <data name="Msg_ScanFinished" xml:space="preserve"><value>已掃描此電腦上的 {0} 個軟體。</value></data>
+  <data name="Msg_ScanFailed" xml:space="preserve"><value>軟體掃描失敗：{0}</value></data>
+
+  <!-- General logging -->
+  <data name="Msg_CommandSucceeded" xml:space="preserve"><value>命令執行成功。</value></data>
+  <data name="Msg_CommandFailed" xml:space="preserve"><value>命令執行失敗。</value></data>
+  <data name="Msg_AppStarted" xml:space="preserve"><value>應用程式已啟動。</value></data>
+  <data name="Msg_UnhandledError" xml:space="preserve"><value>發生非預期的錯誤：{0}</value></data>
+</root>

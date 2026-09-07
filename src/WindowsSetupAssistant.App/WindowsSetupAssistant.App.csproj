@@ -44,4 +44,10 @@
     <ProjectReference Include="..\WindowsSetupAssistant.Infrastructure\WindowsSetupAssistant.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Update="Localization\Strings.resx">
+      <LogicalName>WindowsSetupAssistant.App.Localization.Strings.resources</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

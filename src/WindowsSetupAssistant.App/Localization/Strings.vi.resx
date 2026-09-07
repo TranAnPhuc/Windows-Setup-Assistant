@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a2c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a2c561934e089</value></resheader>
+
+  <!-- UI Keys -->
+  <data name="Ui_AppTitle" xml:space="preserve"><value>Windows Setup Assistant</value></data>
+  <data name="Ui_AppSubtitle" xml:space="preserve"><value>Cài đặt hàng loạt phần mềm bằng WinGet sau khi cài lại Windows</value></data>
+  <data name="Ui_ProfileLabel" xml:space="preserve"><value>Cấu hình:</value></data>
+  <data name="Ui_ProfileNew" xml:space="preserve"><value>Tạo mới</value></data>
+  <data name="Ui_ProfileRename" xml:space="preserve"><value>Đổi tên</value></data>
+  <data name="Ui_ProfileDuplicate" xml:space="preserve"><value>Nhân bản</value></data>
+  <data name="Ui_ProfileDelete" xml:space="preserve"><value>Xoá</value></data>
+  <data name="Ui_ThemeDark" xml:space="preserve"><value>Giao diện tối</value></data>
+  <data name="Ui_ThemeLight" xml:space="preserve"><value>Giao diện sáng</value></data>
+  <data name="Ui_LanguageLabel" xml:space="preserve"><value>Ngôn ngữ:</value></data>
+
+  <!-- Validation -->
+  <data name="Msg_PackageIdEmpty" xml:space="preserve"><value>Package Id không được để trống.</value></data>
+  <data name="Msg_PackageIdTooLong" xml:space="preserve"><value>Package Id quá dài (tối đa {0} ký tự).</value></data>
+  <data name="Msg_PackageIdStartsWithDash" xml:space="preserve"><value>Package Id không được bắt đầu bằng dấu gạch ngang '-' vì sẽ bị nhận nhầm là tham số dòng lệnh.</value></data>
+  <data name="Msg_PackageIdInvalidCharacters" xml:space="preserve"><value>Package Id chỉ được chứa chữ cái, chữ số và các dấu . _ - + (ví dụ Google.Chrome).</value></data>
+  <data name="Msg_SearchQueryEmpty" xml:space="preserve"><value>Từ khoá tìm kiếm không được để trống.</value></data>
+  <data name="Msg_SearchQueryTooLong" xml:space="preserve"><value>Từ khoá tìm kiếm quá dài (tối đa {0} ký tự).</value></data>
+  <data name="Msg_SearchQueryStartsWithDash" xml:space="preserve"><value>Từ khoá tìm kiếm không được bắt đầu bằng dấu gạch ngang '-' vì sẽ bị nhận nhầm là tham số dòng lệnh.</value></data>
+  <data name="Msg_SearchQueryControlCharacters" xml:space="preserve"><value>Từ khoá tìm kiếm chứa ký tự điều khiển không hợp lệ.</value></data>
+
+  <!-- Installation outcomes & messages -->
+  <data name="Msg_InstallSucceeded" xml:space="preserve"><value>Cài đặt thành công.</value></data>
+  <data name="Msg_UpgradeSucceeded" xml:space="preserve"><value>Nâng cấp thành công.</value></data>
+  <data name="Msg_SkippedAlreadyInstalled" xml:space="preserve"><value>Đã được cài sẵn - bỏ qua theo lựa chọn của bạn.</value></data>
+  <data name="Msg_InstallFailed" xml:space="preserve"><value>Cài đặt thất bại.</value></data>
+  <data name="Msg_CancelledBeforeStart" xml:space="preserve"><value>Bị huỷ trước khi bắt đầu.</value></data>
+  <data name="Msg_CancelledByUser" xml:space="preserve"><value>Người dùng đã huỷ quá trình cài đặt.</value></data>
+  <data name="Msg_UnexpectedError" xml:space="preserve"><value>Lỗi không mong đợi: {0}</value></data>
+  <data name="Msg_WingetNotResponding" xml:space="preserve"><value>WinGet không phản hồi. Hãy thử mở Terminal và chạy lệnh 'winget --version'.</value></data>
+  <data name="Msg_WingetExecutableMissing" xml:space="preserve"><value>Không tìm thấy winget.exe. Hãy cài Microsoft App Installer trước.</value></data>
+
+  <!-- Installation queue -->
+  <data name="Msg_QueueStarted" xml:space="preserve"><value>Bắt đầu hàng đợi cài đặt: {0} phần mềm.</value></data>
+  <data name="Msg_QueueFinished" xml:space="preserve"><value>Kết thúc hàng đợi sau {0}s: {1} thành công, {2} bỏ qua, {3} thất bại, {4} bị huỷ.</value></data>
+  <data name="Msg_QueueStoppedOnFirstError" xml:space="preserve"><value>Đã bật tuỳ chọn dừng khi gặp lỗi đầu tiên - hàng đợi dừng lại.</value></data>
+  <data name="Msg_QueueProcessing" xml:space="preserve"><value>({0}/{1}) Đang xử lý {2}...</value></data>
+  <data name="Msg_QueueItemDone" xml:space="preserve"><value>({0}/{1}) {2}: {3}</value></data>
+  <data name="Msg_QueueCompleted" xml:space="preserve"><value>Hoàn tất.</value></data>
+  <data name="Msg_QueueCancelled" xml:space="preserve"><value>Đã huỷ quá trình cài đặt.</value></data>
+  <data name="Msg_InstalledStateCheckFailed" xml:space="preserve"><value>Không kiểm tra được trạng thái cài đặt của {0}: {1}</value></data>
+
+  <!-- WinGet Exit Codes -->
+  <data name="Msg_ExitSuccess" xml:space="preserve"><value>Thành công.</value></data>
+  <data name="Msg_ExitNoApplicationsFound" xml:space="preserve"><value>Không tìm thấy gói này trong nguồn WinGet. Hãy kiểm tra lại Package Id.</value></data>
+  <data name="Msg_ExitAlreadyInstalled" xml:space="preserve"><value>Phần mềm đã được cài trên máy.</value></data>
+  <data name="Msg_ExitNoUpgrade" xml:space="preserve"><value>Không có bản cập nhật mới - phiên bản hiện tại đã là mới nhất.</value></data>
+  <data name="Msg_ExitRequiresAdmin" xml:space="preserve"><value>Lệnh này cần quyền Administrator. Hãy chạy lại ứng dụng bằng 'Run as administrator'.</value></data>
+  <data name="Msg_ExitAccessDenied" xml:space="preserve"><value>Bị từ chối quyền truy cập. Có thể cần quyền Administrator.</value></data>
+  <data name="Msg_ExitProhibitsElevation" xml:space="preserve"><value>Trình cài đặt của phần mềm này không cho phép chạy dưới quyền Administrator. Hãy chạy ứng dụng ở chế độ người dùng thường.</value></data>
+  <data name="Msg_ExitDownloadFailed" xml:space="preserve"><value>Tải trình cài đặt thất bại. Kiểm tra kết nối mạng rồi thử lại.</value></data>
+  <data name="Msg_ExitZeroByteFile" xml:space="preserve"><value>File tải về rỗng (0 byte). Kết nối mạng có thể đang gặp sự cố.</value></data>
+  <data name="Msg_ExitNoNetwork" xml:space="preserve"><value>Phần mềm này cần kết nối Internet để cài đặt.</value></data>
+  <data name="Msg_ExitHashMismatch" xml:space="preserve"><value>Mã băm của file tải về không khớp với manifest - dừng để đảm bảo an toàn.</value></data>
+  <data name="Msg_ExitNoApplicableInstaller" xml:space="preserve"><value>Không có trình cài đặt phù hợp với hệ thống này (kiến trúc/phiên bản Windows).</value></data>
+  <data name="Msg_ExitNoSources" xml:space="preserve"><value>WinGet chưa có nguồn nào. Chạy 'winget source reset --force' rồi thử lại.</value></data>
+  <data name="Msg_ExitSourceOpenFailed" xml:space="preserve"><value>Không mở được nguồn WinGet. Kiểm tra kết nối mạng.</value></data>
+  <data name="Msg_ExitServiceUnavailable" xml:space="preserve"><value>Dịch vụ cần thiết đang bận hoặc không sẵn sàng. Thử lại sau.</value></data>
+  <data name="Msg_ExitMultipleFound" xml:space="preserve"><value>Có nhiều gói khớp với tiêu chí. Hãy dùng Package Id chính xác hơn.</value></data>
+  <data name="Msg_ExitInstallInProgress" xml:space="preserve"><value>Đang có một tiến trình cài đặt khác chạy. Thử lại sau.</value></data>
+  <data name="Msg_ExitPackageInUse" xml:space="preserve"><value>Phần mềm đang chạy hoặc file đang được sử dụng. Hãy đóng ứng dụng rồi thử lại.</value></data>
+  <data name="Msg_ExitMissingDependency" xml:space="preserve"><value>Thiếu thành phần phụ thuộc trên hệ thống.</value></data>
+  <data name="Msg_ExitDiskFull" xml:space="preserve"><value>Ổ đĩa đã đầy. Giải phóng dung lượng rồi thử lại.</value></data>
+  <data name="Msg_ExitInsufficientMemory" xml:space="preserve"><value>Không đủ bộ nhớ để cài đặt. Đóng bớt ứng dụng rồi thử lại.</value></data>
+  <data name="Msg_ExitRebootRequired" xml:space="preserve"><value>Cài đặt xong nhưng cần khởi động lại máy để hoàn tất.</value></data>
+  <data name="Msg_ExitCancelled" xml:space="preserve"><value>Quá trình cài đặt đã bị huỷ.</value></data>
+  <data name="Msg_ExitDowngrade" xml:space="preserve"><value>Trên máy đã có phiên bản mới hơn.</value></data>
+  <data name="Msg_ExitBlockedByPolicy" xml:space="preserve"><value>Bị chặn bởi chính sách của tổ chức (Group Policy).</value></data>
+  <data name="Msg_ExitInvalidArguments" xml:space="preserve"><value>Tham số dòng lệnh không hợp lệ - có thể phiên bản WinGet trên máy quá cũ.</value></data>
+  <data name="Msg_ExitCustomInstallerError" xml:space="preserve"><value>Trình cài đặt của phần mềm báo lỗi riêng.</value></data>
+  <data name="Msg_ExitInternalError" xml:space="preserve"><value>WinGet gặp lỗi nội bộ.</value></data>
+  <data name="Msg_ExitCommandFailed" xml:space="preserve"><value>WinGet thực thi lệnh thất bại.</value></data>
+  <data name="Msg_ExitUnknown" xml:space="preserve"><value>WinGet kết thúc với mã lỗi 0x{0:X8}.</value></data>
+
+  <!-- Data / Storage -->
+  <data name="Msg_SeedCatalogCreated" xml:space="preserve"><value>Khởi tạo danh sách mẫu tại {0}.</value></data>
+  <data name="Msg_CatalogFileCorrupted" xml:space="preserve"><value>File dữ liệu không đọc được tại {0}; giữ nguyên file cũ, không ghi đè bằng dữ liệu mẫu.</value></data>
+  <data name="Msg_CatalogReadFailed" xml:space="preserve"><value>Không tải được dữ liệu tại {0}; dừng tải để tránh ghi đè dữ liệu chưa đọc được.</value></data>
+  <data name="Msg_CatalogExported" xml:space="preserve"><value>Đã xuất danh sách ra {0}.</value></data>
+  <data name="Msg_CatalogImported" xml:space="preserve"><value>Đã nhập {0} cấu hình từ {1}.</value></data>
+  <data name="Msg_ImportFileNotFound" xml:space="preserve"><value>Không tìm thấy file cần nhập.</value></data>
+  <data name="Msg_ImportInvalidJson" xml:space="preserve"><value>File JSON không hợp lệ: {0}</value></data>
+  <data name="Msg_ImportNoProfiles" xml:space="preserve"><value>File không chứa cấu hình nào.</value></data>
+  <data name="Msg_PackageDroppedInvalidId" xml:space="preserve"><value>Bỏ qua mục có Package Id không hợp lệ: {0}</value></data>
+  <data name="Msg_SaveFailed" xml:space="preserve"><value>Lưu thất bại: {0}</value></data>
+
+  <!-- WinGet / Environment -->
+  <data name="Msg_WingetDetected" xml:space="preserve"><value>Đã phát hiện WinGet {0}.</value></data>
+  <data name="Msg_WingetNotFound" xml:space="preserve"><value>Không tìm thấy WinGet trên máy này. Hãy cài 'App Installer' từ Microsoft Store (hoặc tải bản .msixbundle chính thức từ GitHub: microsoft/winget-cli/releases) rồi mở lại ứng dụng.</value></data>
+  <data name="Msg_WingetCheckFailed" xml:space="preserve"><value>Không kiểm tra được WinGet: {0}</value></data>
+  <data name="Msg_WingetReturnedError" xml:space="preserve"><value>Chạy được winget nhưng trả về lỗi: {0}</value></data>
+  <data name="Msg_WingetSearchFailed" xml:space="preserve"><value>Tìm kiếm WinGet thất bại.</value></data>
+  <data name="Msg_WingetSearchTimeout" xml:space="preserve"><value>WinGet không phản hồi khi tìm kiếm. Kiểm tra kết nối mạng rồi thử lại.</value></data>
+  <data name="Msg_InstalledListFailed" xml:space="preserve"><value>Không lấy được danh sách phần mềm đã cài: {0}</value></data>
+  <data name="Msg_InstalledListTimeout" xml:space="preserve"><value>WinGet không phản hồi khi liệt kê phần mềm đã cài.</value></data>
+
+  <!-- Scan and backup -->
+  <data name="Msg_ScanStarted" xml:space="preserve"><value>Bắt đầu quét các phần mềm đã cài trên máy...</value></data>
+  <data name="Msg_ScanFinished" xml:space="preserve"><value>Đã quét {0} phần mềm trên máy.</value></data>
+  <data name="Msg_ScanFailed" xml:space="preserve"><value>Quét phần mềm thất bại: {0}</value></data>
+
+  <!-- General logging -->
+  <data name="Msg_CommandSucceeded" xml:space="preserve"><value>Lệnh thực thi thành công.</value></data>
+  <data name="Msg_CommandFailed" xml:space="preserve"><value>Lệnh thực thi thất bại.</value></data>
+  <data name="Msg_AppStarted" xml:space="preserve"><value>Ứng dụng đã khởi động.</value></data>
+  <data name="Msg_UnhandledError" xml:space="preserve"><value>Đã xảy ra lỗi không mong đợi: {0}</value></data>
+</root>
