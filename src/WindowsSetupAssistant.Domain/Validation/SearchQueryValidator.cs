@@ -1,3 +1,4 @@
+using WindowsSetupAssistant.Domain.Localization;
 namespace WindowsSetupAssistant.Domain.Validation;
 
 /// <summary>
@@ -8,11 +9,11 @@ public static class SearchQueryValidator
 {
     public const int MaxLength = 100;
 
-    public static bool TryValidate(string? query, out string error)
+    public static bool TryValidate(string? query, out LocalizedText error)
     {
         if (string.IsNullOrWhiteSpace(query))
         {
-            error = "Từ khoá tìm kiếm không được để trống.";
+            error = LocalizedText.Of(MessageKeys.SearchQueryEmpty);
             return false;
         }
 
@@ -20,23 +21,23 @@ public static class SearchQueryValidator
 
         if (trimmed.Length > MaxLength)
         {
-            error = $"Từ khoá quá dài (tối đa {MaxLength} ký tự).";
+            error = LocalizedText.Of(MessageKeys.SearchQueryTooLong, MaxLength);
             return false;
         }
 
         if (trimmed.StartsWith('-'))
         {
-            error = "Từ khoá không được bắt đầu bằng dấu '-'.";
+            error = LocalizedText.Of(MessageKeys.SearchQueryStartsWithDash);
             return false;
         }
 
         if (trimmed.Any(char.IsControl))
         {
-            error = "Từ khoá chứa ký tự điều khiển không hợp lệ.";
+            error = LocalizedText.Of(MessageKeys.SearchQueryControlCharacters);
             return false;
         }
 
-        error = string.Empty;
+        error = LocalizedText.Raw(string.Empty);
         return true;
     }
 
@@ -44,7 +45,7 @@ public static class SearchQueryValidator
     {
         if (!TryValidate(query, out var error))
         {
-            throw new ArgumentException(error, nameof(query));
+            throw new LocalizedException(error);
         }
 
         return query!.Trim();

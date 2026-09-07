@@ -1,3 +1,4 @@
+using WindowsSetupAssistant.Domain.Localization;
 using WindowsSetupAssistant.Application.Models;
 using WindowsSetupAssistant.Application.Services;
 using WindowsSetupAssistant.Domain.Entities;
@@ -94,7 +95,8 @@ public class InstallationQueueServiceTests
 
         var failed = summary.Results.Single(r => r.PackageId == "Git.Git");
         Assert.Equal(InstallOutcome.Failed, failed.Outcome);
-        Assert.Contains("Mất kết nối mạng", failed.Message);
+        Assert.Equal(MessageKeys.UnexpectedError, failed.Message.Key);
+        Assert.Contains("Mất kết nối mạng", failed.Message.Arguments.Select(a => a?.ToString()));
 
         // Gói cuối cùng vẫn được cài.
         Assert.Contains("7zip.7zip", _winget.InstallCalls);
@@ -171,7 +173,7 @@ public class InstallationQueueServiceTests
 
         Assert.Equal(new[] { "Git.Git" }, _winget.InstallCalls);
         Assert.Equal(1, summary.SucceededCount);
-        Assert.Contains(_logger.Warnings, w => w.Message.Contains("Không kiểm tra được"));
+        Assert.Contains(_logger.Warnings, w => w.Message.Key == MessageKeys.InstalledStateCheckFailed);
     }
 
     [Fact]
@@ -265,8 +267,8 @@ public class InstallationQueueServiceTests
     {
         await CreateQueue().RunAsync(ThreePackages(), new InstallationOptions());
 
-        Assert.Contains(_logger.Entries, e => e.Message.Contains("Bắt đầu hàng đợi"));
-        Assert.Contains(_logger.Entries, e => e.Message.Contains("Kết thúc hàng đợi"));
+        Assert.Contains(_logger.Entries, e => e.Message.Key == MessageKeys.QueueStarted);
+        Assert.Contains(_logger.Entries, e => e.Message.Key == MessageKeys.QueueFinished);
     }
 
     /// <summary>IProgress gọi callback ngay lập tức, giúp test không phụ thuộc thời gian.</summary>

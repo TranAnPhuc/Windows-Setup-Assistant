@@ -1,3 +1,4 @@
+using WindowsSetupAssistant.Domain.Localization;
 using System.Diagnostics;
 using WindowsSetupAssistant.Application.Abstractions;
 using WindowsSetupAssistant.Application.Models;
@@ -43,8 +44,7 @@ public sealed class InstallationQueueService
         var stopwatch = Stopwatch.StartNew();
         var cancelled = false;
 
-        _logger.Information($"Bắt đầu hàng đợi cài đặt: {ordered.Count} phần mềm. " +
-                            $"Gói đã tồn tại sẽ được {(options.ExistingPackageAction == ExistingPackageAction.Upgrade ? "NÂNG CẤP" : "BỎ QUA")}.");
+        _logger.Information(LocalizedText.Of(MessageKeys.QueueStarted, ordered.Count));
 
         for (var index = 0; index < ordered.Count; index++)
         {
@@ -58,7 +58,7 @@ public sealed class InstallationQueueService
             if (cancelled)
             {
                 // Ghi nhận các gói còn lại là "đã huỷ" để người dùng thấy rõ và có thể thử lại sau.
-                results.Add(CreateResult(package, InstallOutcome.Cancelled, "Bị huỷ trước khi bắt đầu."));
+                results.Add(CreateResult(package, InstallOutcome.Cancelled, LocalizedText.Of(MessageKeys.CancelledBeforeStart)));
                 continue;
             }
 
@@ -67,7 +67,7 @@ public sealed class InstallationQueueService
                 CompletedCount = index,
                 TotalCount = ordered.Count,
                 CurrentPackage = package,
-                StatusMessage = $"({index + 1}/{ordered.Count}) Đang xử lý {package.Name}..."
+                StatusMessage = $"({index + 1}/{ordered.Count}) {package.Name}"
             });
 
             InstallationResult result;
@@ -79,12 +79,12 @@ public sealed class InstallationQueueService
             catch (OperationCanceledException)
             {
                 cancelled = true;
-                result = CreateResult(package, InstallOutcome.Cancelled, "Người dùng đã huỷ quá trình cài đặt.");
+                result = CreateResult(package, InstallOutcome.Cancelled, LocalizedText.Of(MessageKeys.CancelledByUser));
             }
             catch (Exception ex)
             {
                 // Bắt mọi lỗi ngoài dự kiến để hàng đợi vẫn chạy tiếp gói sau.
-                result = CreateResult(package, InstallOutcome.Failed, $"Lỗi không mong đợi: {ex.Message}");
+                result = CreateResult(package, InstallOutcome.Failed, LocalizedText.Of(MessageKeys.UnexpectedError, ex.Message));
             }
 
             // winget cũng có thể tự báo "đã bị huỷ" qua exit code - coi như người dùng đã huỷ.
@@ -101,13 +101,13 @@ public sealed class InstallationQueueService
                 CompletedCount = index + 1,
                 TotalCount = ordered.Count,
                 CurrentPackage = package,
-                StatusMessage = $"({index + 1}/{ordered.Count}) {package.Name}: {result.Message}",
+                StatusMessage = $"({index + 1}/{ordered.Count}) {package.Name}",
                 CompletedResult = result
             });
 
             if (result.Outcome == InstallOutcome.Failed && options.StopOnFirstError)
             {
-                _logger.Warning("Đã bật tuỳ chọn dừng khi gặp lỗi đầu tiên - hàng đợi dừng lại.");
+                _logger.Warning(LocalizedText.Of(MessageKeys.QueueStoppedOnFirstError));
                 break;
             }
         }
@@ -121,10 +121,12 @@ public sealed class InstallationQueueService
             TotalDuration = stopwatch.Elapsed
         };
 
-        _logger.Information(
-            $"Kết thúc hàng đợi sau {summary.TotalDuration.TotalSeconds:F1}s: " +
-            $"{summary.SucceededCount} thành công, {summary.SkippedCount} bỏ qua, " +
-            $"{summary.FailedCount} thất bại, {summary.CancelledCount} bị huỷ.");
+        _logger.Information(LocalizedText.Of(MessageKeys.QueueFinished,
+            $"{summary.TotalDuration.TotalSeconds:F1}",
+            summary.SucceededCount,
+            summary.SkippedCount,
+            summary.FailedCount,
+            summary.CancelledCount));
 
         progress?.Report(new InstallationProgressUpdate
         {
@@ -152,7 +154,7 @@ public sealed class InstallationQueueService
 
         if (isInstalled && options.ExistingPackageAction == ExistingPackageAction.Skip)
         {
-            return CreateResult(package, InstallOutcome.Skipped, "Đã được cài sẵn - bỏ qua theo lựa chọn của bạn.");
+            return CreateResult(package, InstallOutcome.Skipped, LocalizedText.Of(MessageKeys.SkippedAlreadyInstalled));
         }
 
         if (isInstalled && options.ExistingPackageAction == ExistingPackageAction.Upgrade)
@@ -184,12 +186,12 @@ public sealed class InstallationQueueService
         catch (Exception ex)
         {
             // Không kiểm tra được thì coi như chưa cài: winget sẽ tự báo "already installed" nếu trùng.
-            _logger.Warning($"Không kiểm tra được trạng thái cài đặt của {package.PackageId}: {ex.Message}");
+            _logger.Warning(LocalizedText.Of(MessageKeys.InstalledStateCheckFailed, package.PackageId, ex.Message));
             return false;
         }
     }
 
-    private static InstallationResult CreateResult(SoftwarePackage package, InstallOutcome outcome, string message) =>
+    private static InstallationResult CreateResult(SoftwarePackage package, InstallOutcome outcome, LocalizedText message) =>
         new()
         {
             PackageId = package.PackageId,
@@ -200,7 +202,7 @@ public sealed class InstallationQueueService
 
     private void LogResult(InstallationResult result)
     {
-        var text = $"{result.DisplayName} ({result.PackageId}): {result.Outcome} - {result.Message}";
+        var text = $"{result.DisplayName} ({result.PackageId}): {result.Outcome} - {result.Message.Key}";
 
         if (result.Outcome == InstallOutcome.Failed)
         {

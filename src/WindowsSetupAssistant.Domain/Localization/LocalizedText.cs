@@ -10,6 +10,8 @@ public sealed class LocalizedText
 {
     private static readonly object?[] NoArguments = Array.Empty<object?>();
 
+    public static Func<LocalizedText, string>? DefaultFormatter { get; set; }
+
     private LocalizedText(string key, object?[] arguments, bool isRaw)
     {
         Key = key;
@@ -42,5 +44,5 @@ public sealed class LocalizedText
         return new LocalizedText(text, NoArguments, isRaw: true);
     }
 
-    public override string ToString() => Key;
+    public override string ToString() => DefaultFormatter?.Invoke(this) ?? Key;
 }

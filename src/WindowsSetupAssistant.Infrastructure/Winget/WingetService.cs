@@ -1,3 +1,4 @@
+using WindowsSetupAssistant.Domain.Localization;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -213,14 +214,14 @@ public sealed partial class WingetService : IWingetService
         {
             safeId = PackageIdValidator.EnsureValid(package.PackageId);
         }
-        catch (ArgumentException ex)
+        catch (LocalizedException ex)
         {
             return new InstallationResult
             {
                 PackageId = package.PackageId,
                 DisplayName = DisplayNameOf(package),
                 Outcome = InstallOutcome.Failed,
-                Message = ex.Message,
+                Message = ex.LocalizedMessage,
                 StartedAt = startedAt,
                 Duration = stopwatch.Elapsed
             };
@@ -259,7 +260,7 @@ public sealed partial class WingetService : IWingetService
                 PackageId = safeId,
                 DisplayName = DisplayNameOf(package),
                 Outcome = InstallOutcome.Failed,
-                Message = "Không tìm thấy winget.exe. Hãy cài Microsoft App Installer trước.",
+                Message = LocalizedText.Of(MessageKeys.WingetExecutableMissing),
                 Command = ProcessRunner.FormatCommand(_options.ExecutableName, arguments),
                 StartedAt = startedAt,
                 Duration = stopwatch.Elapsed
@@ -274,7 +275,7 @@ public sealed partial class WingetService : IWingetService
         if (result.TimedOut)
         {
             return Build(InstallOutcome.Failed,
-                $"WinGet không phản hồi sau {_options.InstallTimeout.TotalMinutes:F0} phút và đã bị dừng.");
+                LocalizedText.Of(MessageKeys.WingetNotResponding, (int)_options.InstallTimeout.TotalMinutes));
         }
 
         var exitCode = result.ExitCode;
@@ -282,28 +283,28 @@ public sealed partial class WingetService : IWingetService
         if (exitCode == WingetExitCodes.Success)
         {
             return Build(isUpgrade ? InstallOutcome.Upgraded : InstallOutcome.Succeeded,
-                isUpgrade ? "Nâng cấp thành công." : "Cài đặt thành công.");
+                LocalizedText.Of(isUpgrade ? MessageKeys.UpgradeSucceeded : MessageKeys.InstallSucceeded));
         }
 
         if (WingetExitCodes.RequiresReboot(exitCode))
         {
             return Build(isUpgrade ? InstallOutcome.Upgraded : InstallOutcome.Succeeded,
-                WingetExitCodes.Describe(exitCode));
+                LocalizedText.Raw(WingetExitCodes.Describe(exitCode)));
         }
 
         if (WingetExitCodes.IsAlreadyInstalled(exitCode) || WingetExitCodes.IsNoUpgradeAvailable(exitCode))
         {
-            return Build(InstallOutcome.AlreadyInstalled, WingetExitCodes.Describe(exitCode));
+            return Build(InstallOutcome.AlreadyInstalled, LocalizedText.Raw(WingetExitCodes.Describe(exitCode)));
         }
 
         if (WingetExitCodes.IsCancelled(exitCode))
         {
-            return Build(InstallOutcome.Cancelled, WingetExitCodes.Describe(exitCode));
+            return Build(InstallOutcome.Cancelled, LocalizedText.Raw(WingetExitCodes.Describe(exitCode)));
         }
 
-        return Build(InstallOutcome.Failed, WingetExitCodes.Describe(exitCode));
+        return Build(InstallOutcome.Failed, LocalizedText.Raw(WingetExitCodes.Describe(exitCode)));
 
-        InstallationResult Build(InstallOutcome outcome, string message) => new()
+        InstallationResult Build(InstallOutcome outcome, LocalizedText message) => new()
         {
             PackageId = safeId,
             DisplayName = DisplayNameOf(package),

@@ -1,3 +1,4 @@
+using WindowsSetupAssistant.Domain.Localization;
 using WindowsSetupAssistant.Application.Abstractions;
 using WindowsSetupAssistant.Domain.Enums;
 using WindowsSetupAssistant.Domain.Models;
@@ -61,13 +62,13 @@ public sealed class AppLogger : IAppLogger
         }
     }
 
-    public void Information(string message, string? command = null, string? details = null) =>
+    public void Information(LocalizedText message, string? command = null, string? details = null) =>
         Log(new LogEntry { Level = LogLevel.Information, Message = message, Command = command, Details = details });
 
-    public void Warning(string message, string? command = null, string? details = null) =>
+    public void Warning(LocalizedText message, string? command = null, string? details = null) =>
         Log(new LogEntry { Level = LogLevel.Warning, Message = message, Command = command, Details = details });
 
-    public void Error(string message, string? command = null, int? exitCode = null, string? details = null) =>
+    public void Error(LocalizedText message, string? command = null, int? exitCode = null, string? details = null) =>
         Log(new LogEntry
         {
             Level = LogLevel.Error,
@@ -76,6 +77,40 @@ public sealed class AppLogger : IAppLogger
             ExitCode = exitCode,
             Details = details
         });
+
+    public void Information(string message, string? command = null, string? details = null) =>
+        Information(LocalizedText.Raw(message), command, details);
+
+    public void Warning(string message, string? command = null, string? details = null) =>
+        Warning(LocalizedText.Raw(message), command, details);
+
+    public void Error(string message, string? command = null, int? exitCode = null, string? details = null) =>
+        Error(LocalizedText.Raw(message), command, exitCode, details);
+
+    private static string Render(LogEntry entry)
+    {
+        var parts = new List<string>
+        {
+            $"[{entry.Timestamp:yyyy-MM-dd HH:mm:ss}] [{entry.Level.ToString().ToUpperInvariant()}] {entry.Message}"
+        };
+
+        if (!string.IsNullOrWhiteSpace(entry.Command))
+        {
+            parts.Add($"    > {entry.Command}");
+        }
+
+        if (entry.ExitCode.HasValue)
+        {
+            parts.Add($"    exit code: {entry.ExitCode.Value} (0x{entry.ExitCode.Value:X8})");
+        }
+
+        if (!string.IsNullOrWhiteSpace(entry.Details))
+        {
+            parts.Add($"    {entry.Details.Replace("\n", "\n    ")}");
+        }
+
+        return string.Join(Environment.NewLine, parts);
+    }
 
     private void WriteToFile(LogEntry entry)
     {
@@ -88,7 +123,7 @@ public sealed class AppLogger : IAppLogger
         {
             lock (_fileLock)
             {
-                File.AppendAllText(_logFilePath, entry + Environment.NewLine);
+                File.AppendAllText(_logFilePath, Render(entry) + Environment.NewLine);
             }
         }
         catch (Exception)

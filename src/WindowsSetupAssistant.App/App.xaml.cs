@@ -1,3 +1,4 @@
+using WindowsSetupAssistant.Domain.Localization;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Threading;
@@ -99,7 +100,7 @@ public partial class App : WpfApplication
         MainWindow = window;
         window.Show();
 
-        logger.Information("Ứng dụng Windows Setup Assistant khởi động.");
+        logger.Information(LocalizedText.Of(MessageKeys.AppStarted));
     }
 
     protected override void OnExit(ExitEventArgs e)

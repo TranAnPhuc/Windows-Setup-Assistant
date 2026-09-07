@@ -106,7 +106,7 @@ public sealed class LogViewModel : ObservableObject, IDisposable
     {
         try
         {
-            var text = string.Join(Environment.NewLine, Entries.Select(e => e.ToString()));
+            var text = string.Join(Environment.NewLine, Entries.Select(FormatLogEntry));
             Clipboard.SetText(text);
             _dialogService.ShowInfo(_localizer[UiKeys.LogDialogTitle], _localizer[UiKeys.LogCopied]);
         }
@@ -141,6 +141,31 @@ public sealed class LogViewModel : ObservableObject, IDisposable
         {
             _dialogService.ShowError(_localizer[UiKeys.LogDialogTitle], _localizer.Format(LocalizedText.Of(UiKeys.LogOpenFolderFailed, ex.Message)));
         }
+    }
+
+    private string FormatLogEntry(LogEntry entry)
+    {
+        var parts = new List<string>
+        {
+            $"[{entry.Timestamp:yyyy-MM-dd HH:mm:ss}] [{entry.Level.ToString().ToUpperInvariant()}] {_localizer.Format(entry.Message)}"
+        };
+
+        if (!string.IsNullOrWhiteSpace(entry.Command))
+        {
+            parts.Add($"    > {entry.Command}");
+        }
+
+        if (entry.ExitCode.HasValue)
+        {
+            parts.Add($"    exit code: {entry.ExitCode.Value} (0x{entry.ExitCode.Value:X8})");
+        }
+
+        if (!string.IsNullOrWhiteSpace(entry.Details))
+        {
+            parts.Add($"    {entry.Details.Replace("\n", "\n    ")}");
+        }
+
+        return string.Join(Environment.NewLine, parts);
     }
 
     public void Dispose()

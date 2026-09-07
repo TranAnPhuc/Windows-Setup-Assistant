@@ -1162,7 +1162,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             lines.Add(_localizer[UiKeys.InstallSummaryFailedPackages]);
             lines.AddRange(summary.Results
                 .Where(r => r.Outcome == InstallOutcome.Failed)
-                .Select(r => $"  - {r.DisplayName}: {r.Message}"));
+                .Select(r => $"  - {r.DisplayName}: {_localizer.Format(r.Message)}"));
             lines.Add(string.Empty);
             lines.Add(_localizer[UiKeys.InstallSummaryFailedHint]);
         }

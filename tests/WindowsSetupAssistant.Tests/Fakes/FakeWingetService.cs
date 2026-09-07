@@ -1,3 +1,4 @@
+using WindowsSetupAssistant.Domain.Localization;
 using WindowsSetupAssistant.Application.Abstractions;
 using WindowsSetupAssistant.Application.Models;
 using WindowsSetupAssistant.Domain.Entities;
@@ -113,6 +114,6 @@ public sealed class FakeWingetService : IWingetService
         Outcome = outcome,
         ExitCode = outcome == InstallOutcome.Failed ? unchecked((int)0x8A150003) : 0,
         Command = $"winget install --id {package.PackageId} (fake)",
-        Message = outcome.ToString()
+        Message = LocalizedText.Raw(outcome.ToString())
     };
 }

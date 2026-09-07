@@ -1,3 +1,4 @@
+using WindowsSetupAssistant.Domain.Localization;
 using WindowsSetupAssistant.Application.Abstractions;
 using WindowsSetupAssistant.Domain.Classification;
 using WindowsSetupAssistant.Domain.Models;
@@ -20,7 +21,7 @@ public sealed class MachineScanService : IMachineScanService
         cancellationToken.ThrowIfCancellationRequested();
         var rows = await _wingetService.GetInstalledPackagesAsync(cancellationToken).ConfigureAwait(false);
         var entries = rows.Select(InstalledSoftwareClassifier.ToEntry).ToList();
-        _logger.Information($"Đã quét {entries.Count} phần mềm trên máy.");
+        _logger.Information(LocalizedText.Of(MessageKeys.ScanFinished, entries.Count));
         return new MachineSnapshot
         {
             MachineName = Environment.MachineName,

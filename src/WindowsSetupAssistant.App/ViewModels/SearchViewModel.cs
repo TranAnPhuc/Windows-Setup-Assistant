@@ -165,7 +165,7 @@ public sealed class SearchViewModel : ObservableObject, IDisposable
     {
         if (!SearchQueryValidator.TryValidate(SearchText, out var validationError))
         {
-            StatusMessage = validationError;
+            StatusMessage = _localizer.Format(validationError);
             return;
         }
 

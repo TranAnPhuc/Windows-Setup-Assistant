@@ -1,3 +1,4 @@
+using WindowsSetupAssistant.Domain.Localization;
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
@@ -53,7 +54,7 @@ public sealed class MainWindowBindingTests
             vm.Results.Add(new InstallationResult
             {
                 PackageId = "Test.Example", DisplayName = "Example", Outcome = InstallOutcome.Failed,
-                ExitCode = -1, Duration = TimeSpan.FromSeconds(2), Message = "Test result only"
+                ExitCode = -1, Duration = TimeSpan.FromSeconds(2), Message = LocalizedText.Raw("Test result only")
             });
             fixture.Logger.Information("Binding test entry", details: "No process is started.");
             var tabs = Assert.Single(WpfTestHost.Descendants<TabControl>(window));

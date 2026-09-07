@@ -1,3 +1,4 @@
+using WindowsSetupAssistant.Domain.Localization;
 using WindowsSetupAssistant.Domain.Enums;
 
 namespace WindowsSetupAssistant.Domain.Models;
@@ -11,7 +12,7 @@ public sealed class LogEntry
 
     public LogLevel Level { get; init; } = LogLevel.Information;
 
-    public string Message { get; init; } = string.Empty;
+    public LocalizedText Message { get; init; } = LocalizedText.Raw(string.Empty);
 
     /// <summary>Câu lệnh liên quan (nếu có), ví dụ: winget install --id Git.Git --exact ...</summary>
     public string? Command { get; init; }
@@ -20,28 +21,5 @@ public sealed class LogEntry
 
     public string? Details { get; init; }
 
-    public override string ToString()
-    {
-        var parts = new List<string>
-        {
-            $"[{Timestamp:yyyy-MM-dd HH:mm:ss}] [{Level.ToString().ToUpperInvariant()}] {Message}"
-        };
 
-        if (!string.IsNullOrWhiteSpace(Command))
-        {
-            parts.Add($"    > {Command}");
-        }
-
-        if (ExitCode.HasValue)
-        {
-            parts.Add($"    exit code: {ExitCode.Value} (0x{ExitCode.Value:X8})");
-        }
-
-        if (!string.IsNullOrWhiteSpace(Details))
-        {
-            parts.Add($"    {Details.Replace("\n", "\n    ")}");
-        }
-
-        return string.Join(Environment.NewLine, parts);
-    }
 }

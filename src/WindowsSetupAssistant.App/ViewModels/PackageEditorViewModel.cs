@@ -96,7 +96,7 @@ public sealed class PackageEditorViewModel : ObservableObject
 
         if (!PackageIdValidator.TryValidate(PackageId, out var error))
         {
-            ErrorMessage = error;
+            ErrorMessage = _localizer.Format(error);
             return false;
         }
 

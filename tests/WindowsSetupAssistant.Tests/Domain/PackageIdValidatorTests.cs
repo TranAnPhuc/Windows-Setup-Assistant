@@ -1,3 +1,4 @@
+using WindowsSetupAssistant.Domain.Localization;
 using WindowsSetupAssistant.Domain.Validation;
 
 namespace WindowsSetupAssistant.Tests.Domain;
@@ -51,7 +52,8 @@ public class PackageIdValidatorTests
         var isValid = PackageIdValidator.TryValidate(tooLong, out var error);
 
         Assert.False(isValid);
-        Assert.Contains("quá dài", error);
+        Assert.Equal(MessageKeys.PackageIdTooLong, error.Key);
+        Assert.Contains(PackageIdValidator.MaxLength, error.Arguments);
     }
 
     [Fact]
@@ -63,7 +65,7 @@ public class PackageIdValidatorTests
     [Fact]
     public void EnsureValid_InvalidId_ThrowsArgumentException()
     {
-        Assert.Throws<ArgumentException>(() => PackageIdValidator.EnsureValid("--source"));
+        Assert.Throws<LocalizedException>(() => PackageIdValidator.EnsureValid("--source"));
     }
 
     [Theory]

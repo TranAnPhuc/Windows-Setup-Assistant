@@ -1,3 +1,4 @@
+using WindowsSetupAssistant.Domain.Localization;
 using System.Text.Json;
 using WindowsSetupAssistant.Domain.Entities;
 using WindowsSetupAssistant.Domain.Enums;
@@ -169,8 +170,8 @@ public class JsonProfileRepositoryTests : IDisposable
         await Assert.ThrowsAnyAsync<System.Text.Json.JsonException>(() => CreateRepository().LoadAsync());
 
         Assert.Equal(corruptedJson, await File.ReadAllTextAsync(_dataFile));
-        Assert.Contains(_logger.Errors, e => e.Message.Contains("không đọc được"));
-        Assert.DoesNotContain(_logger.Entries, e => e.Message.Contains("danh sách mẫu"));
+        Assert.Contains(_logger.Errors, e => e.Message.Key.Contains("không đọc được") || e.Message.Key == MessageKeys.CatalogReadFailed);
+        Assert.DoesNotContain(_logger.Entries, e => e.Message.Key.Contains("danh sách mẫu") || e.Message.Key == MessageKeys.SeedCatalogCreated);
         Assert.Empty(Directory.GetFiles(Path.GetDirectoryName(_dataFile)!, "*.bak"));
         Assert.False(File.Exists(_dataFile + ".tmp"));
     }
@@ -192,7 +193,7 @@ public class JsonProfileRepositoryTests : IDisposable
         Assert.Equal(originalBytes, await File.ReadAllBytesAsync(_dataFile));
         Assert.Empty(Directory.GetFiles(Path.GetDirectoryName(_dataFile)!, "*.bak"));
         Assert.False(File.Exists(_dataFile + ".tmp"));
-        Assert.Contains(_logger.Errors, e => e.Message.Contains("Không tải được dữ liệu"));
+        Assert.Contains(_logger.Errors, e => e.Message.Key.Contains("Không tải được dữ liệu") || e.Message.Key == MessageKeys.CatalogReadFailed);
 
         var recovered = await repository.LoadAsync();
         Assert.Equal("Dữ liệu cần giữ nguyên", recovered.Profiles[0].Name);
@@ -212,7 +213,7 @@ public class JsonProfileRepositoryTests : IDisposable
         Assert.Equal(corrupted, await File.ReadAllTextAsync(_dataFile));
         Assert.Empty(Directory.GetFiles(Path.GetDirectoryName(_dataFile)!, "*.bak"));
         Assert.False(File.Exists(_dataFile + ".tmp"));
-        Assert.DoesNotContain(_logger.Entries, e => e.Message.Contains("danh sách mẫu"));
+        Assert.DoesNotContain(_logger.Entries, e => e.Message.Key.Contains("danh sách mẫu") || e.Message.Key == MessageKeys.SeedCatalogCreated);
     }
 
     [Fact]
@@ -224,7 +225,7 @@ public class JsonProfileRepositoryTests : IDisposable
 
         Assert.True(Directory.Exists(_dataFile));
         Assert.False(File.Exists(_dataFile + ".tmp"));
-        Assert.Contains(_logger.Errors, e => e.Message.Contains("Không tải được dữ liệu"));
+        Assert.Contains(_logger.Errors, e => e.Message.Key.Contains("Không tải được dữ liệu") || e.Message.Key == MessageKeys.CatalogReadFailed);
     }
 
     [Fact]
@@ -255,7 +256,7 @@ public class JsonProfileRepositoryTests : IDisposable
 
         var package = Assert.Single(catalog.Profiles[0].Packages);
         Assert.Equal("Google.Chrome", package.PackageId);
-        Assert.Contains(_logger.Warnings, w => w.Message.Contains("không hợp lệ"));
+        Assert.Contains(_logger.Warnings, w => w.Message.Key.Contains("không hợp lệ") || w.Message.Key == MessageKeys.PackageDroppedInvalidId);
     }
 
     [Fact]

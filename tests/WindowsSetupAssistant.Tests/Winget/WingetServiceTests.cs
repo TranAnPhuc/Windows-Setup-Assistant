@@ -1,3 +1,4 @@
+using WindowsSetupAssistant.Domain.Localization;
 using WindowsSetupAssistant.Domain.Entities;
 using WindowsSetupAssistant.Domain.Enums;
 using WindowsSetupAssistant.Infrastructure.Winget;
@@ -121,7 +122,7 @@ public class WingetServiceTests
 
         Assert.Equal(expected, result.Outcome);
         Assert.Equal(exitCode, result.ExitCode);
-        Assert.False(string.IsNullOrWhiteSpace(result.Message));
+        Assert.False(string.IsNullOrWhiteSpace(result.Message.Key));
     }
 
     [Fact]
@@ -133,7 +134,7 @@ public class WingetServiceTests
         var result = await service.InstallAsync(Chrome());
 
         Assert.Equal(InstallOutcome.Failed, result.Outcome);
-        Assert.Contains("không phản hồi", result.Message);
+        Assert.Equal(MessageKeys.WingetNotResponding, result.Message.Key);
     }
 
     [Fact]
@@ -186,7 +187,7 @@ public class WingetServiceTests
     {
         var (service, runner, _) = CreateService();
 
-        await Assert.ThrowsAsync<ArgumentException>(() => service.SearchAsync("--source malicious"));
+        await Assert.ThrowsAsync<LocalizedException>(() => service.SearchAsync("--source malicious"));
         Assert.Empty(runner.Calls);
     }
 

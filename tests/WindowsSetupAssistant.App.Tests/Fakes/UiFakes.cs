@@ -1,3 +1,4 @@
+using WindowsSetupAssistant.Domain.Localization;
 using WindowsSetupAssistant.App.Services;
 using WindowsSetupAssistant.App.ViewModels;
 using WindowsSetupAssistant.Application.Abstractions;
@@ -50,7 +51,7 @@ internal sealed class UiWingetFake : IWingetService
             DisplayName = package.Name,
             Outcome = InstallOutcome.Succeeded,
             ExitCode = 0,
-            Message = "Fake only: no software installed."
+            Message = LocalizedText.Raw("Fake only: no software installed.")
         };
     }
 

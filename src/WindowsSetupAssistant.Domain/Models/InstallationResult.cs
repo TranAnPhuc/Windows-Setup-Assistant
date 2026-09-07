@@ -1,3 +1,4 @@
+using WindowsSetupAssistant.Domain.Localization;
 using WindowsSetupAssistant.Domain.Enums;
 
 namespace WindowsSetupAssistant.Domain.Models;
@@ -20,7 +21,7 @@ public sealed class InstallationResult
     public string? Command { get; init; }
 
     /// <summary>Thông điệp thân thiện cho người dùng (thành công / lý do lỗi).</summary>
-    public string Message { get; init; } = string.Empty;
+    public LocalizedText Message { get; init; } = LocalizedText.Raw(string.Empty);
 
     public DateTimeOffset StartedAt { get; init; } = DateTimeOffset.Now;
 
