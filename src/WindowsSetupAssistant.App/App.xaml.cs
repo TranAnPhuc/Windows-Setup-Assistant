@@ -81,22 +81,6 @@ public partial class App : WpfApplication
         };
 
         var window = new MainWindow { DataContext = _mainViewModel };
-        var isClosing = false;
-        window.Closing += async (_, args) =>
-        {
-            if (isClosing)
-            {
-                return;
-            }
-
-            args.Cancel = true;
-            if (_mainViewModel is not null && await _mainViewModel.PrepareForCloseAsync())
-            {
-                isClosing = true;
-                window.Close();
-            }
-        };
-
         MainWindow = window;
         window.Show();
 

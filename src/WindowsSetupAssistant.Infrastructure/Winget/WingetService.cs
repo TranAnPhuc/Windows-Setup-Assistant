@@ -65,7 +65,7 @@ public sealed partial class WingetService : IWingetService
 
             var versionText = result.StandardOutput.Trim();
             _detectedVersion = ParseVersion(versionText);
-            _logger.Information($"Đã phát hiện WinGet {versionText}.", result.Command);
+            _logger.Information(LocalizedText.Of(MessageKeys.WingetDetected, versionText), result.Command);
 
             return WingetAvailability.Available(versionText);
         }

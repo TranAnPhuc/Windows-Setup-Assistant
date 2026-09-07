@@ -29,4 +29,10 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Run-UiSmokeTest.ps1
 3. Bấm X lúc đang cài → hộp xác nhận hiện, trả lời **No** → ứng dụng vẫn chạy, hàng đợi không bị huỷ.
 4. Bấm X lần nữa, trả lời **Yes** → ứng dụng thoát và tiến trình winget con bị dừng theo.
 
+## Lưu ý về ngôn ngữ
+
+Kịch bản tìm nút theo nhãn tiếng Việt (`"Bắt đầu cài đặt"`, `"Huỷ cài đặt"`...) nên kịch bản
+tự động ghim `"language": "vi"` vào `Data/app-settings.json` trước khi chạy,
+bảo đảm kịch bản chạy nhất quán trên mọi máy bất kể ngôn ngữ Windows của hệ thống.
+
 Kết thúc phải thấy `Dat: 16 | Truot: 0`.

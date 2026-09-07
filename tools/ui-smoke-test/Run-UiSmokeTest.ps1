@@ -137,6 +137,12 @@ $resolved = (Get-Command winget).Source
 Write-Host ("winget dang tro toi: " + $resolved)
 Check "Dung winget GIA - khong co phan mem that nao duoc cai" ($resolved -like ($fakeBin + "*"))
 
+# Kich ban tim nut theo nhan tieng Viet nen phai ghim ngon ngu, khong phu thuoc may chay.
+$dataDir = Join-Path (Split-Path $appExe) "Data"
+New-Item -ItemType Directory -Path $dataDir -Force | Out-Null
+'{ "theme": "Light", "existingPackageAction": "Skip", "checkInstalledOnStartup": true, "language": "vi" }' |
+    Out-File (Join-Path $dataDir "app-settings.json") -Encoding utf8
+
 Write-Host ""
 Write-Host "=== 1. DONG UNG DUNG KHI KHONG CAI DAT: khong duoc hoi gi ==="
 $proc = Start-Process $appExe -PassThru
