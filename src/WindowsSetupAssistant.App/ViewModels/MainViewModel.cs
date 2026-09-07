@@ -144,7 +144,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             () => RefreshInstalledStatesAsync(showDialog: true),
             () => !_isClosing && !IsInstalling && IsWingetAvailable);
         ScanAndBackupCommand = new AsyncRelayCommand(ScanAndBackupAsync,
-            () => _scanService is not null && _backupExporter is not null && !_isClosing && !IsInstalling && IsWingetAvailable);
+            () => _scanService is not null && _backupExporter is not null && !_isClosing && !IsInstalling);
 
         // --- Cấu hình / dữ liệu ---
         NewProfileCommand = new RelayCommand(NewProfile, () => !_isClosing && !IsInstalling);

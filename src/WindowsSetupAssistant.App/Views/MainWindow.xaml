@@ -208,6 +208,7 @@
                                 <Button Content="Quét &amp; sao lưu máy này"
                                         Command="{Binding ScanAndBackupCommand}"
                                         Margin="0,0,8,0"
+                                        Style="{StaticResource PrimaryButton}"
                                         ToolTip="Quét phần mềm đang có trên máy và lưu lại trước khi cài lại Windows" />
                                 <Button Content="Kiểm tra đã cài"
                                         Command="{Binding RefreshInstalledCommand}"
