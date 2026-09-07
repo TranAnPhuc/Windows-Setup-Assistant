@@ -1,3 +1,5 @@
+using WindowsSetupAssistant.Domain.Localization;
+
 namespace WindowsSetupAssistant.Infrastructure.Winget;
 
 /// <summary>
@@ -75,39 +77,40 @@ public static class WingetExitCodes
     public static bool RequiresAdmin(int exitCode) =>
         exitCode is CommandRequiresAdmin or AccessDenied;
 
-    /// <summary>Thông điệp tiếng Việt dễ hiểu cho người dùng cuối.</summary>
-    public static string Describe(int exitCode) => exitCode switch
+    /// <summary>Thông điệp dưới dạng khoá cho người dùng cuối.</summary>
+    public static LocalizedText Describe(int exitCode) => exitCode switch
     {
-        Success => "Thành công.",
-        NoApplicationsFound => "Không tìm thấy gói này trong nguồn WinGet. Hãy kiểm tra lại Package Id.",
-        PackageAlreadyInstalled or InstallAlreadyInstalled => "Phần mềm đã được cài trên máy.",
-        UpdateNotApplicable or UpgradeVersionNotNewer => "Không có bản cập nhật mới - phiên bản hiện tại đã là mới nhất.",
-        CommandRequiresAdmin => "Lệnh này cần quyền Administrator. Hãy chạy lại ứng dụng bằng 'Run as administrator'.",
-        AccessDenied => "Bị từ chối quyền truy cập. Có thể cần quyền Administrator.",
-        InstallerProhibitsElevation => "Trình cài đặt của phần mềm này không cho phép chạy dưới quyền Administrator. Hãy chạy ứng dụng ở chế độ người dùng thường.",
-        DownloadFailed => "Tải trình cài đặt thất bại. Kiểm tra kết nối mạng rồi thử lại.",
-        InstallerZeroByteFile => "File tải về rỗng (0 byte). Kết nối mạng có thể đang gặp sự cố.",
-        InstallNoNetwork => "Phần mềm này cần kết nối Internet để cài đặt.",
-        InstallerHashMismatch => "Mã băm của file tải về không khớp với manifest - dừng để đảm bảo an toàn.",
-        NoApplicableInstaller => "Không có trình cài đặt phù hợp với hệ thống này (kiến trúc/phiên bản Windows).",
-        NoSourcesDefined => "WinGet chưa có nguồn nào. Chạy 'winget source reset --force' rồi thử lại.",
-        SourceOpenFailed => "Không mở được nguồn WinGet. Kiểm tra kết nối mạng.",
-        ServiceUnavailable => "Dịch vụ cần thiết đang bận hoặc không sẵn sàng. Thử lại sau.",
-        MultipleApplicationsFound => "Có nhiều gói khớp với tiêu chí. Hãy dùng Package Id chính xác hơn.",
-        InstallInProgress => "Đang có một tiến trình cài đặt khác chạy. Thử lại sau.",
-        InstallPackageInUse or InstallFileInUse => "Phần mềm đang chạy hoặc file đang được sử dụng. Hãy đóng ứng dụng rồi thử lại.",
-        InstallMissingDependency => "Thiếu thành phần phụ thuộc trên hệ thống.",
-        InstallDiskFull => "Ổ đĩa đã đầy. Giải phóng dung lượng rồi thử lại.",
-        InstallInsufficientMemory => "Không đủ bộ nhớ để cài đặt. Đóng bớt ứng dụng rồi thử lại.",
+        Success => LocalizedText.Of(MessageKeys.ExitSuccess),
+        NoApplicationsFound => LocalizedText.Of(MessageKeys.ExitNoApplicationsFound),
+        PackageAlreadyInstalled or InstallAlreadyInstalled => LocalizedText.Of(MessageKeys.ExitAlreadyInstalled),
+        UpdateNotApplicable or UpgradeVersionNotNewer => LocalizedText.Of(MessageKeys.ExitNoUpgrade),
+        CommandRequiresAdmin => LocalizedText.Of(MessageKeys.ExitRequiresAdmin),
+        AccessDenied => LocalizedText.Of(MessageKeys.ExitAccessDenied),
+        InstallerProhibitsElevation => LocalizedText.Of(MessageKeys.ExitProhibitsElevation),
+        DownloadFailed => LocalizedText.Of(MessageKeys.ExitDownloadFailed),
+        InstallerZeroByteFile => LocalizedText.Of(MessageKeys.ExitZeroByteFile),
+        InstallNoNetwork => LocalizedText.Of(MessageKeys.ExitNoNetwork),
+        InstallerHashMismatch => LocalizedText.Of(MessageKeys.ExitHashMismatch),
+        NoApplicableInstaller => LocalizedText.Of(MessageKeys.ExitNoApplicableInstaller),
+        NoSourcesDefined => LocalizedText.Of(MessageKeys.ExitNoSources),
+        SourceOpenFailed => LocalizedText.Of(MessageKeys.ExitSourceOpenFailed),
+        ServiceUnavailable => LocalizedText.Of(MessageKeys.ExitServiceUnavailable),
+        MultipleApplicationsFound => LocalizedText.Of(MessageKeys.ExitMultipleFound),
+        InstallInProgress => LocalizedText.Of(MessageKeys.ExitInstallInProgress),
+        InstallPackageInUse or InstallFileInUse => LocalizedText.Of(MessageKeys.ExitPackageInUse),
+        InstallMissingDependency => LocalizedText.Of(MessageKeys.ExitMissingDependency),
+        InstallDiskFull => LocalizedText.Of(MessageKeys.ExitDiskFull),
+        InstallInsufficientMemory => LocalizedText.Of(MessageKeys.ExitInsufficientMemory),
         InstallRebootRequiredToFinish or InstallRebootRequiredForInstall or InstallRebootInitiated =>
-            "Cài đặt xong nhưng cần khởi động lại máy để hoàn tất.",
-        InstallCancelledByUser or CtrlSignalReceived or AppTerminationReceived => "Quá trình cài đặt đã bị huỷ.",
-        InstallDowngrade => "Trên máy đã có phiên bản mới hơn.",
-        BlockedByPolicy or InstallBlockedByPolicy => "Bị chặn bởi chính sách của tổ chức (Group Policy).",
-        InvalidCommandLineArguments => "Tham số dòng lệnh không hợp lệ - có thể phiên bản WinGet trên máy quá cũ.",
-        InstallCustomError => "Trình cài đặt của phần mềm báo lỗi riêng.",
-        InternalError => "WinGet gặp lỗi nội bộ.",
-        CommandFailed => "WinGet thực thi lệnh thất bại.",
-        _ => $"WinGet kết thúc với mã lỗi 0x{exitCode:X8}."
+            LocalizedText.Of(MessageKeys.ExitRebootRequired),
+        InstallCancelledByUser or CtrlSignalReceived or AppTerminationReceived =>
+            LocalizedText.Of(MessageKeys.ExitCancelled),
+        InstallDowngrade => LocalizedText.Of(MessageKeys.ExitDowngrade),
+        BlockedByPolicy or InstallBlockedByPolicy => LocalizedText.Of(MessageKeys.ExitBlockedByPolicy),
+        InvalidCommandLineArguments => LocalizedText.Of(MessageKeys.ExitInvalidArguments),
+        InstallCustomError => LocalizedText.Of(MessageKeys.ExitCustomInstallerError),
+        InternalError => LocalizedText.Of(MessageKeys.ExitInternalError),
+        CommandFailed => LocalizedText.Of(MessageKeys.ExitCommandFailed),
+        _ => LocalizedText.Of(MessageKeys.ExitUnknown, exitCode)
     };
 }

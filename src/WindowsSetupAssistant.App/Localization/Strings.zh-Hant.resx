@@ -81,6 +81,12 @@
   <data name="Msg_ExitUnknown" xml:space="preserve"><value>WinGet 結束，錯誤碼為 0x{0:X8}。</value></data>
 
   <!-- Data / Storage -->
+  <data name="Msg_SeedProfilePersonal" xml:space="preserve"><value>個人電腦</value></data>
+  <data name="Msg_SeedProfilePersonalDescription" xml:space="preserve"><value>日常使用的必備軟體。</value></data>
+  <data name="Msg_SeedProfileDeveloper" xml:space="preserve"><value>開發人員電腦</value></data>
+  <data name="Msg_SeedProfileDeveloperDescription" xml:space="preserve"><value>開發人員專用工具。</value></data>
+  <data name="Msg_SeedProfileCompany" xml:space="preserve"><value>公司電腦</value></data>
+  <data name="Msg_SeedProfileCompanyDescription" xml:space="preserve"><value>辦公室基本必備軟體。</value></data>
   <data name="Msg_SeedCatalogCreated" xml:space="preserve"><value>已在 {0} 建立範本清單。</value></data>
   <data name="Msg_CatalogFileCorrupted" xml:space="preserve"><value>無法讀取位於 {0} 的資料檔案；保留原檔案，不以範本資料覆寫。</value></data>
   <data name="Msg_CatalogReadFailed" xml:space="preserve"><value>無法載入位於 {0} 的資料；停止載入以避免覆寫未讀取的資料。</value></data>

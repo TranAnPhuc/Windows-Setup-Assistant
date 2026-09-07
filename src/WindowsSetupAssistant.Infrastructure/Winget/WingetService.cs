@@ -122,7 +122,7 @@ public sealed partial class WingetService : IWingetService
             _logger.Error("Tìm kiếm WinGet thất bại.", result.Command, result.ExitCode,
                 WingetOutputParser.StripProgressNoise(result.CombinedOutput));
 
-            throw new InvalidOperationException(WingetExitCodes.Describe(result.ExitCode));
+            throw new InvalidOperationException(WingetExitCodes.Describe(result.ExitCode).ToString());
         }
 
         var packages = WingetOutputParser.ParseTable(result.StandardOutput);
@@ -289,20 +289,20 @@ public sealed partial class WingetService : IWingetService
         if (WingetExitCodes.RequiresReboot(exitCode))
         {
             return Build(isUpgrade ? InstallOutcome.Upgraded : InstallOutcome.Succeeded,
-                LocalizedText.Raw(WingetExitCodes.Describe(exitCode)));
+                WingetExitCodes.Describe(exitCode));
         }
 
         if (WingetExitCodes.IsAlreadyInstalled(exitCode) || WingetExitCodes.IsNoUpgradeAvailable(exitCode))
         {
-            return Build(InstallOutcome.AlreadyInstalled, LocalizedText.Raw(WingetExitCodes.Describe(exitCode)));
+            return Build(InstallOutcome.AlreadyInstalled, WingetExitCodes.Describe(exitCode));
         }
 
         if (WingetExitCodes.IsCancelled(exitCode))
         {
-            return Build(InstallOutcome.Cancelled, LocalizedText.Raw(WingetExitCodes.Describe(exitCode)));
+            return Build(InstallOutcome.Cancelled, WingetExitCodes.Describe(exitCode));
         }
 
-        return Build(InstallOutcome.Failed, LocalizedText.Raw(WingetExitCodes.Describe(exitCode)));
+        return Build(InstallOutcome.Failed, WingetExitCodes.Describe(exitCode));
 
         InstallationResult Build(InstallOutcome outcome, LocalizedText message) => new()
         {

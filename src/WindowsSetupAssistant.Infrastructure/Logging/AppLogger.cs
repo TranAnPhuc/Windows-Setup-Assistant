@@ -1,3 +1,4 @@
+using System.Globalization;
 using WindowsSetupAssistant.Domain.Localization;
 using WindowsSetupAssistant.Application.Abstractions;
 using WindowsSetupAssistant.Domain.Enums;
@@ -16,11 +17,16 @@ namespace WindowsSetupAssistant.Infrastructure.Logging;
 /// </summary>
 public sealed class AppLogger : IAppLogger
 {
+    private static readonly CultureInfo FileLogCulture = CultureInfo.GetCultureInfo("en");
+
     private readonly object _fileLock = new();
     private readonly string? _logFilePath;
+    private readonly IStringLocalizer _localizer;
 
-    public AppLogger(string? logDirectory = null, bool writeToFile = true)
+    public AppLogger(string? logDirectory, bool writeToFile, IStringLocalizer localizer)
     {
+        _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
+
         if (!writeToFile)
         {
             return;
@@ -39,6 +45,11 @@ public sealed class AppLogger : IAppLogger
         {
             _logFilePath = null;
         }
+    }
+
+    public AppLogger(string? logDirectory = null, bool writeToFile = true)
+        : this(logDirectory, writeToFile, FallbackLocalizer.Instance)
+    {
     }
 
     public event EventHandler<LogEntry>? EntryLogged;
@@ -87,11 +98,12 @@ public sealed class AppLogger : IAppLogger
     public void Error(string message, string? command = null, int? exitCode = null, string? details = null) =>
         Error(LocalizedText.Raw(message), command, exitCode, details);
 
-    private static string Render(LogEntry entry)
+    private string Render(LogEntry entry)
     {
         var parts = new List<string>
         {
-            $"[{entry.Timestamp:yyyy-MM-dd HH:mm:ss}] [{entry.Level.ToString().ToUpperInvariant()}] {entry.Message}"
+            $"[{entry.Timestamp:yyyy-MM-dd HH:mm:ss}] [{entry.Level.ToString().ToUpperInvariant()}] " +
+            _localizer.Format(entry.Message, FileLogCulture)
         };
 
         if (!string.IsNullOrWhiteSpace(entry.Command))
@@ -131,4 +143,16 @@ public sealed class AppLogger : IAppLogger
             // Ghi log lỗi thì cũng chỉ bỏ qua - không có gì để làm thêm.
         }
     }
+}
+
+internal sealed class FallbackLocalizer : IStringLocalizer
+{
+    public static readonly FallbackLocalizer Instance = new();
+
+    public string this[string key] => key;
+
+    public string Format(LocalizedText text) => Format(text, CultureInfo.InvariantCulture);
+
+    public string Format(LocalizedText text, CultureInfo culture) =>
+        text.IsRaw ? text.Key : (text.Arguments.Count > 0 ? string.Format(culture, text.Key, text.Arguments.ToArray()) : text.Key);
 }

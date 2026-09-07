@@ -1,6 +1,7 @@
 using System.Text.Json;
 using WindowsSetupAssistant.Application.Abstractions;
 using WindowsSetupAssistant.Domain.Entities;
+using WindowsSetupAssistant.Domain.Localization;
 
 namespace WindowsSetupAssistant.Infrastructure.Persistence;
 
@@ -20,14 +21,16 @@ public sealed class JsonProfileRepository : IProfileRepository
     // Chặn ghi đồng thời từ nhiều tác vụ (ví dụ tự động lưu trong lúc người dùng bấm Lưu).
     private readonly SemaphoreSlim _writeLock = new(1, 1);
     private readonly IAppLogger? _logger;
+    private readonly IStringLocalizer? _localizer;
 
-    public JsonProfileRepository(string? dataFilePath = null, IAppLogger? logger = null)
+    public JsonProfileRepository(string? dataFilePath = null, IAppLogger? logger = null, IStringLocalizer? localizer = null)
     {
         DataFilePath = string.IsNullOrWhiteSpace(dataFilePath)
             ? Path.Combine(AppContext.BaseDirectory, DefaultFolderName, DefaultFileName)
             : Path.GetFullPath(dataFilePath);
 
         _logger = logger;
+        _localizer = localizer;
     }
 
     public string DataFilePath { get; }
@@ -45,9 +48,11 @@ public sealed class JsonProfileRepository : IProfileRepository
             }
             catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
             {
-                var seeded = DefaultCatalogFactory.Create();
+                var seeded = _localizer is not null
+                    ? DefaultCatalogFactory.Create(_localizer)
+                    : DefaultCatalogFactory.Create();
                 await SaveAsync(seeded, cancellationToken).ConfigureAwait(false);
-                _logger?.Information($"Chưa có dữ liệu - đã tạo danh sách mẫu tại {DataFilePath}.");
+                _logger?.Information(LocalizedText.Of(MessageKeys.SeedCatalogCreated, DataFilePath));
                 return seeded;
             }
 
@@ -63,7 +68,7 @@ public sealed class JsonProfileRepository : IProfileRepository
 
                 foreach (var item in removed)
                 {
-                    _logger?.Warning($"Bỏ qua mục có Package Id không hợp lệ: {item}");
+                    _logger?.Warning(LocalizedText.Of(MessageKeys.PackageDroppedInvalidId, item));
                 }
 
                 return normalized;
@@ -72,7 +77,7 @@ public sealed class JsonProfileRepository : IProfileRepository
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 _logger?.Error(
-                    $"File dữ liệu không đọc được tại {DataFilePath}; giữ nguyên file cũ, không ghi đè bằng dữ liệu mẫu.",
+                    LocalizedText.Of(MessageKeys.CatalogFileCorrupted, DataFilePath),
                     details: ex.Message);
                 throw;
             }
@@ -80,7 +85,7 @@ public sealed class JsonProfileRepository : IProfileRepository
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException)
         {
             _logger?.Error(
-                $"Không tải được dữ liệu tại {DataFilePath}; dừng tải để tránh ghi đè dữ liệu chưa đọc được.",
+                LocalizedText.Of(MessageKeys.CatalogReadFailed, DataFilePath),
                 details: ex.ToString());
             throw;
         }
@@ -126,7 +131,7 @@ public sealed class JsonProfileRepository : IProfileRepository
         var json = JsonSerializer.Serialize(catalog, CatalogJson.Options);
         await File.WriteAllTextAsync(filePath, json, cancellationToken).ConfigureAwait(false);
 
-        _logger?.Information($"Đã xuất danh sách ra {filePath}.");
+        _logger?.Information(LocalizedText.Of(MessageKeys.CatalogExported, filePath));
     }
 
     public async Task<SoftwareCatalog> ImportAsync(string filePath, CancellationToken cancellationToken = default)
@@ -160,10 +165,10 @@ public sealed class JsonProfileRepository : IProfileRepository
 
         foreach (var item in removed)
         {
-            _logger?.Warning($"Mục bị loại khi nhập vì Package Id không hợp lệ: {item}");
+            _logger?.Warning(LocalizedText.Of(MessageKeys.PackageDroppedInvalidId, item));
         }
 
-        _logger?.Information($"Đã nhập {normalized.Profiles.Count} cấu hình từ {filePath}.");
+        _logger?.Information(LocalizedText.Of(MessageKeys.CatalogImported, normalized.Profiles.Count, filePath));
         return normalized;
     }
 }

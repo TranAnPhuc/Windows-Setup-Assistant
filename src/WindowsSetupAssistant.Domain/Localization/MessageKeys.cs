@@ -70,6 +70,12 @@ public static class MessageKeys
     public const string ExitUnknown = "Msg_ExitUnknown";
 
     // --- Dữ liệu / lưu trữ ---
+    public const string SeedProfilePersonal = "Msg_SeedProfilePersonal";
+    public const string SeedProfilePersonalDescription = "Msg_SeedProfilePersonalDescription";
+    public const string SeedProfileDeveloper = "Msg_SeedProfileDeveloper";
+    public const string SeedProfileDeveloperDescription = "Msg_SeedProfileDeveloperDescription";
+    public const string SeedProfileCompany = "Msg_SeedProfileCompany";
+    public const string SeedProfileCompanyDescription = "Msg_SeedProfileCompanyDescription";
     public const string SeedCatalogCreated = "Msg_SeedCatalogCreated";
     public const string CatalogFileCorrupted = "Msg_CatalogFileCorrupted";
     public const string CatalogReadFailed = "Msg_CatalogReadFailed";

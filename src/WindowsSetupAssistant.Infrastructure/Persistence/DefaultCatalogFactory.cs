@@ -1,5 +1,7 @@
+using WindowsSetupAssistant.Application.Abstractions;
 using WindowsSetupAssistant.Domain.Entities;
 using WindowsSetupAssistant.Domain.Enums;
+using WindowsSetupAssistant.Domain.Localization;
 
 namespace WindowsSetupAssistant.Infrastructure.Persistence;
 
@@ -7,18 +9,22 @@ namespace WindowsSetupAssistant.Infrastructure.Persistence;
 /// Tạo danh sách mẫu cho lần chạy đầu tiên.
 ///
 /// Toàn bộ Package Id dưới đây đã được kiểm chứng bằng lệnh
-/// "winget search &lt;tên&gt; --source winget" chứ không phải đoán:
+/// "winget search <tên> --source winget" chứ không phải đoán:
 ///   Google.Chrome, Mozilla.Firefox, Microsoft.VisualStudioCode, Git.Git,
 ///   OpenJS.NodeJS, 7zip.7zip, VideoLAN.VLC, Notepad++.Notepad++
 /// </summary>
 public static class DefaultCatalogFactory
 {
-    public static SoftwareCatalog Create()
+    public static SoftwareCatalog Create() => Create(new SeedFallbackLocalizer());
+
+    public static SoftwareCatalog Create(IStringLocalizer localizer)
     {
+        ArgumentNullException.ThrowIfNull(localizer);
+
         var personal = new InstallationProfile
         {
-            Name = "Máy cá nhân",
-            Description = "Bộ phần mềm cơ bản cho máy dùng hằng ngày.",
+            Name = localizer[MessageKeys.SeedProfilePersonal],
+            Description = localizer[MessageKeys.SeedProfilePersonalDescription],
             Packages = Order(new List<SoftwarePackage>
             {
                 Package("Google Chrome", "Google.Chrome", SoftwareCategory.Browser),
@@ -31,8 +37,8 @@ public static class DefaultCatalogFactory
 
         var developer = new InstallationProfile
         {
-            Name = "Máy lập trình",
-            Description = "Công cụ cho lập trình viên.",
+            Name = localizer[MessageKeys.SeedProfileDeveloper],
+            Description = localizer[MessageKeys.SeedProfileDeveloperDescription],
             Packages = Order(new List<SoftwarePackage>
             {
                 Package("Google Chrome", "Google.Chrome", SoftwareCategory.Browser),
@@ -46,8 +52,8 @@ public static class DefaultCatalogFactory
 
         var company = new InstallationProfile
         {
-            Name = "Máy công ty",
-            Description = "Bộ tối thiểu cho máy văn phòng.",
+            Name = localizer[MessageKeys.SeedProfileCompany],
+            Description = localizer[MessageKeys.SeedProfileCompanyDescription],
             Packages = Order(new List<SoftwarePackage>
             {
                 Package("Google Chrome", "Google.Chrome", SoftwareCategory.Browser),
@@ -63,6 +69,23 @@ public static class DefaultCatalogFactory
             ActiveProfileId = personal.Id,
             Profiles = new List<InstallationProfile> { personal, developer, company }
         };
+    }
+
+    private sealed class SeedFallbackLocalizer : IStringLocalizer
+    {
+        public string this[string key] => key switch
+        {
+            MessageKeys.SeedProfilePersonal => "Máy cá nhân",
+            MessageKeys.SeedProfilePersonalDescription => "Bộ phần mềm cơ bản cho máy dùng hằng ngày.",
+            MessageKeys.SeedProfileDeveloper => "Máy lập trình",
+            MessageKeys.SeedProfileDeveloperDescription => "Công cụ cho lập trình viên.",
+            MessageKeys.SeedProfileCompany => "Máy công ty",
+            MessageKeys.SeedProfileCompanyDescription => "Bộ tối thiểu cho máy văn phòng.",
+            _ => key
+        };
+
+        public string Format(LocalizedText text) => this[text.Key];
+        public string Format(LocalizedText text, System.Globalization.CultureInfo culture) => this[text.Key];
     }
 
     private static SoftwarePackage Package(string name, string packageId, SoftwareCategory category) => new()

@@ -81,6 +81,12 @@
   <data name="Msg_ExitUnknown" xml:space="preserve"><value>WinGet kết thúc với mã lỗi 0x{0:X8}.</value></data>
 
   <!-- Data / Storage -->
+  <data name="Msg_SeedProfilePersonal" xml:space="preserve"><value>Máy cá nhân</value></data>
+  <data name="Msg_SeedProfilePersonalDescription" xml:space="preserve"><value>Bộ phần mềm cơ bản cho máy dùng hằng ngày.</value></data>
+  <data name="Msg_SeedProfileDeveloper" xml:space="preserve"><value>Máy lập trình</value></data>
+  <data name="Msg_SeedProfileDeveloperDescription" xml:space="preserve"><value>Công cụ cho lập trình viên.</value></data>
+  <data name="Msg_SeedProfileCompany" xml:space="preserve"><value>Máy công ty</value></data>
+  <data name="Msg_SeedProfileCompanyDescription" xml:space="preserve"><value>Bộ tối thiểu cho máy văn phòng.</value></data>
   <data name="Msg_SeedCatalogCreated" xml:space="preserve"><value>Khởi tạo danh sách mẫu tại {0}.</value></data>
   <data name="Msg_CatalogFileCorrupted" xml:space="preserve"><value>File dữ liệu không đọc được tại {0}; giữ nguyên file cũ, không ghi đè bằng dữ liệu mẫu.</value></data>
   <data name="Msg_CatalogReadFailed" xml:space="preserve"><value>Không tải được dữ liệu tại {0}; dừng tải để tránh ghi đè dữ liệu chưa đọc được.</value></data>

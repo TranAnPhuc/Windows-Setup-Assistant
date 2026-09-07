@@ -81,6 +81,12 @@
   <data name="Msg_ExitUnknown" xml:space="preserve"><value>WinGet exited with error code 0x{0:X8}.</value></data>
 
   <!-- Data / Storage -->
+  <data name="Msg_SeedProfilePersonal" xml:space="preserve"><value>Personal PC</value></data>
+  <data name="Msg_SeedProfilePersonalDescription" xml:space="preserve"><value>Essential software for daily use.</value></data>
+  <data name="Msg_SeedProfileDeveloper" xml:space="preserve"><value>Developer PC</value></data>
+  <data name="Msg_SeedProfileDeveloperDescription" xml:space="preserve"><value>Tools for developers.</value></data>
+  <data name="Msg_SeedProfileCompany" xml:space="preserve"><value>Company PC</value></data>
+  <data name="Msg_SeedProfileCompanyDescription" xml:space="preserve"><value>Minimal package for office work.</value></data>
   <data name="Msg_SeedCatalogCreated" xml:space="preserve"><value>Created seed catalog at {0}.</value></data>
   <data name="Msg_CatalogFileCorrupted" xml:space="preserve"><value>Catalog file unreadable at {0}; keeping existing file without overwriting.</value></data>
   <data name="Msg_CatalogReadFailed" xml:space="preserve"><value>Failed to load catalog from {0}; stopping to prevent overwriting unread data.</value></data>

@@ -45,10 +45,11 @@ public partial class App : WpfApplication
         themeManager.Apply(settings.Theme);
 
         // --- Infrastructure ---
-        var logger = new AppLogger();
+        var localizer = LocalizationSource.Instance.Localizer;
+        var logger = new AppLogger(logDirectory: null, writeToFile: true, localizer);
         var processRunner = new ProcessRunner();
         var wingetService = new WingetService(processRunner, logger);
-        var repository = new JsonProfileRepository(dataFilePath: null, logger: logger);
+        var repository = new JsonProfileRepository(dataFilePath: null, logger: logger, localizer: localizer);
 
         // --- Application ---
         var queueService = new InstallationQueueService(wingetService, logger);
@@ -57,7 +58,6 @@ public partial class App : WpfApplication
 
         // --- Presentation ---
         var dialogService = new DialogService();
-        var localizer = LocalizationSource.Instance.Localizer;
         var logViewModel = new LogViewModel(logger, dialogService, logger.LogFilePath, localizer);
 
         _mainViewModel = new MainViewModel(
