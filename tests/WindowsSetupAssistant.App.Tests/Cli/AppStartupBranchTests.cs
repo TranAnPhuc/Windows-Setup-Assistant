@@ -110,4 +110,43 @@ public class AppStartupBranchTests
     {
         Assert.Contains("Shutdown((int)", ReadAppSource());
     }
+
+    [Fact]
+    public void ChiDuyNhatMotNoiGoiShutdownTrucTiep()
+    {
+        // Truoc day co hai noi goi thang Shutdown((int)...): trong
+        // OnDispatcherUnhandledException va trong finally cua RunCommandLineAsync. Neu ca hai
+        // cung chay (vd. loi nem tu callback Progress<T>.Report, chay ngoai ngan xep
+        // try/catch/finally cua RunCommandLineAsync vi duoc marshal qua
+        // SynchronizationContext.Post), loi goi sau se GHI DE ma thoat cua loi goi truoc: trinh
+        // bat loi toan cuc bao Shutdown(1) nhung sau do finally lai goi Shutdown(0), va script
+        // goi ung dung se tuong moi thu thanh cong trong khi console da in loi ra man hinh - hong
+        // am tham, con te hon ca sap han. Ma thoat la hop dong voi script ben ngoai nen phai
+        // gom moi loi goi Shutdown ve dung MOT ham (ShutdownOnce) de loi goi dau tien luon thang.
+        var source = ReadAppSource();
+        var soLanXuatHien = System.Text.RegularExpressions.Regex.Matches(
+            source, System.Text.RegularExpressions.Regex.Escape("Shutdown((int)")).Count;
+
+        Assert.Equal(1, soLanXuatHien);
+    }
+
+    [Fact]
+    public void OnDispatcherUnhandledExceptionPhaiDiQuaShutdownOnce()
+    {
+        // Trinh bat loi toan cuc khong duoc goi thang Shutdown((int)...) - no phai di qua
+        // ShutdownOnce de dam bao "loi goi dau tien thang" duoc ap dung dong nhat, du loi
+        // goi den tu day hay tu finally cua RunCommandLineAsync.
+        var source = ReadAppSource();
+        var handlerIndex = source.IndexOf("private void OnDispatcherUnhandledException", StringComparison.Ordinal);
+
+        Assert.True(handlerIndex > 0, "Phai tim thay noi khai bao OnDispatcherUnhandledException.");
+
+        var ketThucHam = source.IndexOf("\n    }", handlerIndex, StringComparison.Ordinal);
+        Assert.True(ketThucHam > handlerIndex, "Phai xac dinh duoc diem ket thuc cua ham.");
+
+        var than = source[handlerIndex..ketThucHam];
+
+        Assert.Contains("ShutdownOnce(", than);
+        Assert.DoesNotContain("Shutdown((int)", than);
+    }
 }

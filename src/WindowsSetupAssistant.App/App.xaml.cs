@@ -28,6 +28,12 @@ public partial class App : WpfApplication
     /// <summary>Khác null nghĩa là đang chạy chế độ không giám sát: tuyệt đối không hiện hộp thoại.</summary>
     private IUnattendedOutput? _unattendedOutput;
 
+    /// <summary>
+    /// Đánh dấu đã có lời gọi thoát nào "thắng cuộc" chưa - phục vụ ShutdownOnce bên dưới,
+    /// bảo đảm chỉ lời gọi thoát đầu tiên có tác dụng.
+    /// </summary>
+    private bool _shutdownRequested;
+
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
@@ -130,7 +136,7 @@ public partial class App : WpfApplication
         {
             output.WriteError(ConsoleMessages.UnexpectedError(e.Exception.Message));
             e.Handled = true;
-            Shutdown((int)UnattendedExitCode.SomePackagesFailed);
+            ShutdownOnce(UnattendedExitCode.SomePackagesFailed);
             return;
         }
 
@@ -222,8 +228,33 @@ public partial class App : WpfApplication
             console?.Dispose();
             _unattendedOutput = null;
 
-            Shutdown((int)exitCode);
+            ShutdownOnce(exitCode);
         }
+    }
+
+    /// <summary>
+    /// Chỉ lời gọi ĐẦU TIÊN có tác dụng - ai báo lỗi trước thì mã thoát của người đó thắng.
+    ///
+    /// Có hai nơi trong nhánh không giám sát muốn quyết định mã thoát: trình bắt lỗi toàn cục
+    /// (OnDispatcherUnhandledException) và khối finally của RunCommandLineAsync. Một ngoại lệ
+    /// ném ra từ callback Progress&lt;T&gt;.Report được marshal về Dispatcher qua
+    /// SynchronizationContext.Post, tức là nằm NGOÀI ngăn xếp lời gọi của RunCommandLineAsync.
+    /// Trình bắt lỗi toàn cục xử lý nó, đặt e.Handled = true để nuốt ngoại lệ - nhưng vì bị
+    /// nuốt, RunCommandLineAsync không hề biết có lỗi, chạy tiếp tới finally, và nếu finally
+    /// gọi Shutdown một lần nữa thì mã thoát báo lỗi (vd. 1) sẽ bị mã thoát thành công (0) ghi
+    /// đè. Hệ quả: console in ra lỗi nhưng tiến trình vẫn báo thành công cho script bên ngoài -
+    /// hỏng âm thầm, tệ hơn cả sập hẳn. Gom mọi lời gọi Shutdown về đây và chỉ cho lời gọi đầu
+    /// tiên có tác dụng loại bỏ hoàn toàn khả năng ghi đè đó.
+    /// </summary>
+    private void ShutdownOnce(UnattendedExitCode exitCode)
+    {
+        if (_shutdownRequested)
+        {
+            return;
+        }
+
+        _shutdownRequested = true;
+        Shutdown((int)exitCode);
     }
 
     /// <summary>
