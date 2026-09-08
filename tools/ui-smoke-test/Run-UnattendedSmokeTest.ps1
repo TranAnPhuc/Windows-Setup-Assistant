@@ -3,10 +3,34 @@ param(
     [string]$FakeWingetDir = ".\fake-winget\bin\Release\net8.0"
 )
 $ErrorActionPreference = 'Stop'
+Add-Type -AssemblyName UIAutomationClient
+Add-Type -AssemblyName UIAutomationTypes
+
+$AE   = [System.Windows.Automation.AutomationElement]
+$TS   = [System.Windows.Automation.TreeScope]
+$root = $AE::RootElement
+
+# Dem so cua so cap cao (top-level) cua mot tien trinh bang UI Automation.
+# Dung de xac nhan that su khong co cua so nao loe len trong luc chay khong giam sat,
+# thay vi chi suy doan tu viec tien trinh da thoat (xem Run-UiSmokeTest.ps1 ben canh).
+function Get-TopWindowCount($processId) {
+    $cond = New-Object System.Windows.Automation.PropertyCondition($AE::ProcessIdProperty, $processId)
+    return @($root.FindAll($TS::Children, $cond)).Count
+}
 
 $appExe  = (Resolve-Path $AppExe).Path
 $fakeBin = (Resolve-Path $FakeWingetDir).Path
 $appDir  = Split-Path $appExe -Parent
+
+# Resolve-Path chi xac nhan THU MUC ton tai, khong xac nhan winget.exe GIA nam trong do.
+# Neu thieu file nay (vi du buoc build winget gia bi bo sot hoac loi am tham), ung dung se
+# roi xuong PATH va co the goi trung winget THAT tren may - tuyet doi khong duoc de xay ra.
+$fakeWingetExe = Join-Path $fakeBin "winget.exe"
+if (-not (Test-Path $fakeWingetExe)) {
+    throw ("Khong tim thay winget GIA tai '" + $fakeWingetExe + "'. " +
+           "Hay build truoc: dotnet build tools/ui-smoke-test/fake-winget -c Release. " +
+           "DUNG LAI de tranh roi xuong winget THAT va cai phan mem that len may.")
+}
 
 $pass = 0; $fail = 0
 function Check($label, $ok) {
@@ -16,6 +40,11 @@ function Check($label, $ok) {
 
 # Dat winget GIA len dau PATH: khong co phan mem that nao duoc cai.
 $env:PATH = $fakeBin + ";" + $env:PATH
+
+# Winget gia mac dinh "nam cho" 5 phut moi lenh cai (phuc vu kich ban UI can tien trinh
+# song lau de thu huy). Kich ban khong giam sat nay khong can dieu do, nen rut ngan lai
+# de moi lan chay chi mat vai giay thay vi hang chuc phut.
+$env:WSA_FAKE_WINGET_DELAY_MS = "300"
 
 # Du lieu rieng cho lan chay nay, khong dung vao Data that cua nguoi dung.
 $work = Join-Path $env:TEMP ("wsa-unattended-" + [guid]::NewGuid().ToString("N"))
@@ -46,12 +75,28 @@ $catalog | ConvertTo-Json -Depth 8 | Set-Content -Path (Join-Path $dataDir "soft
 function Invoke-App([string[]]$AppArgs) {
     $out = Join-Path $work "stdout.txt"
     $err = Join-Path $work "stderr.txt"
-    $p = Start-Process -FilePath $appExe -ArgumentList $AppArgs -NoNewWindow -Wait -PassThru `
+    # KHONG dung -Wait: phai de tien trinh dang chay de do so cua so cap cao thuc su,
+    # neu khong thi -Wait se chan toi khi tien trinh DA THOAT roi moi kiem tra, luc do
+    # dung nhien khong con cua so nao - muc kiem tra se luon "dat" du ung dung co mo
+    # cua so giua chung hay khong.
+    $p = Start-Process -FilePath $appExe -ArgumentList $AppArgs -NoNewWindow -PassThru `
                        -RedirectStandardOutput $out -RedirectStandardError $err
+    # Truy cap .Handle ngay sau khi tao tien trinh: day la thao tac bat buoc theo mot
+    # quai tinh cua .NET Process - neu khong lam vay, .ExitCode co the tra ve rong sau
+    # khi tien trinh thoat vi handle da bi giai phong truoc khi doc duoc ma thoat.
+    $h = $p.Handle
+    $maxWindows = 0
+    while (-not $p.HasExited) {
+        $count = Get-TopWindowCount $p.Id
+        if ($count -gt $maxWindows) { $maxWindows = $count }
+        Start-Sleep -Milliseconds 100
+    }
+    $p.WaitForExit()
     return [pscustomobject]@{
-        ExitCode = $p.ExitCode
-        StdOut   = (Get-Content $out -Raw -ErrorAction SilentlyContinue)
-        StdErr   = (Get-Content $err -Raw -ErrorAction SilentlyContinue)
+        ExitCode   = $p.ExitCode
+        StdOut     = (Get-Content $out -Raw -ErrorAction SilentlyContinue)
+        StdErr     = (Get-Content $err -Raw -ErrorAction SilentlyContinue)
+        MaxWindows = $maxWindows
     }
 }
 
@@ -79,7 +124,7 @@ try {
     Check "ma thoat 0"                 ($r.ExitCode -eq 0)
     Check "in tien trinh goi 1"        ($r.StdOut -match "\[1/2\]")
     Check "in tien trinh goi 2"        ($r.StdOut -match "\[2/2\]")
-    Check "khong cua so nao mo ra"     (-not (Get-Process -Name "WindowsSetupAssistant" -ErrorAction SilentlyContinue))
+    Check "khong cua so nao mo ra"     ($r.MaxWindows -eq 0)
     Check "co file bao cao"            (Test-Path $report)
 
     if (Test-Path $report) {
@@ -97,9 +142,25 @@ try {
     Check "co canh bao"                (($r.StdOut + $r.StdErr) -match "WARNING")
 }
 finally {
-    if ($backup) {
-        Remove-Item $dataDir -Recurse -Force
-        Copy-Item $backup $dataDir -Recurse
+    # Bo qua trong try/catch rieng: $ErrorActionPreference = 'Stop' co the khien
+    # Remove-Item/Copy-Item nem loi terminating (vd. file bi khoa boi phan mem diet virus),
+    # neu khong bat lai o day thi buoc don dep thu muc tam ben duoi se khong bao gio chay.
+    try {
+        if ($backup) {
+            # Da co Data that tu truoc: khoi phuc lai nguyen ven.
+            Remove-Item $dataDir -Recurse -Force
+            Copy-Item $backup $dataDir -Recurse
+        }
+        elseif (Test-Path $dataDir) {
+            # Ban dau KHONG co Data (ban publish moi tinh): phai xoa het du lieu thu
+            # nghiem da tao ra, tra lai dung trang thai ban dau - khong duoc de lai
+            # danh sach gia canh file .exe.
+            Remove-Item $dataDir -Recurse -Force
+        }
+    }
+    catch {
+        Write-Warning ("Khong the khoi phuc/don dep thu muc Data mot cach day du: " + $_.Exception.Message)
+        Write-Warning ("Hay tu kiem tra thu muc: " + $dataDir)
     }
     Remove-Item $work -Recurse -Force -ErrorAction SilentlyContinue
 }

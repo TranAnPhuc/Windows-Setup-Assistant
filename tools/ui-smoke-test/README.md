@@ -46,13 +46,29 @@ các tham số `--unattended`, `--help`, `--profile`, `--report` và kiểm tra:
 cha, mã thoát, có mở cửa sổ nào hay không, và nội dung file báo cáo JSON.
 
 Kịch bản dùng lại đúng `winget.exe` **giả** ở `fake-winget/` (đặt lên đầu `PATH`) như kịch bản UI
-ở trên, nên cũng không cài phần mềm thật nào. Trước khi chạy, kịch bản sao lưu thư mục `Data`
-cạnh file `.exe` (nếu có) và ghi đè bằng một danh sách thử nghiệm riêng; khối `finally` luôn khôi
-phục lại `Data` gốc kể cả khi kịch bản lỗi giữa chừng, nên không đụng đến danh sách thật của
-người dùng.
+ở trên, nên cũng không cài phần mềm thật nào. Trước khi đụng vào `PATH`, kịch bản kiểm tra
+`winget.exe` GIA thật sự tồn tại trong thư mục chỉ định (`-FakeWingetDir`) - `Resolve-Path` chỉ
+xác nhận thư mục có thật, không xác nhận file bên trong, nên nếu thiếu file này (ví dụ bước build
+winget giả bị bỏ sót) kịch bản **dừng ngay lập tức** với thông báo rõ ràng, không để rơi xuống
+winget thật trên máy.
 
-Lưu ý: vì winget giả cố tình "nằm chờ" 5 phút cho mỗi lệnh cài (`install`/`upgrade`) để phục vụ
-kịch bản UI ở trên, một lượt cài 2 gói trong kịch bản này mất khoảng 10 phút - đây là điều
-bình thường, không phải lỗi treo.
+Trước khi chạy, kịch bản sao lưu thư mục `Data` cạnh file `.exe` (nếu có) và ghi đè bằng một danh
+sách thử nghiệm riêng; khối `finally` luôn khôi phục lại `Data` gốc kể cả khi kịch bản lỗi giữa
+chừng. Nếu ban đầu **chưa có** `Data` (bản publish mới), `finally` sẽ **xoá hẳn** thư mục thử
+nghiệm đã tạo ra thay vì để nó nằm lại cạnh file `.exe`. Việc khôi phục/dọn dẹp được bọc trong
+`try/catch` riêng để nếu nó tự thất bại (ví dụ file bị khoá) thì vẫn báo lỗi rõ ràng và bước dọn
+thư mục tạm luôn được chạy, thay vì âm thầm bỏ dở.
+
+Mục kiểm tra "không cửa sổ nào mở ra" chạy tiến trình **không** `-Wait`, dùng UI Automation đếm số
+cửa sổ cấp cao theo ProcessId trong lúc tiến trình đang sống (cùng kỹ thuật với
+`Run-UiSmokeTest.ps1`), rồi mới đợi tiến trình thoát hẳn - nhờ vậy mục này thật sự phát hiện được
+nếu ứng dụng lỡ mở cửa sổ, chứ không phải lúc nào cũng đạt.
+
+Winget giả mặc định "nằm chờ" 5 phút cho mỗi lệnh cài (`install`/`upgrade`) để phục vụ kịch bản UI
+ở trên, nhưng thời gian này chỉnh được qua biến môi trường `WSA_FAKE_WINGET_DELAY_MS` (mili-giây).
+Không đặt biến thì giữ nguyên hành vi cũ (5 phút) - `Run-UiSmokeTest.ps1` không bị ảnh hưởng.
+`Run-UnattendedSmokeTest.ps1` đặt biến này rất ngắn (300ms) vì kịch bản không giám sát không cần
+tiến trình cài sống lâu, nhờ đó cả 5 bước chỉ mất khoảng **vài giây đến vài chục giây**, thay vì
+18-20 phút như trước.
 
 Kết thúc phải thấy `Ket qua: 18 dat, 0 truot`.
