@@ -18,6 +18,10 @@ public static class ConsoleMessages
 
     public const string CancelRequested = "Ctrl+C received - finishing the current package, then stopping.";
 
+    public const string InvalidArguments = "Invalid arguments.";
+
+    public static string UnexpectedError(string message) => $"Unexpected error: {message}";
+
     public static string WingetDetected(string? version) =>
         $"WinGet {version ?? "(unknown version)"} detected.";
 

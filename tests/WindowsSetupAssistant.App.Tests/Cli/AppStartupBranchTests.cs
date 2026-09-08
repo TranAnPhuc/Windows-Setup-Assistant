@@ -65,6 +65,47 @@ public class AppStartupBranchTests
     }
 
     [Fact]
+    public void DangKyDispatcherUnhandledExceptionTruocKhiPhanNhanhDongLenh()
+    {
+        var source = ReadAppSource();
+
+        var registerIndex = source.IndexOf("DispatcherUnhandledException +=", StringComparison.Ordinal);
+        var parseIndex = source.IndexOf("CommandLineParser.Parse(e.Args)", StringComparison.Ordinal);
+
+        Assert.True(registerIndex > 0, "Phai tim thay noi dang ky DispatcherUnhandledException.");
+        Assert.True(parseIndex > 0, "Phai tim thay noi goi CommandLineParser.Parse.");
+
+        // Nhanh khong giam sat return som ngay sau khi phan nhanh dong lenh. Neu dong dang ky
+        // nam SAU diem phan nhanh nay, nhanh khong giam sat se chay ma khong co trinh bat loi
+        // toan cuc nao: mot ngoai le trong callback ProcessRunner hay Progress<T> (chay ngoai
+        // ngan xep try/catch cua RunCommandLineAsync) se lam sap cung tien trinh, khong in loi,
+        // khong tra ve ma thoat nao trong hop dong 0..4.
+        Assert.True(
+            registerIndex < parseIndex,
+            "DispatcherUnhandledException phai duoc dang ky TRUOC khi phan nhanh dong lenh, " +
+            "de ca che do GUI lan che do khong giam sat deu duoc bao ve.");
+    }
+
+    [Fact]
+    public void DangKyAppDomainUnhandledExceptionTruocKhiPhanNhanhDongLenh()
+    {
+        var source = ReadAppSource();
+
+        var registerIndex = source.IndexOf("AppDomain.CurrentDomain.UnhandledException +=", StringComparison.Ordinal);
+        var parseIndex = source.IndexOf("CommandLineParser.Parse(e.Args)", StringComparison.Ordinal);
+
+        Assert.True(registerIndex > 0, "Phai tim thay noi dang ky AppDomain.CurrentDomain.UnhandledException.");
+        Assert.True(parseIndex > 0, "Phai tim thay noi goi CommandLineParser.Parse.");
+
+        // Cung ly do nhu DispatcherUnhandledException o tren: day la lop bao ve cuoi cung cho
+        // cac ngoai le khong dong bo (vi du tren luong nen cua tien trinh con), va nhanh khong
+        // giam sat phai duoc bao ve boi no giong het nhu nhanh giao dien.
+        Assert.True(
+            registerIndex < parseIndex,
+            "AppDomain.CurrentDomain.UnhandledException phai duoc dang ky TRUOC khi phan nhanh dong lenh.");
+    }
+
+    [Fact]
     public void MoiNhanhDeuKetThucBangShutdownCoMaThoat()
     {
         Assert.Contains("Shutdown((int)", ReadAppSource());

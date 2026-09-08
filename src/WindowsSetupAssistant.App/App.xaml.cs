@@ -32,6 +32,16 @@ public partial class App : WpfApplication
     {
         base.OnStartup(e);
 
+        // Bắt mọi lỗi chưa xử lý TRƯỚC khi phân nhánh dòng lệnh: nhánh không giám sát cũng
+        // đang cài phần mềm và cũng cần lưới an toàn này, không chỉ riêng giao diện. Nếu hai
+        // dòng đăng ký này nằm sau điểm return của nhánh không giám sát thì nhánh đó chạy mà
+        // không có bất kỳ trình bắt lỗi toàn cục nào - một ngoại lệ trong callback tiến trình
+        // con hay trong Progress<T> (chạy ngoài ngăn xếp try/catch của RunCommandLineAsync) sẽ
+        // làm sập cứng tiến trình, không in lỗi, không trả về mã thoát nào trong hợp đồng 0..4.
+        DispatcherUnhandledException += OnDispatcherUnhandledException;
+        AppDomain.CurrentDomain.UnhandledException += (_, args) =>
+            System.Diagnostics.Debug.WriteLine(args.ExceptionObject);
+
         var parseResult = CommandLineParser.Parse(e.Args);
 
         if (parseResult.Mode != CommandLineMode.Gui)
@@ -39,11 +49,6 @@ public partial class App : WpfApplication
             RunCommandLine(parseResult);
             return;
         }
-
-        // Bắt mọi lỗi chưa xử lý để ứng dụng không "tắt ngang" khi đang cài phần mềm.
-        DispatcherUnhandledException += OnDispatcherUnhandledException;
-        AppDomain.CurrentDomain.UnhandledException += (_, args) =>
-            System.Diagnostics.Debug.WriteLine(args.ExceptionObject);
 
         var settingsStore = new SettingsStore();
         var settings = settingsStore.Load();
@@ -123,7 +128,7 @@ public partial class App : WpfApplication
         // sẽ treo máy đang chạy không người trông cho tới khi có ai đó đi ngang qua.
         if (_unattendedOutput is { } output)
         {
-            output.WriteError($"Unexpected error: {e.Exception.Message}");
+            output.WriteError(ConsoleMessages.UnexpectedError(e.Exception.Message));
             e.Handled = true;
             Shutdown((int)UnattendedExitCode.SomePackagesFailed);
             return;
@@ -155,16 +160,22 @@ public partial class App : WpfApplication
 
     private async Task RunCommandLineAsync(CommandLineParseResult parseResult)
     {
-        var console = ConsoleSession.Attach();
-        _unattendedOutput = console;
-
         var exitCode = UnattendedExitCode.InvalidArguments;
         using var cancellation = new CancellationTokenSource();
 
         ConsoleCancelEventHandler? cancelHandler = null;
 
+        // ConsoleSession.Attach() phải nằm TRONG try: ShutdownMode đã là OnExplicitShutdown
+        // và nhánh này không tạo cửa sổ nào, nên nếu Attach() ném ngoại lệ mà nằm ngoài try thì
+        // không finally nào chạy, Shutdown(...) không bao giờ được gọi, và tiến trình treo mãi
+        // mãi trên một máy không có ai trông.
+        ConsoleSession? console = null;
+
         try
         {
+            console = ConsoleSession.Attach();
+            _unattendedOutput = console;
+
             switch (parseResult.Mode)
             {
                 case CommandLineMode.Help:
@@ -173,7 +184,7 @@ public partial class App : WpfApplication
                     break;
 
                 case CommandLineMode.Invalid:
-                    console.WriteError(parseResult.ErrorMessage ?? "Invalid arguments.");
+                    console.WriteError(parseResult.ErrorMessage ?? ConsoleMessages.InvalidArguments);
                     console.WriteLine();
                     console.WriteLine(ConsoleMessages.BuildHelp());
                     exitCode = UnattendedExitCode.InvalidArguments;
@@ -198,7 +209,7 @@ public partial class App : WpfApplication
         }
         catch (Exception exception)
         {
-            console.WriteError($"Unexpected error: {exception.Message}");
+            console?.WriteError(ConsoleMessages.UnexpectedError(exception.Message));
             exitCode = UnattendedExitCode.SomePackagesFailed;
         }
         finally
@@ -208,7 +219,7 @@ public partial class App : WpfApplication
                 Console.CancelKeyPress -= cancelHandler;
             }
 
-            console.Dispose();
+            console?.Dispose();
             _unattendedOutput = null;
 
             Shutdown((int)exitCode);
