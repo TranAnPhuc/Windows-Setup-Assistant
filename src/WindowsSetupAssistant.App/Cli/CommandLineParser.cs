@@ -20,18 +20,65 @@ public static class CommandLineParser
             return CommandLineParseResult.Gui();
         }
 
-        // --help thắng tất cả: người dùng đang bối rối thì đừng bắt họ sửa lệnh cho đúng
-        // rồi mới được xem hướng dẫn.
-        foreach (var arg in args)
+        // Lượt 1: chỉ để xác định --help và có cờ nào của chế độ này hay không.
+        // Phải quét TOÀN BỘ mảng trước khi quyết định Gui hay Invalid - không được
+        // dừng lại giữa chừng vì kết quả không được phép phụ thuộc thứ tự tham số.
+        // Token đứng ngay sau --profile/--existing/--report là GIÁ TRỊ, không phải cờ,
+        // nên phải bỏ qua đúng như TryTakeValue sẽ làm ở lượt 2 - nếu không, giá trị
+        // trùng tên cờ (vd --profile --help) sẽ bị nhận nhầm.
+        var hasHelp = false;
+        var hasOwnFlag = false;
+
+        for (var index = 0; index < args.Count; index++)
         {
-            if (IsHelpFlag(arg))
+            var token = args[index].Trim();
+
+            if (IsHelpFlag(token))
             {
-                return CommandLineParseResult.Help();
+                hasHelp = true;
+            }
+
+            if (Matches(token, UnattendedFlag))
+            {
+                hasOwnFlag = true;
+                continue;
+            }
+
+            if (Matches(token, ProfileFlag) || Matches(token, ReportFlag) || Matches(token, ExistingFlag))
+            {
+                hasOwnFlag = true;
+
+                // Cùng điều kiện với TryTakeValue: chỉ coi token kế tiếp là giá trị
+                // (và bỏ qua nó khi quét help) nếu nó thực sự hợp lệ làm giá trị.
+                if (index + 1 < args.Count)
+                {
+                    var candidate = args[index + 1];
+
+                    if (!candidate.StartsWith('-') && !string.IsNullOrWhiteSpace(candidate))
+                    {
+                        index++;
+                    }
+                }
+
+                continue;
             }
         }
 
+        if (hasHelp)
+        {
+            return CommandLineParseResult.Help();
+        }
+
+        if (!hasOwnFlag)
+        {
+            // Không hề dùng cờ nào của chế độ này - rất có thể đây là tham số do Windows
+            // tự truyền vào, cứ mở giao diện, đừng chặn người dùng lại.
+            return CommandLineParseResult.Gui();
+        }
+
+        // Lượt 2: phân tích giá trị như bình thường. Từ đây, cờ nào của chế độ này cũng
+        // đã được xác nhận là có mặt, nên tham số lạ luôn là lỗi, không còn nhánh Gui nữa.
         var unattended = false;
-        var sawOwnFlag = false;
         string? profileName = null;
         string? reportPath = null;
         var existingAction = ExistingPackageAction.Skip;
@@ -43,14 +90,11 @@ public static class CommandLineParser
             if (Matches(flag, UnattendedFlag))
             {
                 unattended = true;
-                sawOwnFlag = true;
                 continue;
             }
 
             if (Matches(flag, ProfileFlag))
             {
-                sawOwnFlag = true;
-
                 if (!TryTakeValue(args, ref index, out var value))
                 {
                     return MissingValue(ProfileFlag);
@@ -62,8 +106,6 @@ public static class CommandLineParser
 
             if (Matches(flag, ReportFlag))
             {
-                sawOwnFlag = true;
-
                 if (!TryTakeValue(args, ref index, out var value))
                 {
                     return MissingValue(ReportFlag);
@@ -75,8 +117,6 @@ public static class CommandLineParser
 
             if (Matches(flag, ExistingFlag))
             {
-                sawOwnFlag = true;
-
                 if (!TryTakeValue(args, ref index, out var value))
                 {
                     return MissingValue(ExistingFlag);
@@ -99,13 +139,8 @@ public static class CommandLineParser
                 continue;
             }
 
-            // Tham số lạ. Nếu người dùng KHÔNG hề dùng cờ nào của chế độ này thì rất có thể
-            // đây là tham số do Windows tự truyền vào - cứ mở giao diện, đừng chặn họ lại.
-            if (!sawOwnFlag && !unattended)
-            {
-                return CommandLineParseResult.Gui();
-            }
-
+            // Tham số lạ. Lượt 1 đã xác nhận có ít nhất một cờ của chế độ này trong toàn
+            // mảng, nên đây luôn là lỗi - không còn khả năng "cứ mở giao diện" nữa.
             return CommandLineParseResult.Invalid($"Unknown argument: \"{args[index]}\".");
         }
 

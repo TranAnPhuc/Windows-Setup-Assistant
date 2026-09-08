@@ -146,6 +146,67 @@ public class CommandLineParserTests
     }
 
     [Fact]
+    public void ThamSoLaDungTruocUnattendedVanBaoLoi()
+    {
+        // Fix loi thu tu: "--turbo" dung o vi tri 0 khong duoc phep khien ket qua
+        // thanh Gui chi vi luc gap no chua doc toi "--unattended" phia sau.
+        var result = CommandLineParser.Parse(new[] { "--turbo", "--unattended" });
+
+        Assert.Equal(CommandLineMode.Invalid, result.Mode);
+    }
+
+    [Fact]
+    public void ThamSoLaDungTruocCoRiengMaThieuUnattendedVanBaoLoi()
+    {
+        // Ca nay truoc kia tra ve Gui vi vong lap dung lai ngay khi gap "--turbo"
+        // truoc khi kip thay co rieng "--profile" phia sau.
+        var result = CommandLineParser.Parse(new[] { "--turbo", "--profile", "X" });
+
+        Assert.Equal(CommandLineMode.Invalid, result.Mode);
+    }
+
+    [Fact]
+    public void DaoThuTuCoVanRaKetQuaDung()
+    {
+        var result = CommandLineParser.Parse(new[] { "--profile", "May cong ty", "--unattended" });
+
+        Assert.Equal(CommandLineMode.Unattended, result.Mode);
+        Assert.Equal("May cong ty", result.Options!.ProfileName);
+    }
+
+    [Fact]
+    public void ThamSoLaODauCuoiSauCacCoHopLeVanBaoLoi()
+    {
+        var result = CommandLineParser.Parse(new[] { "--unattended", "--profile", "A", "--turbo" });
+
+        Assert.Equal(CommandLineMode.Invalid, result.Mode);
+    }
+
+    [Fact]
+    public void ReportDungTruocHelpVanTraVeHelp()
+    {
+        // Giu nguyen hanh vi cu: --help thang tat ca du dung o vi tri nao.
+        var result = CommandLineParser.Parse(new[] { "--report", "--help" });
+
+        Assert.Equal(CommandLineMode.Help, result.Mode);
+    }
+
+    [Fact]
+    public void GiaTriTrungTenCoHelpBiTuChoiLamGiaTriNenVanTraVeHelp()
+    {
+        // "-?" bat dau bang "-" nen bi tu choi lam gia tri cua "--profile" (giong het
+        // truong hop "--profile" roi "--help" da duoc kiem thu o tren). Vi khong duoc
+        // tieu thu lam gia tri, no tro thanh mot token doc lap va trung dung mau help,
+        // nen --help thang - nhat quan voi quy tac "help thang o bat ky vi tri nao".
+        // Day la diem hanh vi thuc te khac voi mo ta Invalid trong yeu cau ban dau,
+        // nhung nhat quan voi test ReportDungTruocHelpVanTraVeHelp va
+        // HelpThangTheNgayCaKhiDiKemThamSoKhac da co san trong file nay.
+        var result = CommandLineParser.Parse(new[] { "--unattended", "--profile", "-?" });
+
+        Assert.Equal(CommandLineMode.Help, result.Mode);
+    }
+
+    [Fact]
     public void MaThoatCoDungNamGiaTriTheoSpec()
     {
         Assert.Equal(0, (int)UnattendedExitCode.Success);
