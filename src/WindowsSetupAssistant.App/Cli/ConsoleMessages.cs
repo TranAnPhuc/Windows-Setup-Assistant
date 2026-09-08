@@ -24,6 +24,11 @@ public static class ConsoleMessages
     public static string ProfileSummary(string profileName, int total, int notInstalled) =>
         $"Profile \"{profileName}\": {total} package(s), {notInstalled} not installed.";
 
+    // Dùng khi quét gói đã cài bị lỗi: không được bịa ra một con số "not installed" trông
+    // như sự thật trong khi thực ra không biết gì cả - phải nói thẳng là "unknown".
+    public static string ProfileSummaryUnknownInstallState(string profileName, int total) =>
+        $"Profile \"{profileName}\": {total} package(s), install state unknown (scan failed - checking each package individually).";
+
     public static string ProfileNotFound(string requested, IEnumerable<string> available) =>
         $"Profile \"{requested}\" was not found. Available profiles: {string.Join(", ", available.Select(name => $"\"{name}\""))}.";
 

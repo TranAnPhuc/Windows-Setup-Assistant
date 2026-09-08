@@ -87,14 +87,33 @@ public sealed class UnattendedRunner
         var selected = profile.Packages.Where(package => package.IsSelected).ToList();
 
         var installedIds = await GetInstalledIdsAsync(cancellationToken).ConfigureAwait(false);
-        var notInstalled = selected.Count(package => !installedIds.Contains(package.PackageId));
 
-        _output.WriteLine(ConsoleMessages.ProfileSummary(profile.Name, selected.Count, notInstalled));
-
-        if (selected.Count == 0 ||
-            (options.ExistingPackageAction == ExistingPackageAction.Skip && notInstalled == 0))
+        if (installedIds is null)
         {
-            _output.WriteLine(ConsoleMessages.NothingToDo);
+            // Quét thất bại: KHÔNG được coi "không biết" là "biết chắc rỗng" rồi suy ra
+            // "không gói nào đã cài". In một dòng riêng nói rõ là không biết, thay vì bịa ra
+            // một con số "not installed" trông như sự thật. Hàng đợi phía dưới vẫn nhận
+            // installedIds = null nguyên vẹn để nó tự hỏi WinGet từng gói.
+            _output.WriteLine(ConsoleMessages.ProfileSummaryUnknownInstallState(profile.Name, selected.Count));
+
+            // Chỉ được kết luận NothingToDo khi không có gói nào được tick - tuyệt đối
+            // không được dùng trạng thái "không biết" để suy ra "mọi gói đã cài sẵn".
+            if (selected.Count == 0)
+            {
+                _output.WriteLine(ConsoleMessages.NothingToDo);
+            }
+        }
+        else
+        {
+            var notInstalled = selected.Count(package => !installedIds.Contains(package.PackageId));
+
+            _output.WriteLine(ConsoleMessages.ProfileSummary(profile.Name, selected.Count, notInstalled));
+
+            if (selected.Count == 0 ||
+                (options.ExistingPackageAction == ExistingPackageAction.Skip && notInstalled == 0))
+            {
+                _output.WriteLine(ConsoleMessages.NothingToDo);
+            }
         }
 
         var summary = await _queueService.RunAsync(
@@ -146,7 +165,7 @@ public sealed class UnattendedRunner
             string.Equals(profile.Name?.Trim(), wanted, StringComparison.OrdinalIgnoreCase));
     }
 
-    private async Task<IReadOnlySet<string>> GetInstalledIdsAsync(CancellationToken cancellationToken)
+    private async Task<IReadOnlySet<string>?> GetInstalledIdsAsync(CancellationToken cancellationToken)
     {
         try
         {
@@ -159,9 +178,12 @@ public sealed class UnattendedRunner
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
-            // Không quét được thì cứ để hàng đợi tự hỏi từng gói - chậm hơn nhưng vẫn đúng.
+            // Không quét được thì trả về null - "không biết" - chứ KHÔNG được trả về tập
+            // rỗng, vì tập rỗng lại có nghĩa hoàn toàn khác: "biết chắc chưa gói nào được
+            // cài". null đúng với hợp đồng của InstallationOptions.PreCheckedInstalledPackageIds:
+            // cứ để hàng đợi tự hỏi WinGet từng gói - chậm hơn nhưng vẫn đúng.
             _logger.Warning($"Could not list installed packages: {exception.Message}");
-            return new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            return null;
         }
     }
 

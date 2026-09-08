@@ -280,4 +280,36 @@ public class UnattendedRunnerTests : IDisposable
         Assert.Contains(_output.Lines, line => line.Contains("[1/2]") && line.Contains("A.A"));
         Assert.Contains(_output.Lines, line => line.Contains("[2/2]") && line.Contains("B.B"));
     }
+
+    [Fact]
+    public async Task QuetGoiDaCaiLoiThiHangDoiTuHoiTungGoi()
+    {
+        // Khi liet ke goi da cai bi loi, runner phai truyen null (khong biet) cho hang doi,
+        // KHONG duoc gia vo la "biet chac rong". Hang doi chi hoi tung goi qua IsInstalledAsync
+        // khi PreCheckedInstalledPackageIds la null.
+        var repository = await GivenCatalogAsync(Profile("P", "A.A", "B.B"));
+        _winget.ThrowOnGetInstalled = new InvalidOperationException("winget list failed");
+
+        var code = await CreateRunner(repository).RunAsync(Options(), CancellationToken.None);
+
+        Assert.Equal(UnattendedExitCode.Success, code);
+        Assert.Equal(new[] { "A.A", "B.B" }, _winget.IsInstalledCalls);
+        Assert.Contains("install state unknown", _output.All);
+    }
+
+    [Fact]
+    public async Task QuetGoiDaCaiLoiNhungGoiDaCoVanDuocBoQuaKhiSkip()
+    {
+        // Du khong liet ke duoc, hang doi van tu hoi tung goi va van phai bo qua dung
+        // goi da cai san - khong duoc cai lai no chi vi lan quet tong the bi loi.
+        var repository = await GivenCatalogAsync(Profile("P", "A.A", "B.B"));
+        _winget.ThrowOnGetInstalled = new InvalidOperationException("winget list failed");
+        _winget.InstalledPackageIds.Add("A.A");
+
+        var code = await CreateRunner(repository).RunAsync(Options(), CancellationToken.None);
+
+        Assert.Equal(UnattendedExitCode.Success, code);
+        Assert.Equal(new[] { "A.A", "B.B" }, _winget.IsInstalledCalls);
+        Assert.Equal(new[] { "B.B" }, _winget.InstallCalls);
+    }
 }
