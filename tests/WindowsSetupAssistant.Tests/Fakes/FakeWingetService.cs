@@ -35,8 +35,11 @@ public sealed class FakeWingetService : IWingetService
 
     public Exception? ThrowOnIsInstalled { get; set; }
 
+    /// <summary>Cho test mô phỏng máy không có winget.</summary>
+    public WingetAvailability Availability { get; set; } = WingetAvailability.Available("v1.9.0 (fake)");
+
     public Task<WingetAvailability> CheckAvailabilityAsync(CancellationToken cancellationToken = default) =>
-        Task.FromResult(WingetAvailability.Available("v1.9.0 (fake)"));
+        Task.FromResult(Availability);
 
     public Task<IReadOnlyList<WingetPackageInfo>> SearchAsync(string query, CancellationToken cancellationToken = default) =>
         Task.FromResult<IReadOnlyList<WingetPackageInfo>>(Array.Empty<WingetPackageInfo>());
