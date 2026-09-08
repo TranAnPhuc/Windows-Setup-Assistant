@@ -24,7 +24,8 @@ public class NoHardcodedTextTests
         @"src\WindowsSetupAssistant.App\ViewModels\ScanResultViewModel.cs",
         @"src\WindowsSetupAssistant.App\ViewModels\PackageEditorViewModel.cs",
         @"src\WindowsSetupAssistant.App\ViewModels\InstallConfirmViewModel.cs",
-        @"src\WindowsSetupAssistant.App\ViewModels\LogViewModel.cs"
+        @"src\WindowsSetupAssistant.App\ViewModels\LogViewModel.cs",
+        @"src\WindowsSetupAssistant.App\Converters\AppConverters.cs"
     };
 
     private static readonly Regex VietnameseLetters = new(

@@ -63,6 +63,8 @@ public static class UiKeys
     public const string ColumnResultOutcome = "Ui_ColumnResultOutcome";
     public const string ColumnResultExitCode = "Ui_ColumnResultExitCode";
     public const string ColumnResultDuration = "Ui_ColumnResultDuration";
+    public const string DurationMinutes = "Ui_DurationMinutes";
+    public const string DurationSeconds = "Ui_DurationSeconds";
     public const string ColumnResultMessage = "Ui_ColumnResultMessage";
     public const string TabLogs = "Ui_TabLogs";
     public const string BtnClearLogs = "Ui_BtnClearLogs";

@@ -12,7 +12,7 @@ public sealed class PackageEditorViewModel : ObservableObject
 {
     private string _name = string.Empty;
     private string _packageId = string.Empty;
-    private CategoryOption _category = CategoryNames.All[0];
+    private CategoryOption _category;
     private string _notes = string.Empty;
     private string _errorMessage = string.Empty;
 
@@ -22,6 +22,7 @@ public sealed class PackageEditorViewModel : ObservableObject
     {
         _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
         IsEditing = existing is not null;
+        Categories = CategoryNames.GetAll(_localizer);
 
         if (existing is not null)
         {
@@ -45,7 +46,7 @@ public sealed class PackageEditorViewModel : ObservableObject
 
     public string Title => IsEditing ? _localizer[UiKeys.PackageEditorEditTitle] : _localizer[UiKeys.PackageEditorAddTitle];
 
-    public IReadOnlyList<CategoryOption> Categories => CategoryNames.GetAll(_localizer);
+    public IReadOnlyList<CategoryOption> Categories { get; }
 
     public string Name
     {

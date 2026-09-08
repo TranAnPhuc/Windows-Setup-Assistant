@@ -61,6 +61,12 @@ public sealed class LogViewModel : ObservableObject, IDisposable
         ? _localizer[UiKeys.LogFileCannotWrite]
         : _localizer.Format(LocalizedText.Of(UiKeys.LogFileDescription, _logFilePath));
 
+    /// <summary>Báo cho WPF biết mô tả đường dẫn nhật ký đã đổi theo ngôn ngữ mới.</summary>
+    public void RefreshLocalization()
+    {
+        OnPropertyChanged(nameof(LogFileDescription));
+    }
+
     public bool AutoScroll
     {
         get => _autoScroll;

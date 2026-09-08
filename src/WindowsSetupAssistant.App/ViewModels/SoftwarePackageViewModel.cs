@@ -171,6 +171,13 @@ public sealed class SoftwarePackageViewModel : ObservableObject
         }
     }
 
+    /// <summary>Báo cho WPF biết chuỗi nhóm và trạng thái đã đổi theo ngôn ngữ mới.</summary>
+    public void RefreshLocalization()
+    {
+        OnPropertyChanged(nameof(CategoryDisplayName));
+        OnPropertyChanged(nameof(StatusText));
+    }
+
     /// <summary>Gọi sau khi sửa entity để giao diện vẽ lại toàn bộ các cột.</summary>
     public void RefreshAll()
     {

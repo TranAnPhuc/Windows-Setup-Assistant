@@ -60,8 +60,10 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     private bool _suppressAutoSave;
 
     private string _filterText = string.Empty;
-    private CategoryFilterOption _categoryFilter;
+    private CategoryFilterOption _categoryFilter = null!;
+    private IReadOnlyList<CategoryFilterOption> _categoryFilters = Array.Empty<CategoryFilterOption>();
     private string _statusMessage;
+    private LocalizedText? _lastStatusText;
     private bool _isBusy;
     private bool _isInstalling;
     private double _progressValue;
@@ -124,7 +126,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         _scanService = scanService;
         _backupExporter = backupExporter;
         _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
-        _statusMessage = _localizer[UiKeys.StatusReady];
+        _lastStatusText = LocalizedText.Of(UiKeys.StatusReady);
+        _statusMessage = _localizer.Format(_lastStatusText);
 
         _selectedLanguage = LanguageCatalog.Supported
             .FirstOrDefault(l => string.Equals(l.Code, settings.Language, StringComparison.OrdinalIgnoreCase))
@@ -139,14 +142,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             () => !_isClosing && !IsInstalling,
             _localizer);
 
-        CategoryFilters = new List<CategoryFilterOption>
-        {
-            new(null, _localizer[UiKeys.CategoryAll])
-        }
-        .Concat(CategoryNames.GetAll(_localizer).Select(c => new CategoryFilterOption(c.Value, c.DisplayName)))
-        .ToList();
-
-        _categoryFilter = CategoryFilters[0];
+        RefreshCategoryFilters();
 
         PackagesView = CollectionViewSource.GetDefaultView(Packages);
         PackagesView.Filter = FilterPackage;
@@ -190,6 +186,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         ToggleThemeCommand = new RelayCommand(ToggleTheme, () => !_isClosing);
         RestartAsAdminCommand = new RelayCommand(RestartAsAdministrator, () => !_isClosing && !IsInstalling && !IsAdministrator);
         LoadedCommand = new AsyncRelayCommand(InitializeAsync, () => !_isClosing);
+        LocalizationSource.Instance.LanguageChanged += OnLanguageChanged;
     }
 
     // ---------------------------------------------------------------- Dữ liệu
@@ -202,7 +199,11 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
     public ICollectionView PackagesView { get; }
 
-    public IReadOnlyList<CategoryFilterOption> CategoryFilters { get; }
+    public IReadOnlyList<CategoryFilterOption> CategoryFilters
+    {
+        get => _categoryFilters;
+        private set => SetProperty(ref _categoryFilters, value);
+    }
 
     public SearchViewModel Search { get; }
 
@@ -343,7 +344,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         {
             if (SetProperty(ref _categoryFilter, value))
             {
-                PackagesView.Refresh();
+                PackagesView?.Refresh();
                 OnPropertyChanged(nameof(VisibleCount));
             }
         }
@@ -464,12 +465,59 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         ? _localizer[UiKeys.AdminRunningAsAdmin]
         : _localizer[UiKeys.AdminRunningAsUser];
 
+    private void RefreshCategoryFilters()
+    {
+        var currentVal = _categoryFilter?.Value;
+        CategoryFilters = new List<CategoryFilterOption>
+        {
+            new(null, _localizer[UiKeys.CategoryAll])
+        }
+        .Concat(CategoryNames.GetAll(_localizer).Select(c => new CategoryFilterOption(c.Value, c.DisplayName)))
+        .ToList();
+
+        CategoryFilter = CategoryFilters.FirstOrDefault(c => c.Value == currentVal) ?? CategoryFilters[0];
+    }
+
+    private void SetStatus(LocalizedText text)
+    {
+        _lastStatusText = text;
+        StatusMessage = _localizer.Format(text);
+    }
+
+    private void SetStatus(string key) => SetStatus(LocalizedText.Of(key));
+
+    private void OnLanguageChanged(object? sender, CultureInfo culture)
+    {
+        RefreshCategoryFilters();
+
+        foreach (var package in Packages)
+        {
+            package.RefreshLocalization();
+        }
+
+        Search.RefreshLocalization();
+        Logs.RefreshLocalization();
+
+        if (_lastStatusText is not null)
+        {
+            StatusMessage = _localizer.Format(_lastStatusText);
+        }
+
+        OnPropertyChanged(nameof(SummaryText));
+        OnPropertyChanged(nameof(ThemeButtonText));
+        OnPropertyChanged(nameof(PrivilegeText));
+
+        PackagesView?.Refresh();
+        var resultsView = CollectionViewSource.GetDefaultView(Results);
+        resultsView?.Refresh();
+    }
+
     // ---------------------------------------------------------------- Khởi động
 
     private async Task InitializeAsync()
     {
         IsBusy = true;
-        StatusMessage = _localizer[UiKeys.StatusLoadingCatalog];
+        SetStatus(UiKeys.StatusLoadingCatalog);
 
         try
         {
@@ -482,7 +530,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             _catalogLoaded = true;
             ReloadProfiles();
 
-            StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusLoadedFrom, _repository.DataFilePath));
+            SetStatus(LocalizedText.Of(UiKeys.StatusLoadedFrom, _repository.DataFilePath));
 
             await CheckWingetAsync().ConfigureAwait(true);
 
@@ -506,7 +554,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             if (!_catalogLoaded)
             {
                 DataErrorMessage = _localizer.Format(LocalizedText.Of(UiKeys.DataErrorLoadFailed, DataFilePath, ex.Message));
-                StatusMessage = _localizer[UiKeys.StatusLoadFailedAutoSaveDisabled];
+                SetStatus(UiKeys.StatusLoadFailedAutoSaveDisabled);
             }
             _dialogService.ShowError(_localizer[UiKeys.DialogStartupError], ex.Message);
         }
@@ -518,7 +566,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
     private async Task CheckWingetAsync()
     {
-        StatusMessage = _localizer[UiKeys.StatusCheckingWinget];
+        SetStatus(UiKeys.StatusCheckingWinget);
 
         var availability = await _wingetService.CheckAvailabilityAsync(_lifetimeCts.Token).ConfigureAwait(true);
 
@@ -526,14 +574,14 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
         if (availability.IsAvailable)
         {
-            StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusWingetReady, availability.Version));
+            SetStatus(LocalizedText.Of(UiKeys.StatusWingetReady, availability.Version));
             WingetWarning = string.Empty;
             return;
         }
 
         WingetWarning = availability.ErrorMessage ?? _localizer[UiKeys.WarningWingetUnavailable];
 
-        StatusMessage = _localizer[UiKeys.StatusWingetNotReady];
+        SetStatus(UiKeys.StatusWingetNotReady);
         _logger.Warning(WingetWarning);
     }
 
@@ -693,7 +741,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         RaiseCountsChanged();
         SaveCatalogInBackground();
 
-        StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusPackageAdded, package.Name));
+        SetStatus(LocalizedText.Of(UiKeys.StatusPackageAdded, package.Name));
         _logger.Information($"Added package to list: {package.Name} ({package.PackageId}).");
 
         // Biết ngay gói vừa thêm đã có trên máy hay chưa.
@@ -740,7 +788,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         Search.RefreshAlreadyInListFlags();
         RaiseCountsChanged();
         SaveCatalogInBackground();
-        StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusPackageUpdated, SelectedPackage.Name));
+        SetStatus(LocalizedText.Of(UiKeys.StatusPackageUpdated, SelectedPackage.Name));
 
         if (packageIdChanged)
         {
@@ -773,7 +821,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         RaiseCountsChanged();
         SaveCatalogInBackground();
 
-        StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusPackageDeleted, package.Name));
+        SetStatus(LocalizedText.Of(UiKeys.StatusPackageDeleted, package.Name));
     }
 
     private bool CanMovePackage(int offset)
@@ -910,7 +958,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         }
 
         IsBusy = true;
-        StatusMessage = _localizer[UiKeys.StatusCheckingInstalled];
+        SetStatus(UiKeys.StatusCheckingInstalled);
 
         foreach (var package in Packages)
         {
@@ -942,7 +990,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             _installedScanCompleted = true;
             RaiseCountsChanged();
 
-            StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusCheckedInstalledSummary, InstalledCount, TotalCount));
+            SetStatus(LocalizedText.Of(UiKeys.StatusCheckedInstalledSummary, InstalledCount, TotalCount));
 
             if (showDialog)
             {
@@ -961,7 +1009,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             }
 
             _logger.Error($"Check installed packages failed: {ex.Message}");
-            StatusMessage = _localizer[UiKeys.StatusCheckInstalledFailed];
+            SetStatus(UiKeys.StatusCheckInstalledFailed);
 
             if (showDialog)
             {
@@ -1010,7 +1058,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
         if (!_dialogService.ShowInstallConfirmation(confirm))
         {
-            StatusMessage = _localizer[UiKeys.StatusInstallCancelledNoop];
+            SetStatus(UiKeys.StatusInstallCancelledNoop);
             return;
         }
 
@@ -1115,6 +1163,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         ProgressValue = update.PercentComplete;
         ProgressText = $"{update.CompletedCount}/{update.TotalCount}";
         CurrentPackageText = update.StatusMessage;
+        _lastStatusText = LocalizedText.Raw(update.StatusMessage);
         StatusMessage = update.StatusMessage;
 
         if (update.CompletedResult is not { } result)
@@ -1167,9 +1216,9 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             lines.Add(_localizer[UiKeys.InstallSummaryFailedHint]);
         }
 
-        StatusMessage = summary.WasCancelled
-            ? _localizer[UiKeys.StatusInstallCancelled]
-            : _localizer.Format(LocalizedText.Of(UiKeys.StatusInstallCompleted, summary.SucceededCount, summary.FailedCount));
+        SetStatus(summary.WasCancelled
+            ? LocalizedText.Of(UiKeys.StatusInstallCancelled)
+            : LocalizedText.Of(UiKeys.StatusInstallCompleted, summary.SucceededCount, summary.FailedCount));
 
         _dialogService.ShowInfo(_localizer[UiKeys.DialogInstallResultTitle], string.Join(Environment.NewLine, lines));
     }
@@ -1205,7 +1254,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         SelectedProfile = profile;
 
         SaveCatalogInBackground();
-        StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusProfileCreated, name));
+        SetStatus(LocalizedText.Of(UiKeys.StatusProfileCreated, name));
     }
 
     private void RenameProfile()
@@ -1259,7 +1308,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         SelectedProfile = copy;
 
         SaveCatalogInBackground();
-        StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusProfileDuplicated, copy.Name));
+        SetStatus(LocalizedText.Of(UiKeys.StatusProfileDuplicated, copy.Name));
     }
 
     private void DeleteProfile()
@@ -1282,7 +1331,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         SelectedProfile = Profiles.FirstOrDefault();
 
         SaveCatalogInBackground();
-        StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusProfileDeleted, profile.Name));
+        SetStatus(LocalizedText.Of(UiKeys.StatusProfileDeleted, profile.Name));
     }
 
     // ---------------------------------------------------------------- Import / Export
@@ -1291,10 +1340,10 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     {
         if (_scanService is null || _backupExporter is null) return;
         IsBusy = true;
-        StatusMessage = _localizer[UiKeys.StatusScanningMachine];
+        SetStatus(UiKeys.StatusScanningMachine);
         MachineSnapshot snapshot;
         try { snapshot = await _scanService.ScanAsync(_lifetimeCts.Token).ConfigureAwait(true); }
-        catch (OperationCanceledException) { StatusMessage = _localizer[UiKeys.StatusScanCancelled]; return; }
+        catch (OperationCanceledException) { SetStatus(UiKeys.StatusScanCancelled); return; }
         catch (Exception ex) { _logger.Error($"Scan machine failed: {ex.Message}"); _dialogService.ShowError(_localizer[UiKeys.DialogScanFailed], ex.Message); return; }
         finally { IsBusy = false; }
         if (snapshot.Entries.Count == 0) { _dialogService.ShowInfo(_localizer[UiKeys.DialogScanFinished], _localizer[UiKeys.DialogNoSoftwareFound]); return; }
@@ -1352,7 +1401,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             await _repository.SaveAsync(_catalog).ConfigureAwait(true);
             ReloadProfiles();
 
-            StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusImportSuccess, path));
+            SetStatus(LocalizedText.Of(UiKeys.StatusImportSuccess, path));
             _dialogService.ShowInfo(_localizer[UiKeys.DialogImportSuccessTitle], StatusMessage);
 
             if (IsWingetAvailable)
@@ -1393,7 +1442,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
             await _repository.ExportAsync(catalog, path).ConfigureAwait(true);
 
-            StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusExportSuccess, path));
+            SetStatus(LocalizedText.Of(UiKeys.StatusExportSuccess, path));
             _dialogService.ShowInfo(_localizer[UiKeys.DialogExportSuccessTitle], StatusMessage);
         }
         catch (Exception ex)
@@ -1633,6 +1682,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         }
 
         _disposed = true;
+        LocalizationSource.Instance.LanguageChanged -= OnLanguageChanged;
         _installCts?.Cancel();
         _lifetimeCts.Cancel();
         Search.Dispose();

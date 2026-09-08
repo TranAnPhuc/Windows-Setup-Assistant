@@ -161,6 +161,8 @@
   <data name="Ui_ColumnResultOutcome" xml:space="preserve"><value>Kết quả</value></data>
   <data name="Ui_ColumnResultExitCode" xml:space="preserve"><value>Exit code</value></data>
   <data name="Ui_ColumnResultDuration" xml:space="preserve"><value>Thời gian</value></data>
+  <data name="Ui_DurationMinutes" xml:space="preserve"><value>{0} phút</value></data>
+  <data name="Ui_DurationSeconds" xml:space="preserve"><value>{0} giây</value></data>
   <data name="Ui_ColumnResultMessage" xml:space="preserve"><value>Thông báo</value></data>
   <data name="Ui_TabLogs" xml:space="preserve"><value>Nhật ký</value></data>
   <data name="Ui_BtnClearLogs" xml:space="preserve"><value>Xoá nhật ký</value></data>

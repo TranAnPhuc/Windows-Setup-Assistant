@@ -2,7 +2,9 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+using WindowsSetupAssistant.App.Localization;
 using WindowsSetupAssistant.Domain.Enums;
+using WindowsSetupAssistant.Domain.Localization;
 
 namespace WindowsSetupAssistant.App.Converters;
 
@@ -96,22 +98,28 @@ public sealed class ExitCodeConverter : IValueConverter
         throw new NotSupportedException();
 }
 
-/// <summary>Đổi InstallOutcome thành chữ tiếng Việt cho bảng kết quả.</summary>
+/// <summary>Đổi InstallOutcome thành chữ theo ngôn ngữ đang chọn cho bảng kết quả.</summary>
 public sealed class InstallOutcomeConverter : IValueConverter
 {
-    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
-        value is InstallOutcome outcome
-            ? outcome switch
-            {
-                InstallOutcome.Succeeded => "Thành công",
-                InstallOutcome.Upgraded => "Đã nâng cấp",
-                InstallOutcome.Skipped => "Bỏ qua",
-                InstallOutcome.AlreadyInstalled => "Đã có sẵn",
-                InstallOutcome.Failed => "Thất bại",
-                InstallOutcome.Cancelled => "Đã huỷ",
-                _ => outcome.ToString()
-            }
-            : string.Empty;
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is not InstallOutcome outcome)
+        {
+            return string.Empty;
+        }
+
+        var localizer = LocalizationSource.Instance.Localizer;
+        return outcome switch
+        {
+            InstallOutcome.Succeeded => localizer[UiKeys.StatusOutcomeSucceeded],
+            InstallOutcome.Upgraded => localizer[UiKeys.StatusOutcomeUpgraded],
+            InstallOutcome.Skipped => localizer[UiKeys.StatusOutcomeSkipped],
+            InstallOutcome.AlreadyInstalled => localizer[UiKeys.StatusOutcomeAlreadyInstalled],
+            InstallOutcome.Failed => localizer[UiKeys.StatusOutcomeFailed],
+            InstallOutcome.Cancelled => localizer[UiKeys.StatusOutcomeCancelled],
+            _ => localizer[UiKeys.StatusOutcomeUnknown]
+        };
+    }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
         throw new NotSupportedException();
@@ -137,15 +145,21 @@ public sealed class InstallOutcomeToBrushConverter : IValueConverter
         throw new NotSupportedException();
 }
 
-/// <summary>Hiển thị khoảng thời gian ngắn gọn: 12,3 giây.</summary>
+/// <summary>Hiển thị khoảng thời gian ngắn gọn theo ngôn ngữ: 12.3 min / 12.3 phút / 12.3 秒.</summary>
 public sealed class DurationConverter : IValueConverter
 {
-    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
-        value is TimeSpan duration
-            ? duration.TotalMinutes >= 1
-                ? $"{duration.TotalMinutes:F1} phút"
-                : $"{duration.TotalSeconds:F1} giây"
-            : string.Empty;
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is not TimeSpan duration)
+        {
+            return string.Empty;
+        }
+
+        var localizer = LocalizationSource.Instance.Localizer;
+        return duration.TotalMinutes >= 1
+            ? localizer.Format(LocalizedText.Of(UiKeys.DurationMinutes, $"{duration.TotalMinutes:F1}"))
+            : localizer.Format(LocalizedText.Of(UiKeys.DurationSeconds, $"{duration.TotalSeconds:F1}"));
+    }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
         throw new NotSupportedException();

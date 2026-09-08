@@ -48,6 +48,12 @@ public sealed class SearchResultViewModel : ObservableObject
     }
 
     public string StatusText => IsAlreadyInList ? _localizer[UiKeys.SearchAlreadyInList] : string.Empty;
+
+    /// <summary>Báo cho WPF biết chuỗi trạng thái đã đổi theo ngôn ngữ mới.</summary>
+    public void RefreshLocalization()
+    {
+        OnPropertyChanged(nameof(StatusText));
+    }
 }
 
 /// <summary>
@@ -65,6 +71,7 @@ public sealed class SearchViewModel : ObservableObject, IDisposable
     private CancellationTokenSource? _searchCts;
     private string _searchText = string.Empty;
     private readonly IStringLocalizer _localizer;
+    private LocalizedText? _lastStatusText;
     private string _statusMessage;
     private bool _isSearching;
     private bool _disposed;
@@ -83,7 +90,8 @@ public sealed class SearchViewModel : ObservableObject, IDisposable
         _canUseWinget = canUseWinget;
         _canAddPackage = canAddPackage;
         _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
-        _statusMessage = _localizer[UiKeys.SearchInitialPrompt];
+        _lastStatusText = LocalizedText.Of(UiKeys.SearchInitialPrompt);
+        _statusMessage = _localizer.Format(_lastStatusText);
 
         SearchCommand = new AsyncRelayCommand(
             SearchAsync,
@@ -96,7 +104,7 @@ public sealed class SearchViewModel : ObservableObject, IDisposable
             CancelPendingSearch();
             Results.Clear();
             SearchText = string.Empty;
-            StatusMessage = _localizer[UiKeys.SearchCleared];
+            SetStatus(UiKeys.SearchCleared);
         });
     }
 
@@ -143,6 +151,28 @@ public sealed class SearchViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>Cập nhật lại nhãn "Đã có trong danh sách" sau khi danh sách chính thay đổi.</summary>
+    private void SetStatus(LocalizedText text)
+    {
+        _lastStatusText = text;
+        StatusMessage = _localizer.Format(text);
+    }
+
+    private void SetStatus(string key) => SetStatus(LocalizedText.Of(key));
+
+    /// <summary>Cập nhật lại chuỗi trạng thái theo ngôn ngữ đang chọn.</summary>
+    public void RefreshLocalization()
+    {
+        if (_lastStatusText is not null)
+        {
+            StatusMessage = _localizer.Format(_lastStatusText);
+        }
+
+        foreach (var result in Results)
+        {
+            result.RefreshLocalization();
+        }
+    }
+
     public void RefreshAlreadyInListFlags()
     {
         foreach (var result in Results)
@@ -165,7 +195,7 @@ public sealed class SearchViewModel : ObservableObject, IDisposable
     {
         if (!SearchQueryValidator.TryValidate(SearchText, out var validationError))
         {
-            StatusMessage = _localizer.Format(validationError);
+            SetStatus(validationError);
             return;
         }
 
@@ -176,7 +206,7 @@ public sealed class SearchViewModel : ObservableObject, IDisposable
         var token = _searchCts.Token;
 
         IsSearching = true;
-        StatusMessage = _localizer[UiKeys.SearchSearching];
+        SetStatus(UiKeys.SearchSearching);
         Results.Clear();
 
         try
@@ -196,9 +226,9 @@ public sealed class SearchViewModel : ObservableObject, IDisposable
                 });
             }
 
-            StatusMessage = Results.Count == 0
-                ? _localizer[UiKeys.SearchNoResults]
-                : _localizer.Format(LocalizedText.Of(UiKeys.SearchResultsFound, Results.Count));
+            SetStatus(Results.Count == 0
+                ? LocalizedText.Of(UiKeys.SearchNoResults)
+                : LocalizedText.Of(UiKeys.SearchResultsFound, Results.Count));
         }
         catch (OperationCanceledException)
         {
@@ -206,11 +236,12 @@ public sealed class SearchViewModel : ObservableObject, IDisposable
         }
         catch (TimeoutException ex)
         {
+            _lastStatusText = LocalizedText.Raw(ex.Message);
             StatusMessage = ex.Message;
         }
         catch (Exception ex)
         {
-            StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.SearchFailed, ex.Message));
+            SetStatus(LocalizedText.Of(UiKeys.SearchFailed, ex.Message));
         }
         finally
         {
