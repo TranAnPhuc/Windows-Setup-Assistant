@@ -2,6 +2,7 @@ using WindowsSetupAssistant.Domain.Localization;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Threading;
+using WindowsSetupAssistant.App.Cli;
 using WindowsSetupAssistant.App.Localization;
 using WindowsSetupAssistant.App.Mvvm;
 using WindowsSetupAssistant.App.Services;
@@ -24,9 +25,20 @@ public partial class App : WpfApplication
 {
     private MainViewModel? _mainViewModel;
 
+    /// <summary>Khác null nghĩa là đang chạy chế độ không giám sát: tuyệt đối không hiện hộp thoại.</summary>
+    private IUnattendedOutput? _unattendedOutput;
+
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        var parseResult = CommandLineParser.Parse(e.Args);
+
+        if (parseResult.Mode != CommandLineMode.Gui)
+        {
+            RunCommandLine(parseResult);
+            return;
+        }
 
         // Bắt mọi lỗi chưa xử lý để ứng dụng không "tắt ngang" khi đang cài phần mềm.
         DispatcherUnhandledException += OnDispatcherUnhandledException;
@@ -107,6 +119,16 @@ public partial class App : WpfApplication
 
     private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
+        // Ở chế độ không giám sát KHÔNG được hiện hộp thoại: một hộp thoại đứng chờ người bấm
+        // sẽ treo máy đang chạy không người trông cho tới khi có ai đó đi ngang qua.
+        if (_unattendedOutput is { } output)
+        {
+            output.WriteError($"Unexpected error: {e.Exception.Message}");
+            e.Handled = true;
+            Shutdown((int)UnattendedExitCode.SomePackagesFailed);
+            return;
+        }
+
         MessageBox.Show(
             $"Ứng dụng gặp lỗi không mong đợi:\n\n{e.Exception.Message}",
             "Lỗi",
@@ -114,5 +136,103 @@ public partial class App : WpfApplication
             MessageBoxImage.Error);
 
         e.Handled = true;
+    }
+
+    /// <summary>
+    /// Nhánh dòng lệnh. KHÔNG tạo cửa sổ nào.
+    ///
+    /// OnStartup là hàm đồng bộ nên không await được ở đây: ta khởi chạy tác vụ rồi trả về,
+    /// vòng lặp thông điệp của WPF sẽ bơm tiếp các đoạn await sau đó. Điều đó chỉ đúng khi
+    /// ShutdownMode là OnExplicitShutdown - mặc định OnLastWindowClose sẽ đóng ứng dụng ngay
+    /// vì không có cửa sổ nào cả.
+    /// </summary>
+    private void RunCommandLine(CommandLineParseResult parseResult)
+    {
+        ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
+        _ = RunCommandLineAsync(parseResult);
+    }
+
+    private async Task RunCommandLineAsync(CommandLineParseResult parseResult)
+    {
+        var console = ConsoleSession.Attach();
+        _unattendedOutput = console;
+
+        var exitCode = UnattendedExitCode.InvalidArguments;
+        using var cancellation = new CancellationTokenSource();
+
+        ConsoleCancelEventHandler? cancelHandler = null;
+
+        try
+        {
+            switch (parseResult.Mode)
+            {
+                case CommandLineMode.Help:
+                    console.WriteLine(ConsoleMessages.BuildHelp());
+                    exitCode = UnattendedExitCode.Success;
+                    break;
+
+                case CommandLineMode.Invalid:
+                    console.WriteError(parseResult.ErrorMessage ?? "Invalid arguments.");
+                    console.WriteLine();
+                    console.WriteLine(ConsoleMessages.BuildHelp());
+                    exitCode = UnattendedExitCode.InvalidArguments;
+                    break;
+
+                default:
+                    cancelHandler = (_, args) =>
+                    {
+                        // Cancel = true để Windows không giết tiến trình ngay: ta cần kịp
+                        // dừng gói đang cài và ghi báo cáo.
+                        args.Cancel = true;
+                        console.WriteLine(ConsoleMessages.CancelRequested);
+                        cancellation.Cancel();
+                    };
+
+                    Console.CancelKeyPress += cancelHandler;
+
+                    exitCode = await RunUnattendedAsync(parseResult.Options!, console, cancellation.Token)
+                        .ConfigureAwait(true);
+                    break;
+            }
+        }
+        catch (Exception exception)
+        {
+            console.WriteError($"Unexpected error: {exception.Message}");
+            exitCode = UnattendedExitCode.SomePackagesFailed;
+        }
+        finally
+        {
+            if (cancelHandler is not null)
+            {
+                Console.CancelKeyPress -= cancelHandler;
+            }
+
+            console.Dispose();
+            _unattendedOutput = null;
+
+            Shutdown((int)exitCode);
+        }
+    }
+
+    /// <summary>
+    /// Lắp ráp đúng các thành phần mà giao diện đang dùng, chỉ khác: không ViewModel, không cửa sổ.
+    /// </summary>
+    private static async Task<UnattendedExitCode> RunUnattendedAsync(
+        CommandLineOptions options,
+        IUnattendedOutput output,
+        CancellationToken cancellationToken)
+    {
+        var localizer = new ResourceStringLocalizer();
+        var logger = new AppLogger(logDirectory: null, writeToFile: true, localizer);
+        var processRunner = new ProcessRunner();
+        var wingetService = new WingetService(processRunner, logger);
+        var repository = new JsonProfileRepository(dataFilePath: null, logger: logger, localizer: localizer);
+        var queueService = new InstallationQueueService(wingetService, logger);
+
+        var runner = new UnattendedRunner(
+            wingetService, repository, queueService, localizer, output, logger);
+
+        return await runner.RunAsync(options, cancellationToken).ConfigureAwait(true);
     }
 }
