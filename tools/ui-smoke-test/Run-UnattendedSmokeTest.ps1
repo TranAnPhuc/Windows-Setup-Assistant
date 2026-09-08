@@ -39,11 +39,16 @@ function Check($label, $ok) {
 }
 
 # Dat winget GIA len dau PATH: khong co phan mem that nao duoc cai.
+# Luu lai PATH cu de khoi phuc trong finally, tranh ro ri anh huong toi cac lenh winget sau.
+$oldPath = $env:PATH
 $env:PATH = $fakeBin + ";" + $env:PATH
 
 # Winget gia mac dinh "nam cho" 5 phut moi lenh cai (phuc vu kich ban UI can tien trinh
 # song lau de thu huy). Kich ban khong giam sat nay khong can dieu do, nen rut ngan lai
 # de moi lan chay chi mat vai giay thay vi hang chuc phut.
+# Luu lai gia tri cu cua bien nay de khoi phuc trong finally, tranh ro ri anh huong
+# toi lan chay tiep theo trong cung cua so PowerShell.
+$oldDelay = $env:WSA_FAKE_WINGET_DELAY_MS
 $env:WSA_FAKE_WINGET_DELAY_MS = "300"
 
 # Du lieu rieng cho lan chay nay, khong dung vao Data that cua nguoi dung.
@@ -145,6 +150,7 @@ finally {
     # Bo qua trong try/catch rieng: $ErrorActionPreference = 'Stop' co the khien
     # Remove-Item/Copy-Item nem loi terminating (vd. file bi khoa boi phan mem diet virus),
     # neu khong bat lai o day thi buoc don dep thu muc tam ben duoi se khong bao gio chay.
+    $dataRestoreFailed = $false
     try {
         if ($backup) {
             # Da co Data that tu truoc: khoi phuc lai nguyen ven.
@@ -159,10 +165,29 @@ finally {
         }
     }
     catch {
+        $dataRestoreFailed = $true
         Write-Warning ("Khong the khoi phuc/don dep thu muc Data mot cach day du: " + $_.Exception.Message)
-        Write-Warning ("Hay tu kiem tra thu muc: " + $dataDir)
+        Write-Warning ("Ban sao luu Data nam tai: " + $backup)
     }
-    Remove-Item $work -Recurse -Force -ErrorAction SilentlyContinue
+
+    # Chi xoa thu muc tam neu khoi phuc Data thanh cong (neu co). Neu khoi phuc that bai,
+    # giu lai $work de nguoi dung co the khoi phuc bang tay.
+    if (-not $dataRestoreFailed) {
+        Remove-Item $work -Recurse -Force -ErrorAction SilentlyContinue
+    }
+    else {
+        Write-Warning ("Thu muc tam da duoc giu lai: " + $work)
+    }
+
+    # Khoi phuc cac bien moi truong: neu bien khong ton tai truoc day (oldDelay = $null),
+    # phai xoa hoan toan. Neu ton tai, khoi phuc lai gia tri cu.
+    if ($null -eq $oldDelay) {
+        Remove-Item Env:\WSA_FAKE_WINGET_DELAY_MS -ErrorAction SilentlyContinue
+    }
+    else {
+        $env:WSA_FAKE_WINGET_DELAY_MS = $oldDelay
+    }
+    $env:PATH = $oldPath
 }
 
 Write-Host ""
