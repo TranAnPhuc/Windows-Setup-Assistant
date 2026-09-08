@@ -167,11 +167,94 @@ public class UnattendedReportTests
     [Fact]
     public void DuongDanMacDinhNamTrongThuMucReports()
     {
-        var path = UnattendedReportWriter.DefaultPath(
-            DateTimeOffset.Parse("2026-09-08T14:12:33+07:00", CultureInfo.InvariantCulture));
+        var timestamp = DateTimeOffset.Parse("2026-09-08T14:12:33+07:00", CultureInfo.InvariantCulture);
+
+        var path = UnattendedReportWriter.DefaultPath(timestamp);
+
+        // DefaultPath doi timestamp sang gio dia phuong cua may dang chay (timestamp.LocalDateTime),
+        // nen ten file mong doi phai duoc tinh tu chinh mui gio cua may do - khong duoc viet cung
+        // theo mot mui gio cu the, neu khong test se do oan tren may/CI o mui gio khac.
+        var expectedLocal = timestamp.LocalDateTime;
+        var expectedFileName = $"unattended-{expectedLocal:yyyyMMdd-HHmmss}.json";
 
         Assert.Contains("Reports", path);
-        Assert.EndsWith("unattended-20260908-141233.json", path);
+        Assert.EndsWith(expectedFileName, path);
         Assert.True(Path.IsPathRooted(path));
+    }
+
+    [Fact]
+    public void TenFileMacDinhDungKhuonDangKhongPhuThuocMuiGio()
+    {
+        // Test doi chung, dung bieu thuc chinh quy de khang dinh khuon dang ten file
+        // ma khong phu thuoc vao mot thoi diem hay mui gio cu the nao.
+        var path = UnattendedReportWriter.DefaultPath(DateTimeOffset.UtcNow);
+
+        var fileName = Path.GetFileName(path);
+        Assert.Matches(@"^unattended-\d{8}-\d{6}\.json$", fileName);
+    }
+
+    [Fact]
+    public void ThongBaoLoiLuonLaTiengAnhDuTruocKhiFormat()
+    {
+        // Dung LocalizedText.Of (khong phai Raw) de nhanh dich that su chay qua StubLocalizer,
+        // qua do bat duoc neu code san xuat vo tinh doi sang CultureInfo.CurrentUICulture.
+        var summary = new InstallationRunSummary
+        {
+            Results = new[]
+            {
+                new InstallationResult
+                {
+                    PackageId = "Fail.Package",
+                    DisplayName = "Fail.Package",
+                    Outcome = InstallOutcome.Failed,
+                    ExitCode = 1,
+                    Message = LocalizedText.Of("cli.install.failed"),
+                    Duration = TimeSpan.FromSeconds(1)
+                }
+            },
+            TotalDuration = TimeSpan.FromSeconds(1)
+        };
+
+        var report = Build(summary, UnattendedExitCode.SomePackagesFailed);
+
+        // Theo StubLocalizer: Format(text, culture) tra ve "<culture>:<key>" khi text khong phai Raw.
+        Assert.Equal("en:cli.install.failed", report.Packages[0].ErrorMessage);
+    }
+
+    [Fact]
+    public void ThongBaoLoiVanLaTiengAnhDuGiaoDienDangTiengViet()
+    {
+        // Doi chung: dat giao dien hien tai sang tieng Viet, dam bao errorMessage van la tieng Anh.
+        var originalCulture = CultureInfo.CurrentUICulture;
+        try
+        {
+            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("vi");
+
+            var summary = new InstallationRunSummary
+            {
+                Results = new[]
+                {
+                    new InstallationResult
+                    {
+                        PackageId = "Fail.Package",
+                        DisplayName = "Fail.Package",
+                        Outcome = InstallOutcome.Failed,
+                        ExitCode = 1,
+                        Message = LocalizedText.Of("cli.install.failed"),
+                        Duration = TimeSpan.FromSeconds(1)
+                    }
+                },
+                TotalDuration = TimeSpan.FromSeconds(1)
+            };
+
+            var report = Build(summary, UnattendedExitCode.SomePackagesFailed);
+
+            Assert.Equal("en:cli.install.failed", report.Packages[0].ErrorMessage);
+        }
+        finally
+        {
+            // Bat buoc khoi phuc de khong lam ro ri culture toan cuc sang cac test khac.
+            CultureInfo.CurrentUICulture = originalCulture;
+        }
     }
 }
