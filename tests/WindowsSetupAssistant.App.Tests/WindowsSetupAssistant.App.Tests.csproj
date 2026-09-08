@@ -16,5 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\WindowsSetupAssistant.App\WindowsSetupAssistant.App.csproj" />
     <Compile Include="..\WindowsSetupAssistant.Tests\Fakes\RecordingLogger.cs" Link="Fakes\RecordingLogger.cs" />
+    <Compile Include="..\WindowsSetupAssistant.Tests\Fakes\FakeWingetService.cs" Link="Fakes\FakeWingetService.cs" />
+    <Compile Include="..\WindowsSetupAssistant.Tests\Fakes\StubLocalizer.cs" Link="Fakes\StubLocalizer.cs" />
   </ItemGroup>
 </Project>
