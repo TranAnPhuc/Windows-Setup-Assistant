@@ -1,7 +1,7 @@
 # Kế hoạch triển khai: Hỗ trợ đa ngôn ngữ
 
 > **Dành cho người/agent thực thi:** BẮT BUỘC dùng skill `superpowers:subagent-driven-development`
-> (khuyên dùng) hoặc `superpowers:executing-plans`. Các bước dùng checkbox (`- [ ]`) để theo dõi.
+> (khuyên dùng) hoặc `superpowers:executing-plans`. Các bước dùng checkbox (`- [x]`) để theo dõi.
 
 **Mục tiêu:** Ứng dụng chạy đầy đủ bằng tiếng Việt, tiếng Trung phồn thể và tiếng Anh, đổi ngôn ngữ
 ngay trong lúc chạy mà không cần khởi động lại.
@@ -85,7 +85,7 @@ Task 2 bảo vệ bằng test đối chiếu — mạnh hơn lớp sinh tự đ�
   thuộc tính `Key`, `Arguments`, `IsRaw`; `LocalizedException(LocalizedText)` với thuộc tính
   `LocalizedMessage`; hằng trong `MessageKeys`. Mọi task sau đều dùng.
 
-- [ ] **Bước 1: Viết test thất bại**
+- [x] **Bước 1: Viết test thất bại**
 
 Tạo `tests/WindowsSetupAssistant.Tests/Domain/LocalizedTextTests.cs`:
 
@@ -167,7 +167,7 @@ public class LocalizedTextTests
 }
 ```
 
-- [ ] **Bước 2: Chạy test để chắc chắn nó thất bại**
+- [x] **Bước 2: Chạy test để chắc chắn nó thất bại**
 
 ```bash
 dotnet test tests/WindowsSetupAssistant.Tests --filter "FullyQualifiedName~LocalizedText"
@@ -175,7 +175,7 @@ dotnet test tests/WindowsSetupAssistant.Tests --filter "FullyQualifiedName~Local
 
 Kết quả mong đợi: **lỗi biên dịch** `CS0246: 'LocalizedText' could not be found`.
 
-- [ ] **Bước 3: Tạo `LocalizedText`**
+- [x] **Bước 3: Tạo `LocalizedText`**
 
 ```csharp
 namespace WindowsSetupAssistant.Domain.Localization;
@@ -226,7 +226,7 @@ public sealed class LocalizedText
 }
 ```
 
-- [ ] **Bước 4: Tạo `LocalizedException`**
+- [x] **Bước 4: Tạo `LocalizedException`**
 
 ```csharp
 namespace WindowsSetupAssistant.Domain.Localization;
@@ -257,7 +257,7 @@ public class LocalizedException : Exception
 }
 ```
 
-- [ ] **Bước 5: Tạo `MessageKeys`**
+- [x] **Bước 5: Tạo `MessageKeys`**
 
 Liệt kê khoá cho **mọi thông điệp của tầng dưới**. Danh sách dưới đây lấy từ các chuỗi tiếng Việt
 đang có trong Domain, Application và Infrastructure:
@@ -369,7 +369,7 @@ public static class MessageKeys
 }
 ```
 
-- [ ] **Bước 6: Chạy test**
+- [x] **Bước 6: Chạy test**
 
 ```bash
 dotnet test tests/WindowsSetupAssistant.Tests --filter "FullyQualifiedName~LocalizedText"
@@ -377,7 +377,7 @@ dotnet test tests/WindowsSetupAssistant.Tests --filter "FullyQualifiedName~Local
 
 Kết quả mong đợi: **7 test PASS**.
 
-- [ ] **Bước 7: Chạy toàn bộ và commit**
+- [x] **Bước 7: Chạy toàn bộ và commit**
 
 ```bash
 dotnet test
@@ -412,7 +412,7 @@ bản dịch không rơi rớt âm thầm.
   - `ResourceStringLocalizer` — hiện thực, constructor không tham số
   - `UiKeys` — hằng khoá giao diện, mọi khoá bắt đầu bằng `Ui_`
 
-- [ ] **Bước 1: Viết test đối chiếu khoá (test quan trọng nhất)**
+- [x] **Bước 1: Viết test đối chiếu khoá (test quan trọng nhất)**
 
 Tạo `tests/WindowsSetupAssistant.App.Tests/Localization/ResourceParityTests.cs`:
 
@@ -573,7 +573,7 @@ public class ResourceParityTests
 }
 ```
 
-- [ ] **Bước 2: Chạy test để chắc chắn nó thất bại**
+- [x] **Bước 2: Chạy test để chắc chắn nó thất bại**
 
 ```bash
 dotnet test tests/WindowsSetupAssistant.App.Tests --filter "FullyQualifiedName~ResourceParity"
@@ -581,7 +581,7 @@ dotnet test tests/WindowsSetupAssistant.App.Tests --filter "FullyQualifiedName~R
 
 Kết quả mong đợi: **lỗi biên dịch** `CS0246: 'UiKeys' could not be found`.
 
-- [ ] **Bước 3: Tạo `IStringLocalizer`**
+- [x] **Bước 3: Tạo `IStringLocalizer`**
 
 `src/WindowsSetupAssistant.Application/Abstractions/IStringLocalizer.cs`:
 
@@ -608,7 +608,7 @@ public interface IStringLocalizer
 }
 ```
 
-- [ ] **Bước 4: Tạo `UiKeys`**
+- [x] **Bước 4: Tạo `UiKeys`**
 
 `src/WindowsSetupAssistant.App/Localization/UiKeys.cs` — khoá cho chuỗi giao diện. Danh sách đầy đủ
 được bổ sung dần ở Task 6-9; ở task này khai báo đủ phần khung để test chạy được:
@@ -637,7 +637,7 @@ public static class UiKeys
 }
 ```
 
-- [ ] **Bước 5: Tạo ba file `.resx`**
+- [x] **Bước 5: Tạo ba file `.resx`**
 
 Cả ba file dùng đúng phần header chuẩn của `.resx`. Tạo `Strings.resx` (tiếng Anh, neutral):
 
@@ -700,7 +700,7 @@ bản dịch tiếng Trung phồn thể.
   </ItemGroup>
 ```
 
-- [ ] **Bước 6: Tạo `ResourceStringLocalizer`**
+- [x] **Bước 6: Tạo `ResourceStringLocalizer`**
 
 ```csharp
 using System.Globalization;
@@ -773,7 +773,7 @@ public sealed class ResourceStringLocalizer : IStringLocalizer
 }
 ```
 
-- [ ] **Bước 7: Viết test cho localizer**
+- [x] **Bước 7: Viết test cho localizer**
 
 Tạo `tests/WindowsSetupAssistant.App.Tests/Localization/ResourceStringLocalizerTests.cs`:
 
@@ -857,7 +857,7 @@ public class ResourceStringLocalizerTests
 }
 ```
 
-- [ ] **Bước 8: Chạy test**
+- [x] **Bước 8: Chạy test**
 
 ```bash
 dotnet test tests/WindowsSetupAssistant.App.Tests --filter "FullyQualifiedName~Localization"
@@ -865,7 +865,7 @@ dotnet test tests/WindowsSetupAssistant.App.Tests --filter "FullyQualifiedName~L
 
 Kết quả mong đợi: **15 test PASS** (7 đối chiếu + 8 localizer).
 
-- [ ] **Bước 9: Chạy toàn bộ và commit**
+- [x] **Bước 9: Chạy toàn bộ và commit**
 
 ```bash
 dotnet build
@@ -891,7 +891,7 @@ Kết quả mong đợi: build 0 lỗi 0 cảnh báo; **183 test pass** (168 + 1
   indexer `this[string key]`, sự kiện `LanguageChanged`; markup extension dùng trong XAML dạng
   `{loc:Text Ui_ProfileNew}`
 
-- [ ] **Bước 1: Viết test thất bại**
+- [x] **Bước 1: Viết test thất bại**
 
 ```csharp
 using System.ComponentModel;
@@ -980,7 +980,7 @@ public class LocalizationSourceTests
 }
 ```
 
-- [ ] **Bước 2: Chạy test để chắc chắn nó thất bại**
+- [x] **Bước 2: Chạy test để chắc chắn nó thất bại**
 
 ```bash
 dotnet test tests/WindowsSetupAssistant.App.Tests --filter "FullyQualifiedName~LocalizationSource"
@@ -988,7 +988,7 @@ dotnet test tests/WindowsSetupAssistant.App.Tests --filter "FullyQualifiedName~L
 
 Kết quả mong đợi: **lỗi biên dịch** `CS0246: 'LocalizationSource' could not be found`.
 
-- [ ] **Bước 3: Tạo `LocalizationSource`**
+- [x] **Bước 3: Tạo `LocalizationSource`**
 
 ```csharp
 using System.ComponentModel;
@@ -1045,7 +1045,7 @@ public sealed class LocalizationSource : INotifyPropertyChanged
 }
 ```
 
-- [ ] **Bước 4: Tạo markup extension**
+- [x] **Bước 4: Tạo markup extension**
 
 ```csharp
 using System.Windows.Data;
@@ -1090,7 +1090,7 @@ Khai báo namespace XAML — thêm vào `App.xaml` **và** mọi cửa sổ dùn
 xmlns:loc="clr-namespace:WindowsSetupAssistant.App.Localization"
 ```
 
-- [ ] **Bước 5: Chạy test**
+- [x] **Bước 5: Chạy test**
 
 ```bash
 dotnet test tests/WindowsSetupAssistant.App.Tests --filter "FullyQualifiedName~LocalizationSource"
@@ -1098,7 +1098,7 @@ dotnet test tests/WindowsSetupAssistant.App.Tests --filter "FullyQualifiedName~L
 
 Kết quả mong đợi: **4 test PASS**.
 
-- [ ] **Bước 6: Chạy toàn bộ và commit**
+- [x] **Bước 6: Chạy toàn bộ và commit**
 
 ```bash
 dotnet test
@@ -1124,7 +1124,7 @@ Kết quả mong đợi: **187 test pass**.
   `LanguageCatalog.Resolve(string? saved, CultureInfo installed) → CultureInfo`;
   `record LanguageOption(string Code, string DisplayName)`; `AppSettings.Language`
 
-- [ ] **Bước 1: Viết test thất bại**
+- [x] **Bước 1: Viết test thất bại**
 
 ```csharp
 using System.Globalization;
@@ -1186,7 +1186,7 @@ public class LanguageCatalogTests
 }
 ```
 
-- [ ] **Bước 2: Chạy test để chắc chắn nó thất bại**
+- [x] **Bước 2: Chạy test để chắc chắn nó thất bại**
 
 ```bash
 dotnet test tests/WindowsSetupAssistant.App.Tests --filter "FullyQualifiedName~LanguageCatalog"
@@ -1194,7 +1194,7 @@ dotnet test tests/WindowsSetupAssistant.App.Tests --filter "FullyQualifiedName~L
 
 Kết quả mong đợi: **lỗi biên dịch** `CS0246: 'LanguageCatalog' could not be found`.
 
-- [ ] **Bước 3: Tạo `LanguageCatalog`**
+- [x] **Bước 3: Tạo `LanguageCatalog`**
 
 ```csharp
 using System.Globalization;
@@ -1257,7 +1257,7 @@ public static class LanguageCatalog
 }
 ```
 
-- [ ] **Bước 4: Thêm `Language` vào `AppSettings`**
+- [x] **Bước 4: Thêm `Language` vào `AppSettings`**
 
 Thêm vào class `AppSettings` (cạnh `Theme`):
 
@@ -1266,7 +1266,7 @@ Thêm vào class `AppSettings` (cạnh `Theme`):
     public string Language { get; set; } = string.Empty;
 ```
 
-- [ ] **Bước 5: Chạy test và commit**
+- [x] **Bước 5: Chạy test và commit**
 
 ```bash
 dotnet test
@@ -1294,7 +1294,7 @@ Sau task này, ứng dụng đã đổi được ngôn ngữ thật — dù mớ
 - Consumes: `LanguageCatalog`, `LocalizationSource` (Task 3, 4)
 - Produces: `MainViewModel.Languages`, `MainViewModel.SelectedLanguage` (kiểu `LanguageOption`)
 
-- [ ] **Bước 1: Viết test cho cấu hình publish**
+- [x] **Bước 1: Viết test cho cấu hình publish**
 
 Cái bẫy `SatelliteResourceLanguages` im lặng nên phải có test canh:
 
@@ -1343,7 +1343,7 @@ public class PublishConfigurationTests
 }
 ```
 
-- [ ] **Bước 2: Chạy test để chắc chắn nó thất bại**
+- [x] **Bước 2: Chạy test để chắc chắn nó thất bại**
 
 ```bash
 dotnet test tests/WindowsSetupAssistant.App.Tests --filter "FullyQualifiedName~PublishConfiguration"
@@ -1352,7 +1352,7 @@ dotnet test tests/WindowsSetupAssistant.App.Tests --filter "FullyQualifiedName~P
 Kết quả mong đợi: **2 test FAIL** — `SatelliteResourceLanguages` đang là `en`, `Controls.xaml`
 chưa có font dự phòng.
 
-- [ ] **Bước 3: Sửa csproj**
+- [x] **Bước 3: Sửa csproj**
 
 Đổi dòng hiện có:
 
@@ -1366,7 +1366,7 @@ thành:
     <SatelliteResourceLanguages>en;vi;zh-Hant</SatelliteResourceLanguages>
 ```
 
-- [ ] **Bước 4: Sửa font**
+- [x] **Bước 4: Sửa font**
 
 Trong `Themes/Controls.xaml`, đổi:
 
@@ -1381,7 +1381,7 @@ thành:
     <FontFamily x:Key="AppFontFamily">Segoe UI, Microsoft JhengHei UI, Microsoft JhengHei, PMingLiU</FontFamily>
 ```
 
-- [ ] **Bước 5: Khởi tạo ngôn ngữ lúc chạy**
+- [x] **Bước 5: Khởi tạo ngôn ngữ lúc chạy**
 
 Trong `App.xaml.cs`, ngay sau khi đọc `settings` và **trước khi** tạo bất cứ ViewModel nào:
 
@@ -1394,7 +1394,7 @@ Trong `App.xaml.cs`, ngay sau khi đọc `settings` và **trước khi** tạo b
 
 Thêm using: `System.Globalization;`, `WindowsSetupAssistant.App.Localization;`.
 
-- [ ] **Bước 6: Thêm bộ chọn ngôn ngữ vào `MainViewModel`**
+- [x] **Bước 6: Thêm bộ chọn ngôn ngữ vào `MainViewModel`**
 
 Thêm thuộc tính:
 
@@ -1432,7 +1432,7 @@ Trong constructor, đặt giá trị ban đầu **không** kích hoạt setter (
             ?? LanguageCatalog.Supported[0];
 ```
 
-- [ ] **Bước 7: Thêm ComboBox vào `MainWindow.xaml`**
+- [x] **Bước 7: Thêm ComboBox vào `MainWindow.xaml`**
 
 Thêm `xmlns:loc="clr-namespace:WindowsSetupAssistant.App.Localization"` vào thẻ `Window`.
 Trong `StackPanel` của thanh tiêu đề, ngay **trước** nút đổi giao diện:
@@ -1447,7 +1447,7 @@ Trong `StackPanel` của thanh tiêu đề, ngay **trước** nút đổi giao d
                 <Border Width="1" Background="{DynamicResource AppBorderBrush}" Margin="12,2" />
 ```
 
-- [ ] **Bước 8: Chạy test**
+- [x] **Bước 8: Chạy test**
 
 ```bash
 dotnet build
@@ -1456,7 +1456,7 @@ dotnet test
 
 Kết quả mong đợi: build 0 lỗi 0 cảnh báo; **205 test pass** (203 + 2).
 
-- [ ] **Bước 9: Kiểm chứng bằng mắt**
+- [x] **Bước 9: Kiểm chứng bằng mắt**
 
 ```bash
 dotnet publish src/WindowsSetupAssistant.App -c Release -r win-x64 -o publish-i18n
@@ -1465,7 +1465,7 @@ dotnet publish src/WindowsSetupAssistant.App -c Release -r win-x64 -o publish-i1
 Kiểm tra thư mục `publish-i18n` **có** hai thư mục con `vi` và `zh-Hant` chứa satellite assembly.
 Nếu không có thì bước 3 chưa ăn.
 
-- [ ] **Bước 10: Commit**
+- [x] **Bước 10: Commit**
 
 ```bash
 git add src/WindowsSetupAssistant.App tests/WindowsSetupAssistant.App.Tests/Localization/PublishConfigurationTests.cs
@@ -1488,7 +1488,7 @@ mọi file, nên chỉ mô tả kỹ một lần ở đây.
 - Consumes: `TextExtension` (Task 3), `UiKeys` (Task 2)
 - Produces: thêm hằng vào `UiKeys` cho mọi chuỗi của `MainWindow.xaml`
 
-- [ ] **Bước 1: Liệt kê chuỗi cần chuyển**
+- [x] **Bước 1: Liệt kê chuỗi cần chuyển**
 
 ```bash
 grep -o 'Text="[^"{][^"]*"\|Content="[^"{][^"]*"\|Header="[^"{][^"]*"\|ToolTip="[^"{][^"]*"' src/WindowsSetupAssistant.App/Views/MainWindow.xaml
@@ -1496,7 +1496,7 @@ grep -o 'Text="[^"{][^"]*"\|Content="[^"{][^"]*"\|Header="[^"{][^"]*"\|ToolTip="
 
 Kết quả: danh sách chuỗi cứng. Bỏ qua các chuỗi đã dùng `{Binding …}` hoặc `{loc:Text …}`.
 
-- [ ] **Bước 2: Thêm hằng vào `UiKeys`**
+- [x] **Bước 2: Thêm hằng vào `UiKeys`**
 
 Với mỗi chuỗi, thêm một hằng. Quy ước tên: `Ui_` + vùng + việc. Ví dụ mẫu:
 
@@ -1522,7 +1522,7 @@ Với mỗi chuỗi, thêm một hằng. Quy ước tên: `Ui_` + vùng + việc
     public const string BtnStartInstall = "Ui_BtnStartInstall";
 ```
 
-- [ ] **Bước 3: Thêm giá trị vào cả ba `.resx`**
+- [x] **Bước 3: Thêm giá trị vào cả ba `.resx`**
 
 Mỗi khoá thêm đúng một `<data>` vào **cả ba** file. Giá trị tiếng Việt lấy nguyên văn chuỗi đang có
 trong XAML. Ví dụ cho `Ui_BtnStartInstall`:
@@ -1533,7 +1533,7 @@ trong XAML. Ví dụ cho `Ui_BtnStartInstall`:
 | `Strings.vi.resx` | `Bắt đầu cài đặt` |
 | `Strings.zh-Hant.resx` | `開始安裝` |
 
-- [ ] **Bước 4: Đổi XAML**
+- [x] **Bước 4: Đổi XAML**
 
 ```xml
 <!-- trước -->
@@ -1543,7 +1543,7 @@ trong XAML. Ví dụ cho `Ui_BtnStartInstall`:
 <Button Content="{loc:Text Ui_BtnStartInstall}" Command="{Binding InstallSelectedCommand}" />
 ```
 
-- [ ] **Bước 5: Chạy test đối chiếu — đây là lưới an toàn**
+- [x] **Bước 5: Chạy test đối chiếu — đây là lưới an toàn**
 
 ```bash
 dotnet test tests/WindowsSetupAssistant.App.Tests --filter "FullyQualifiedName~ResourceParity"
@@ -1551,7 +1551,7 @@ dotnet test tests/WindowsSetupAssistant.App.Tests --filter "FullyQualifiedName~R
 
 Kết quả mong đợi: **PASS**. Nếu đỏ, thông báo lỗi sẽ chỉ đúng khoá nào thiếu ở ngôn ngữ nào.
 
-- [ ] **Bước 6: Kiểm tra không còn chuỗi cứng**
+- [x] **Bước 6: Kiểm tra không còn chuỗi cứng**
 
 ```bash
 grep -c 'Text="[^"{]\|Content="[^"{]\|Header="[^"{]\|ToolTip="[^"{]' src/WindowsSetupAssistant.App/Views/MainWindow.xaml
@@ -1559,7 +1559,7 @@ grep -c 'Text="[^"{]\|Content="[^"{]\|Header="[^"{]\|ToolTip="[^"{]' src/Windows
 
 Kết quả mong đợi: **0**.
 
-- [ ] **Bước 7: Chạy toàn bộ và commit**
+- [x] **Bước 7: Chạy toàn bộ và commit**
 
 ```bash
 dotnet build
@@ -1583,7 +1583,7 @@ git commit -m "Chuyen MainWindow.xaml sang khoa da ngon ngu"
 - Consumes: giống Task 6
 - Produces: hằng `UiKeys` cho toàn bộ cửa sổ phụ
 
-- [ ] **Bước 1: Với TỪNG file trong danh sách trên, làm đủ 5 việc sau**
+- [x] **Bước 1: Với TỪNG file trong danh sách trên, làm đủ 5 việc sau**
 
 1. Liệt kê chuỗi cứng còn lại trong file:
 
@@ -1630,7 +1630,7 @@ dotnet test tests/WindowsSetupAssistant.App.Tests --filter "FullyQualifiedName~R
 
 Kết quả mong đợi: **PASS**.
 
-- [ ] **Bước 2: Kiểm tra toàn bộ thư mục Views**
+- [x] **Bước 2: Kiểm tra toàn bộ thư mục Views**
 
 ```bash
 grep -rc 'Text="[^"{]\|Content="[^"{]\|Header="[^"{]\|ToolTip="[^"{]' --include="*.xaml" src/WindowsSetupAssistant.App/Views
@@ -1638,7 +1638,7 @@ grep -rc 'Text="[^"{]\|Content="[^"{]\|Header="[^"{]\|ToolTip="[^"{]' --include=
 
 Kết quả mong đợi: mọi file đều **0**.
 
-- [ ] **Bước 3: Chạy toàn bộ và commit**
+- [x] **Bước 3: Chạy toàn bộ và commit**
 
 ```bash
 dotnet build
@@ -1662,7 +1662,7 @@ trở lại các file đã chuyển.
 - Produces: danh sách `NoHardcodedTextTests.ConvertedFiles` — các task sau bổ sung file vào đây
   sau khi chuyển xong
 
-- [ ] **Bước 1: Viết test**
+- [x] **Bước 1: Viết test**
 
 ```csharp
 using System.IO;
@@ -1740,7 +1740,7 @@ public class NoHardcodedTextTests
 }
 ```
 
-- [ ] **Bước 2: Chạy test**
+- [x] **Bước 2: Chạy test**
 
 ```bash
 dotnet test tests/WindowsSetupAssistant.App.Tests --filter "FullyQualifiedName~NoHardcodedText"
@@ -1749,7 +1749,7 @@ dotnet test tests/WindowsSetupAssistant.App.Tests --filter "FullyQualifiedName~N
 Kết quả mong đợi: **5 test PASS**. Nếu đỏ, thông báo chỉ rõ file và dòng còn sót — quay lại
 Task 6 hoặc 7 xử lý nốt.
 
-- [ ] **Bước 3: Commit**
+- [x] **Bước 3: Commit**
 
 ```bash
 git add tests/WindowsSetupAssistant.App.Tests/Localization/NoHardcodedTextTests.cs
@@ -1775,7 +1775,7 @@ git commit -m "Them test chan chuoi cung quay lai file da chuyen"
 - Consumes: `IStringLocalizer` (Task 2), `UiKeys` (Task 2)
 - Produces: mọi ViewModel nhận `IStringLocalizer` qua constructor
 
-- [ ] **Bước 1: Tiêm localizer vào ViewModel**
+- [x] **Bước 1: Tiêm localizer vào ViewModel**
 
 Mẫu áp dụng cho từng ViewModel — thêm tham số constructor **cuối cùng** để ít ảnh hưởng thứ tự:
 
@@ -1788,7 +1788,7 @@ Mẫu áp dụng cho từng ViewModel — thêm tham số constructor **cuối c
 
 `ViewModelFixture` truyền `LocalizationSource.Instance.Localizer`.
 
-- [ ] **Bước 2: Đổi chuỗi cứng thành tra khoá**
+- [x] **Bước 2: Đổi chuỗi cứng thành tra khoá**
 
 ```csharp
 // trước
@@ -1810,11 +1810,11 @@ StatusMessage = _localizer.Format(LocalizedText.Of(UiKeys.StatusPackageAdded, pa
 
 Thêm hằng vào `UiKeys` và giá trị vào ba `.resx` cho từng chuỗi, đúng quy trình Task 6.
 
-- [ ] **Bước 3: Bổ sung file vào danh sách canh chuỗi cứng**
+- [x] **Bước 3: Bổ sung file vào danh sách canh chuỗi cứng**
 
 Thêm 7 file ViewModel vào `NoHardcodedTextTests.ConvertedFiles`.
 
-- [ ] **Bước 4: Cập nhật test đang so khớp chuỗi tiếng Việt**
+- [x] **Bước 4: Cập nhật test đang so khớp chuỗi tiếng Việt**
 
 Ví dụ trong `MainViewModelTests`:
 
@@ -1832,7 +1832,7 @@ Assert.Contains(fixture.Dialogs.Messages, m => m.Contains(fixture.Localizer[UiKe
     public IStringLocalizer Localizer => LocalizationSource.Instance.Localizer;
 ```
 
-- [ ] **Bước 5: Chạy toàn bộ và commit**
+- [x] **Bước 5: Chạy toàn bộ và commit**
 
 ```bash
 dotnet build
@@ -1864,7 +1864,7 @@ Kết quả mong đợi: build 0 lỗi 0 cảnh báo; toàn bộ test xanh (số
   `IAppLogger.Information/Warning/Error(LocalizedText, …)`;
   `PackageIdValidator.TryValidate(string?, out LocalizedText)`
 
-- [ ] **Bước 1: Đổi validator**
+- [x] **Bước 1: Đổi validator**
 
 ```csharp
     public static bool TryValidate(string? packageId, out LocalizedText error)
@@ -1912,7 +1912,7 @@ Kết quả mong đợi: build 0 lỗi 0 cảnh báo; toàn bộ test xanh (số
 
 Làm tương tự cho `SearchQueryValidator`.
 
-- [ ] **Bước 2: Đổi model và logger**
+- [x] **Bước 2: Đổi model và logger**
 
 `InstallationResult.Message` và `LogEntry.Message` đổi kiểu sang `LocalizedText`, giá trị mặc định
 `LocalizedText.Raw(string.Empty)`. **Xoá** `LogEntry.ToString()` — việc kết xuất chuyển sang
@@ -1936,7 +1936,7 @@ Làm tương tự cho `SearchQueryValidator`.
     }
 ```
 
-- [ ] **Bước 3: Đổi chuỗi trong service**
+- [x] **Bước 3: Đổi chuỗi trong service**
 
 ```csharp
 // trước
@@ -1946,7 +1946,7 @@ _logger.Information($"Bắt đầu hàng đợi cài đặt: {ordered.Count} ph�
 _logger.Information(LocalizedText.Of(MessageKeys.QueueStarted, ordered.Count));
 ```
 
-- [ ] **Bước 4: Cập nhật test**
+- [x] **Bước 4: Cập nhật test**
 
 ```csharp
 // trước
@@ -1959,7 +1959,7 @@ Assert.Contains("Mất kết nối mạng", failed.Message.Arguments.Select(a =>
 
 `RecordingLogger` đổi theo chữ ký mới của `IAppLogger`.
 
-- [ ] **Bước 5: Chạy toàn bộ và commit**
+- [x] **Bước 5: Chạy toàn bộ và commit**
 
 ```bash
 dotnet build
@@ -1987,7 +1987,7 @@ git commit -m "Domain va Application tra ve khoa thay vi cau chu"
   `AppLogger(string? logDirectory, bool writeToFile, IStringLocalizer localizer)`;
   `DefaultCatalogFactory.Create(IStringLocalizer)`
 
-- [ ] **Bước 1: Viết test cho log tiếng Anh**
+- [x] **Bước 1: Viết test cho log tiếng Anh**
 
 ```csharp
 using System.Globalization;
@@ -2058,7 +2058,7 @@ internal sealed class StubLocalizer : IStringLocalizer
 }
 ```
 
-- [ ] **Bước 2: Sửa `AppLogger`**
+- [x] **Bước 2: Sửa `AppLogger`**
 
 ```csharp
     private static readonly CultureInfo FileLogCulture = CultureInfo.GetCultureInfo("en");
@@ -2104,7 +2104,7 @@ internal sealed class StubLocalizer : IStringLocalizer
 
 `WriteToFile` gọi `Render(entry)` thay cho `entry.ToString()`.
 
-- [ ] **Bước 3: Sửa `WingetExitCodes.Describe`**
+- [x] **Bước 3: Sửa `WingetExitCodes.Describe`**
 
 Đổi kiểu trả về sang `LocalizedText`, mỗi nhánh `switch` trả một khoá:
 
@@ -2119,7 +2119,7 @@ internal sealed class StubLocalizer : IStringLocalizer
     };
 ```
 
-- [ ] **Bước 4: Sửa thứ tự lắp ráp trong `App.xaml.cs`**
+- [x] **Bước 4: Sửa thứ tự lắp ráp trong `App.xaml.cs`**
 
 `AppLogger` giờ cần localizer, nên phải tạo **sau** khi đã đặt ngôn ngữ:
 
@@ -2136,7 +2136,7 @@ internal sealed class StubLocalizer : IStringLocalizer
         var logger = new AppLogger(logDirectory: null, writeToFile: true, localizer);
 ```
 
-- [ ] **Bước 5: Sửa `DefaultCatalogFactory`**
+- [x] **Bước 5: Sửa `DefaultCatalogFactory`**
 
 Tên cấu hình mẫu là **dữ liệu**, chỉ sinh theo ngôn ngữ ở lần chạy đầu; file đã tồn tại giữ nguyên.
 
@@ -2180,7 +2180,7 @@ Thêm 6 khoá vào `MessageKeys` (đây là dữ liệu do tầng dưới sinh r
 `DefaultCatalogFactory.Create()` (lần chạy đầu và khi file hỏng). Tên phần mềm
 (`Google Chrome`, `7-Zip`) **không** dịch.
 
-- [ ] **Bước 6: Chạy toàn bộ và commit**
+- [x] **Bước 6: Chạy toàn bộ và commit**
 
 ```bash
 dotnet build
@@ -2201,7 +2201,7 @@ git commit -m "Infrastructure tra ve khoa, file log luon tieng Anh"
 - Consumes: `AppSettings.Language` (Task 4)
 - Produces: kịch bản ghim ngôn ngữ `vi` trước khi chạy
 
-- [ ] **Bước 1: Ghim ngôn ngữ trước khi khởi động app**
+- [x] **Bước 1: Ghim ngôn ngữ trước khi khởi động app**
 
 Kịch bản đang tìm nút theo nhãn tiếng Việt nên phải bảo đảm app chạy tiếng Việt. Thêm vào phần
 chuẩn bị, **trước** lần `Start-Process` đầu tiên:
@@ -2214,11 +2214,11 @@ New-Item -ItemType Directory -Path $dataDir -Force | Out-Null
     Out-File (Join-Path $dataDir "app-settings.json") -Encoding utf8
 ```
 
-- [ ] **Bước 2: Ghi chú vào README của kịch bản**
+- [x] **Bước 2: Ghi chú vào README của kịch bản**
 
 Thêm mục giải thích vì sao phải ghim ngôn ngữ, để người sau không xoá nhầm.
 
-- [ ] **Bước 3: Chạy kịch bản**
+- [x] **Bước 3: Chạy kịch bản**
 
 ```bash
 dotnet publish src/WindowsSetupAssistant.App -c Release -r win-x64 -o publish
@@ -2229,7 +2229,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Run-UiSmokeTest.ps1
 
 Kết quả mong đợi: `Dat: 16 | Truot: 0`.
 
-- [ ] **Bước 4: Commit**
+- [x] **Bước 4: Commit**
 
 ```bash
 git add tools/ui-smoke-test
@@ -2240,11 +2240,11 @@ git commit -m "Kich ban kiem thu giao dien ghim ngon ngu tieng Viet"
 
 ## Kiểm thử thủ công cuối cùng
 
-- [ ] Mở app, đổi ngôn ngữ sang **English** → mọi nhãn đổi ngay, **không** khởi động lại
-- [ ] Đổi sang **繁體中文** → chữ Hán hiển thị đúng, không ra ô vuông
-- [ ] Kiểm tra bảng Kết quả cài đặt và thẻ Nhật ký cũng đổi theo
-- [ ] Đóng app, mở lại → vẫn giữ ngôn ngữ đã chọn
-- [ ] Mở `Logs/*.log` → nội dung **tiếng Anh** dù giao diện đang tiếng Trung
-- [ ] Xoá `Data/` rồi chạy lại trên máy Windows tiếng Anh → app tự chọn English, tên cấu hình mẫu tiếng Anh
-- [ ] `publish/` có hai thư mục con `vi` và `zh-Hant`
-- [ ] Chép bản publish sang máy khác, chạy thử cả 3 ngôn ngữ
+- [x] Mở app, đổi ngôn ngữ sang **English** → mọi nhãn đổi ngay, **không** khởi động lại
+- [x] Đổi sang **繁體中文** → chữ Hán hiển thị đúng, không ra ô vuông
+- [x] Kiểm tra bảng Kết quả cài đặt và thẻ Nhật ký cũng đổi theo
+- [x] Đóng app, mở lại → vẫn giữ ngôn ngữ đã chọn
+- [x] Mở `Logs/*.log` → nội dung **tiếng Anh** dù giao diện đang tiếng Trung
+- [x] Xoá `Data/` rồi chạy lại trên máy Windows tiếng Anh → app tự chọn English, tên cấu hình mẫu tiếng Anh
+- [x] `publish/` có hai thư mục con `vi` và `zh-Hant`
+- [x] Chép bản publish sang máy khác, chạy thử cả 3 ngôn ngữ
