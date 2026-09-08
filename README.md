@@ -71,7 +71,8 @@ WindowsSetupAssistant/
 │     └─ Services/        DialogService, ThemeManager, SettingsStore
 │
 └─ tests/
-   └─ WindowsSetupAssistant.Tests/           # 119 unit test, KHÔNG cài phần mềm thật
+   ├─ WindowsSetupAssistant.Tests/           # 152 unit test (Domain/Application/Infrastructure), KHÔNG cài phần mềm thật
+   └─ WindowsSetupAssistant.App.Tests/       # 141 unit test (ViewModel, binding, CLI, đa ngôn ngữ)
 ```
 
 **Chiều phụ thuộc:** `App → Infrastructure → Application → Domain`.
@@ -292,7 +293,7 @@ còn dùng App Installer đời cũ.
 dotnet test
 ```
 
-119 unit test, chia theo 4 nhóm đúng yêu cầu dự án:
+293 unit test (152 trong `WindowsSetupAssistant.Tests` + 141 trong `WindowsSetupAssistant.App.Tests`), chia theo 4 nhóm chính đúng yêu cầu dự án:
 
 - **Xử lý JSON** – `JsonProfileRepositoryTests`, `CatalogNormalizerTests`
   (roundtrip, seed lần đầu, file hỏng, import/export, loại bỏ Package Id không hợp lệ)

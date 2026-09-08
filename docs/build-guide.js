@@ -143,6 +143,12 @@ const figure = (imageRelPath, caption, width = 560, height = 350) => {
     return [P('[Ảnh minh hoạ: ' + caption + ']', { italics: true, color: '888888' })];
   }
   const imgBuffer = fs.readFileSync(fullPath);
+  const ext = path.extname(fullPath).slice(1).toLowerCase();
+  const SUPPORTED_TYPES = { png: 'png', jpg: 'jpg', jpeg: 'jpg', gif: 'gif', bmp: 'bmp', svg: 'svg' };
+  const imageType = SUPPORTED_TYPES[ext];
+  if (!imageType) {
+    throw new Error('Loai anh khong duoc ho tro cho ImageRun: ' + fullPath);
+  }
   return [
     new Paragraph({
       alignment: AlignmentType.CENTER,
@@ -151,6 +157,7 @@ const figure = (imageRelPath, caption, width = 560, height = 350) => {
       children: [
         new ImageRun({
           data: imgBuffer,
+          type: imageType,
           transformation: { width, height }
         })
       ]
