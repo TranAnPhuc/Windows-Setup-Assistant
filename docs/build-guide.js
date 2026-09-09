@@ -504,8 +504,8 @@ children.push(
       ['--unattended', '(bắt buộc)', 'Bật chế độ. Không có nó thì ứng dụng mở giao diện như cũ.'],
       ['--profile <tên>', 'cấu hình đang chọn', 'Cấu hình cần cài'],
       ['--existing skip|upgrade', 'skip', 'Gói đã có trên máy: bỏ qua hay nâng cấp'],
-      ['--report <đường dẫn>', 'thư mục Reports', 'Nơi ghi file báo cáo'],
-      ['--help', '', 'In hướng dẫn']
+      ['--report <đường dẫn>', 'Reports\\unattended-<thời điểm>.json', 'Nơi ghi file báo cáo'],
+      ['--help', '', 'In hướng dẫn. Viết tắt được: -h, -?, /?']
     ]),
   H2('Đọc kết quả'),
   P('Sau khi chạy xong, gõ echo $LASTEXITCODE trong PowerShell để biết kết quả:'),

@@ -59,9 +59,27 @@ public class AppStartupBranchTests
     }
 
     [Fact]
-    public void CoDangKyCtrlC()
+    public void DangKyCtrlCVaGoBoLaiSauKhiChayXong()
     {
-        Assert.Contains("CancelKeyPress", ReadAppSource());
+        var source = ReadAppSource();
+
+        var registerIndex = source.IndexOf("Console.CancelKeyPress +=", StringComparison.Ordinal);
+        var unregisterIndex = source.IndexOf("Console.CancelKeyPress -=", StringComparison.Ordinal);
+
+        Assert.True(registerIndex > 0, "Phai dang ky Console.CancelKeyPress de Ctrl+C huy duoc luot cai.");
+
+        // Dang ky ma khong go bo la ro ri trinh xu ly: no giu tham chieu toi ConsoleSession
+        // va CancellationTokenSource cua luot chay da ket thuc.
+        Assert.True(unregisterIndex > registerIndex, "Phai go bo Console.CancelKeyPress sau khi chay xong.");
+
+        // Go bo phai nam trong finally, neu khong thi mot ngoai le giua chung se bo qua no.
+        // Tim tu khoa finally o dau dong chu khong tim chuoi "finally" bat ky, vi trong file
+        // co nhung dong chu thich cung chua tu do.
+        var finallyIndex = source.IndexOf("\n        finally", registerIndex, StringComparison.Ordinal);
+
+        Assert.True(
+            finallyIndex > 0 && finallyIndex < unregisterIndex,
+            "Viec go bo Console.CancelKeyPress phai nam trong khoi finally.");
     }
 
     [Fact]
@@ -108,7 +126,34 @@ public class AppStartupBranchTests
     [Fact]
     public void MoiNhanhDeuKetThucBangShutdownCoMaThoat()
     {
-        Assert.Contains("Shutdown((int)", ReadAppSource());
+        var source = ReadAppSource();
+
+        var runIndex = source.IndexOf("private async Task RunCommandLineAsync", StringComparison.Ordinal);
+
+        Assert.True(runIndex > 0, "Phai tim thay RunCommandLineAsync.");
+
+        // Nhanh khong giam sat dat ShutdownMode = OnExplicitShutdown va khong tao cua so nao,
+        // nen KHONG co gi tu dong ket thuc tien trinh. Neu loi goi thoat khong nam trong
+        // finally, mot ngoai le hoac mot nhanh return som se de tien trinh song mai mai
+        // tren may khong co ai trong.
+        // Tim tu khoa finally o dau dong chu khong tim chuoi "finally" bat ky, vi ngay trong
+        // RunCommandLineAsync co dong chu thich cung chua tu do - neu khop nham vao do thi
+        // test se van xanh ke ca khi loi goi thoat bi dua ra ngoai khoi finally.
+        var finallyIndex = source.IndexOf("\n        finally", runIndex, StringComparison.Ordinal);
+
+        // Ket thuc RunCommandLineAsync = khai bao thanh vien ke tiep. Can chan tren nay vi
+        // chuoi "ShutdownOnce(" con khop voi chinh dong khai bao ham ShutdownOnce ben duoi;
+        // khong chan thi test van xanh ke ca khi loi goi trong finally bi xoa han.
+        var methodEndIndex = source.IndexOf("\n    private ", runIndex + 1, StringComparison.Ordinal);
+
+        Assert.True(finallyIndex > runIndex, "RunCommandLineAsync phai co khoi finally.");
+        Assert.True(methodEndIndex > finallyIndex, "Phai xac dinh duoc diem ket thuc RunCommandLineAsync.");
+
+        var thanKhoiFinally = source[finallyIndex..methodEndIndex];
+
+        Assert.Contains(
+            "ShutdownOnce(",
+            thanKhoiFinally);
     }
 
     [Fact]

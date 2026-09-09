@@ -44,9 +44,16 @@ public sealed class FakeWingetService : IWingetService
     public Task<IReadOnlyList<WingetPackageInfo>> SearchAsync(string query, CancellationToken cancellationToken = default) =>
         Task.FromResult<IReadOnlyList<WingetPackageInfo>>(Array.Empty<WingetPackageInfo>());
 
+    /// <summary>
+    /// Số lần GetInstalledPackagesAsync bị gọi. Dùng để test chứng minh một lượt quét
+    /// "winget list" đã được bỏ qua khi chắc chắn không cần tới kết quả.
+    /// </summary>
+    public int GetInstalledCallCount { get; private set; }
+
     public Task<IReadOnlyList<WingetPackageInfo>> GetInstalledPackagesAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
+        GetInstalledCallCount++;
         if (ThrowOnGetInstalled is not null) throw ThrowOnGetInstalled;
         return Task.FromResult<IReadOnlyList<WingetPackageInfo>>(InstalledRows.Count > 0
             ? InstalledRows.ToList()

@@ -214,6 +214,32 @@ public class UnattendedRunnerTests : IDisposable
     }
 
     [Fact]
+    public async Task KhongCoGoiNaoDuocTickThiBoHanLuotQuetGoiDaCai()
+    {
+        // "winget list" mat vai giay. Khi hang doi rong thi ket qua chac chan khong
+        // dung toi, nen khong duoc hoi lam gi.
+        var profile = Profile("P", "A.A");
+        profile.Packages[0].IsSelected = false;
+        var repository = await GivenCatalogAsync(profile);
+
+        var code = await CreateRunner(repository).RunAsync(Options(), CancellationToken.None);
+
+        Assert.Equal(UnattendedExitCode.Success, code);
+        Assert.Equal(0, _winget.GetInstalledCallCount);
+    }
+
+    [Fact]
+    public async Task CoGoiDuocTickThiVanPhaiQuetGoiDaCai()
+    {
+        // Doi chung cho test tren: chi duoc bo qua luot quet khi hang doi rong.
+        var repository = await GivenCatalogAsync(Profile("P", "A.A"));
+
+        await CreateRunner(repository).RunAsync(Options(), CancellationToken.None);
+
+        Assert.Equal(1, _winget.GetInstalledCallCount);
+    }
+
+    [Fact]
     public async Task HuyGiuaChungThiTraVeBonVaVanGhiBaoCao()
     {
         var repository = await GivenCatalogAsync(Profile("P", "A.A", "B.B", "C.C"));
