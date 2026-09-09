@@ -2,6 +2,7 @@ using WindowsSetupAssistant.Domain.Localization;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Threading;
+using WindowsSetupAssistant.App.Cli;
 using WindowsSetupAssistant.App.Localization;
 using WindowsSetupAssistant.App.Mvvm;
 using WindowsSetupAssistant.App.Services;
@@ -24,14 +25,36 @@ public partial class App : WpfApplication
 {
     private MainViewModel? _mainViewModel;
 
+    /// <summary>Khác null nghĩa là đang chạy chế độ không giám sát: tuyệt đối không hiện hộp thoại.</summary>
+    private IUnattendedOutput? _unattendedOutput;
+
+    /// <summary>
+    /// Đánh dấu đã có lời gọi thoát nào "thắng cuộc" chưa - phục vụ ShutdownOnce bên dưới,
+    /// bảo đảm chỉ lời gọi thoát đầu tiên có tác dụng.
+    /// </summary>
+    private bool _shutdownRequested;
+
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
 
-        // Bắt mọi lỗi chưa xử lý để ứng dụng không "tắt ngang" khi đang cài phần mềm.
+        // Bắt mọi lỗi chưa xử lý TRƯỚC khi phân nhánh dòng lệnh: nhánh không giám sát cũng
+        // đang cài phần mềm và cũng cần lưới an toàn này, không chỉ riêng giao diện. Nếu hai
+        // dòng đăng ký này nằm sau điểm return của nhánh không giám sát thì nhánh đó chạy mà
+        // không có bất kỳ trình bắt lỗi toàn cục nào - một ngoại lệ trong callback tiến trình
+        // con hay trong Progress<T> (chạy ngoài ngăn xếp try/catch của RunCommandLineAsync) sẽ
+        // làm sập cứng tiến trình, không in lỗi, không trả về mã thoát nào trong hợp đồng 0..4.
         DispatcherUnhandledException += OnDispatcherUnhandledException;
         AppDomain.CurrentDomain.UnhandledException += (_, args) =>
             System.Diagnostics.Debug.WriteLine(args.ExceptionObject);
+
+        var parseResult = CommandLineParser.Parse(e.Args);
+
+        if (parseResult.Mode != CommandLineMode.Gui)
+        {
+            RunCommandLine(parseResult);
+            return;
+        }
 
         var settingsStore = new SettingsStore();
         var settings = settingsStore.Load();
@@ -107,6 +130,16 @@ public partial class App : WpfApplication
 
     private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
+        // Ở chế độ không giám sát KHÔNG được hiện hộp thoại: một hộp thoại đứng chờ người bấm
+        // sẽ treo máy đang chạy không người trông cho tới khi có ai đó đi ngang qua.
+        if (_unattendedOutput is { } output)
+        {
+            output.WriteError(ConsoleMessages.UnexpectedError(e.Exception.Message));
+            e.Handled = true;
+            ShutdownOnce(UnattendedExitCode.SomePackagesFailed);
+            return;
+        }
+
         MessageBox.Show(
             $"Ứng dụng gặp lỗi không mong đợi:\n\n{e.Exception.Message}",
             "Lỗi",
@@ -114,5 +147,134 @@ public partial class App : WpfApplication
             MessageBoxImage.Error);
 
         e.Handled = true;
+    }
+
+    /// <summary>
+    /// Nhánh dòng lệnh. KHÔNG tạo cửa sổ nào.
+    ///
+    /// OnStartup là hàm đồng bộ nên không await được ở đây: ta khởi chạy tác vụ rồi trả về,
+    /// vòng lặp thông điệp của WPF sẽ bơm tiếp các đoạn await sau đó. Điều đó chỉ đúng khi
+    /// ShutdownMode là OnExplicitShutdown - mặc định OnLastWindowClose sẽ đóng ứng dụng ngay
+    /// vì không có cửa sổ nào cả.
+    /// </summary>
+    private void RunCommandLine(CommandLineParseResult parseResult)
+    {
+        ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
+        _ = RunCommandLineAsync(parseResult);
+    }
+
+    private async Task RunCommandLineAsync(CommandLineParseResult parseResult)
+    {
+        var exitCode = UnattendedExitCode.InvalidArguments;
+        using var cancellation = new CancellationTokenSource();
+
+        ConsoleCancelEventHandler? cancelHandler = null;
+
+        // ConsoleSession.Attach() phải nằm TRONG try: ShutdownMode đã là OnExplicitShutdown
+        // và nhánh này không tạo cửa sổ nào, nên nếu Attach() ném ngoại lệ mà nằm ngoài try thì
+        // không finally nào chạy, Shutdown(...) không bao giờ được gọi, và tiến trình treo mãi
+        // mãi trên một máy không có ai trông.
+        ConsoleSession? console = null;
+
+        try
+        {
+            console = ConsoleSession.Attach();
+            _unattendedOutput = console;
+
+            switch (parseResult.Mode)
+            {
+                case CommandLineMode.Help:
+                    console.WriteLine(ConsoleMessages.BuildHelp());
+                    exitCode = UnattendedExitCode.Success;
+                    break;
+
+                case CommandLineMode.Invalid:
+                    console.WriteError(parseResult.ErrorMessage ?? ConsoleMessages.InvalidArguments);
+                    console.WriteLine();
+                    console.WriteLine(ConsoleMessages.BuildHelp());
+                    exitCode = UnattendedExitCode.InvalidArguments;
+                    break;
+
+                default:
+                    cancelHandler = (_, args) =>
+                    {
+                        // Cancel = true để Windows không giết tiến trình ngay: ta cần kịp
+                        // dừng gói đang cài và ghi báo cáo.
+                        args.Cancel = true;
+                        console.WriteLine(ConsoleMessages.CancelRequested);
+                        cancellation.Cancel();
+                    };
+
+                    Console.CancelKeyPress += cancelHandler;
+
+                    exitCode = await RunUnattendedAsync(parseResult.Options!, console, cancellation.Token)
+                        .ConfigureAwait(true);
+                    break;
+            }
+        }
+        catch (Exception exception)
+        {
+            console?.WriteError(ConsoleMessages.UnexpectedError(exception.Message));
+            exitCode = UnattendedExitCode.SomePackagesFailed;
+        }
+        finally
+        {
+            if (cancelHandler is not null)
+            {
+                Console.CancelKeyPress -= cancelHandler;
+            }
+
+            console?.Dispose();
+            _unattendedOutput = null;
+
+            ShutdownOnce(exitCode);
+        }
+    }
+
+    /// <summary>
+    /// Chỉ lời gọi ĐẦU TIÊN có tác dụng - ai báo lỗi trước thì mã thoát của người đó thắng.
+    ///
+    /// Có hai nơi trong nhánh không giám sát muốn quyết định mã thoát: trình bắt lỗi toàn cục
+    /// (OnDispatcherUnhandledException) và khối finally của RunCommandLineAsync. Một ngoại lệ
+    /// ném ra từ callback Progress&lt;T&gt;.Report được marshal về Dispatcher qua
+    /// SynchronizationContext.Post, tức là nằm NGOÀI ngăn xếp lời gọi của RunCommandLineAsync.
+    /// Trình bắt lỗi toàn cục xử lý nó, đặt e.Handled = true để nuốt ngoại lệ - nhưng vì bị
+    /// nuốt, RunCommandLineAsync không hề biết có lỗi, chạy tiếp tới finally, và nếu finally
+    /// gọi Shutdown một lần nữa thì mã thoát báo lỗi (vd. 1) sẽ bị mã thoát thành công (0) ghi
+    /// đè. Hệ quả: console in ra lỗi nhưng tiến trình vẫn báo thành công cho script bên ngoài -
+    /// hỏng âm thầm, tệ hơn cả sập hẳn. Gom mọi lời gọi Shutdown về đây và chỉ cho lời gọi đầu
+    /// tiên có tác dụng loại bỏ hoàn toàn khả năng ghi đè đó.
+    /// </summary>
+    private void ShutdownOnce(UnattendedExitCode exitCode)
+    {
+        if (_shutdownRequested)
+        {
+            return;
+        }
+
+        _shutdownRequested = true;
+        Shutdown((int)exitCode);
+    }
+
+    /// <summary>
+    /// Lắp ráp đúng các thành phần mà giao diện đang dùng, chỉ khác: không ViewModel, không cửa sổ.
+    /// </summary>
+    private static async Task<UnattendedExitCode> RunUnattendedAsync(
+        CommandLineOptions options,
+        IUnattendedOutput output,
+        CancellationToken cancellationToken)
+    {
+        var localizer = new ResourceStringLocalizer();
+        var logger = new AppLogger(logDirectory: null, writeToFile: true, localizer);
+        var processRunner = new ProcessRunner();
+        var wingetService = new WingetService(processRunner, logger);
+        var repository = new JsonProfileRepository(dataFilePath: null, logger: logger, localizer: localizer);
+        var queueService = new InstallationQueueService(wingetService, logger);
+
+        var runner = new UnattendedRunner(
+            wingetService, repository, queueService, localizer, output, logger);
+
+        return await runner.RunAsync(options, cancellationToken).ConfigureAwait(true);
     }
 }

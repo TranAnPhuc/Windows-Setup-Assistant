@@ -26,8 +26,18 @@ switch (verb)
         Console.WriteLine("Found Fake Package [Fake.Package] Version 1.0.0");
         Console.WriteLine("Downloading (gia lap - khong tai gi that)...");
         Console.Out.Flush();
-        // Nam cho de app o trang thai "dang cai" du lau cho viec kiem thu.
-        Thread.Sleep(TimeSpan.FromMinutes(5));
+        // Thoi gian "nam cho" co the chinh qua bien moi truong WSA_FAKE_WINGET_DELAY_MS.
+        // KHONG dat bien nay thi giu nguyen hanh vi cu (5 phut) de Run-UiSmokeTest.ps1
+        // (can tien trinh song lau de thu huy giua chung) khong bi anh huong.
+        // Run-UnattendedSmokeTest.ps1 dat bien nay rat ngan vi no khong can tien trinh
+        // song lau, chi can kiem chung AttachConsole/ShutdownMode/ma thoat.
+        var delayMs = (int)TimeSpan.FromMinutes(5).TotalMilliseconds;
+        var envDelay = Environment.GetEnvironmentVariable("WSA_FAKE_WINGET_DELAY_MS");
+        if (!string.IsNullOrEmpty(envDelay) && int.TryParse(envDelay, out var parsedDelayMs) && parsedDelayMs >= 0)
+        {
+            delayMs = parsedDelayMs;
+        }
+        Thread.Sleep(delayMs);
         Console.WriteLine("Successfully installed");
         return 0;
 

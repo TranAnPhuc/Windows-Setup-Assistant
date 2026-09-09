@@ -71,7 +71,8 @@ WindowsSetupAssistant/
 │     └─ Services/        DialogService, ThemeManager, SettingsStore
 │
 └─ tests/
-   └─ WindowsSetupAssistant.Tests/           # 119 unit test, KHÔNG cài phần mềm thật
+   ├─ WindowsSetupAssistant.Tests/           # 152 unit test (Domain/Application/Infrastructure), KHÔNG cài phần mềm thật
+   └─ WindowsSetupAssistant.App.Tests/       # 141 unit test (ViewModel, binding, CLI, đa ngôn ngữ)
 ```
 
 **Chiều phụ thuộc:** `App → Infrastructure → Application → Domain`.
@@ -188,7 +189,51 @@ Sửa tay file này cũng được — mục nào có `packageId` sai định d�
 
 ---
 
-## 7. Danh sách mẫu (Package Id đã kiểm chứng bằng `winget search`)
+## 7. Chế độ không giám sát (cài bằng một dòng lệnh)
+
+```powershell
+.\WindowsSetupAssistant.exe --unattended --profile "Máy công ty"
+```
+
+Không mở cửa sổ nào. Tiến trình in thẳng ra cửa sổ lệnh, kết quả ghi vào
+`Reports\unattended-<thời điểm>.json`.
+
+| Tham số | Mặc định | Ý nghĩa |
+|---|---|---|
+| `--unattended` | — | **Bắt buộc.** Không có nó thì ứng dụng mở giao diện như cũ. |
+| `--profile <tên>` | cấu hình đang chọn | Cấu hình cần cài |
+| `--existing skip\|upgrade` | `skip` | Gói đã có trên máy: bỏ qua hay nâng cấp |
+| `--report <đường dẫn>` | `Reports\unattended-<thời điểm>.json` | Nơi ghi báo cáo |
+| `--help` | — | In hướng dẫn |
+
+| Mã thoát | Ý nghĩa |
+|---|---|
+| `0` | Mọi gói đã xử lý xong |
+| `1` | Có ít nhất một gói lỗi — đọc file báo cáo |
+| `2` | Sai tham số, hoặc không có cấu hình tên đó |
+| `3` | Máy không có WinGet |
+| `4` | Bị huỷ bằng Ctrl+C |
+
+> **Quyền Administrator:** chế độ này **không** hiện hộp thoại UAC, vì một hộp thoại đứng chờ
+> người bấm sẽ phá hỏng đúng thứ tính năng này sinh ra để làm. Nếu cần cài ở phạm vi toàn máy,
+> hãy **mở PowerShell bằng quyền Administrator trước**, rồi mới gõ lệnh.
+
+Script cài cho nhiều máy:
+
+```powershell
+$ket_qua = @()
+foreach ($may in @("PC-01", "PC-02", "PC-03")) {
+    Invoke-Command -ComputerName $may -ScriptBlock {
+        & "\\file-server\setup\WindowsSetupAssistant.exe" --unattended --profile "Máy công ty"
+        $LASTEXITCODE
+    } | ForEach-Object { $ket_qua += [pscustomobject]@{ May = $may; MaThoat = $_ } }
+}
+$ket_qua | Format-Table
+```
+
+---
+
+## 8. Danh sách mẫu (Package Id đã kiểm chứng bằng `winget search`)
 
 | Phần mềm | WinGet Package Id | Nhóm |
 |----------|-------------------|------|
@@ -203,7 +248,7 @@ Sửa tay file này cũng được — mục nào có `packageId` sai định d�
 
 ---
 
-## 8. An toàn và quyền
+## 9. An toàn và quyền
 
 - **Không ghép chuỗi lệnh.** Mọi tham số đi qua `ProcessStartInfo.ArgumentList`, không qua `cmd.exe`
   (`UseShellExecute = false`), nên các ký tự như `& | > ;` hoàn toàn vô hại.
@@ -227,7 +272,7 @@ còn dùng App Installer đời cũ.
 
 ---
 
-## 9. Xử lý tình huống bất thường
+## 10. Xử lý tình huống bất thường
 
 | Tình huống | Ứng dụng làm gì |
 |------------|-----------------|
@@ -242,13 +287,13 @@ còn dùng App Installer đời cũ.
 
 ---
 
-## 10. Kiểm thử
+## 11. Kiểm thử
 
 ```bash
 dotnet test
 ```
 
-119 unit test, chia theo 4 nhóm đúng yêu cầu dự án:
+293 unit test (152 trong `WindowsSetupAssistant.Tests` + 141 trong `WindowsSetupAssistant.App.Tests`), chia theo 4 nhóm chính đúng yêu cầu dự án:
 
 - **Xử lý JSON** – `JsonProfileRepositoryTests`, `CatalogNormalizerTests`
   (roundtrip, seed lần đầu, file hỏng, import/export, loại bỏ Package Id không hợp lệ)
@@ -262,7 +307,7 @@ dotnet test
 
 ---
 
-## 11. Checklist kiểm thử thực tế trên máy vừa cài lại Windows
+## 12. Checklist kiểm thử thực tế trên máy vừa cài lại Windows
 
 Chép thư mục publish vào USB rồi làm lần lượt:
 
@@ -291,7 +336,7 @@ Chép thư mục publish vào USB rồi làm lần lượt:
 
 ---
 
-## 12. Ghi chú kỹ thuật đáng nhớ
+## 13. Ghi chú kỹ thuật đáng nhớ
 
 - **Vì sao có `WpfApplication`?** Namespace `WindowsSetupAssistant.Application` (tầng nghiệp vụ) trùng tên
   với `System.Windows.Application` của WPF. File `GlobalUsings.cs` khai báo bí danh toàn cục

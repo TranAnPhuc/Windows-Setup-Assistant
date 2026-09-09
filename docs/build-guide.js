@@ -143,6 +143,12 @@ const figure = (imageRelPath, caption, width = 560, height = 350) => {
     return [P('[Ảnh minh hoạ: ' + caption + ']', { italics: true, color: '888888' })];
   }
   const imgBuffer = fs.readFileSync(fullPath);
+  const ext = path.extname(fullPath).slice(1).toLowerCase();
+  const SUPPORTED_TYPES = { png: 'png', jpg: 'jpg', jpeg: 'jpg', gif: 'gif', bmp: 'bmp', svg: 'svg' };
+  const imageType = SUPPORTED_TYPES[ext];
+  if (!imageType) {
+    throw new Error('Loai anh khong duoc ho tro cho ImageRun: ' + fullPath);
+  }
   return [
     new Paragraph({
       alignment: AlignmentType.CENTER,
@@ -151,6 +157,7 @@ const figure = (imageRelPath, caption, width = 560, height = 350) => {
       children: [
         new ImageRun({
           data: imgBuffer,
+          type: imageType,
           transformation: { width, height }
         })
       ]
@@ -478,6 +485,41 @@ children.push(
   bulletR([{ text: '2. Không ', bold: true, color: BAD }, 'tắt đột ngột bằng nút [X] khi đang cài — hãy bấm nút "Huỷ cài đặt", đợi dừng hẳn rồi mới thoát.']),
   bulletR([{ text: '3. Không ', bold: true, color: BAD }, 'rút USB khi phần mềm đang chạy trực tiếp trên USB.']),
   bulletR([{ text: '4. Không ', bold: true, color: BAD }, 'chạy quyền Admin ngay từ đầu nếu không gặp mã lỗi yêu cầu quyền.'])
+);
+
+// ---------- 6. Cài hàng loạt bằng một dòng lệnh ----------
+children.push(
+  H1('6. Cài hàng loạt bằng một dòng lệnh'),
+  P('Khi phải cài cho nhiều máy trong cùng một buổi, bạn không cần mở ứng dụng trên từng máy. ' +
+    'Chuẩn bị cấu hình một lần trong giao diện, sau đó chạy một dòng lệnh trên mỗi máy.'),
+  callout('QUAN TRỌNG',
+    'Mở PowerShell bằng quyền Administrator TRƯỚC khi gõ lệnh. Chế độ này cố ý không hiện hộp ' +
+    'thoại UAC, nên nếu thiếu quyền thì một số phần mềm sẽ cài trượt mà không có gì báo cho bạn.',
+    WARN),
+  code('.\\WindowsSetupAssistant.exe --unattended --profile "Máy công ty"'),
+  H2('Các tham số'),
+  table([2600, 1800, 4600],
+    ['Tham số', 'Mặc định', 'Ý nghĩa'],
+    [
+      ['--unattended', '(bắt buộc)', 'Bật chế độ. Không có nó thì ứng dụng mở giao diện như cũ.'],
+      ['--profile <tên>', 'cấu hình đang chọn', 'Cấu hình cần cài'],
+      ['--existing skip|upgrade', 'skip', 'Gói đã có trên máy: bỏ qua hay nâng cấp'],
+      ['--report <đường dẫn>', 'thư mục Reports', 'Nơi ghi file báo cáo'],
+      ['--help', '', 'In hướng dẫn']
+    ]),
+  H2('Đọc kết quả'),
+  P('Sau khi chạy xong, gõ echo $LASTEXITCODE trong PowerShell để biết kết quả:'),
+  table([1400, 7600],
+    ['Mã thoát', 'Ý nghĩa'],
+    [
+      ['0', 'Mọi phần mềm đã xử lý xong'],
+      ['1', 'Có ít nhất một phần mềm cài trượt — mở file báo cáo để xem gói nào'],
+      ['2', 'Gõ sai tham số, hoặc không có cấu hình tên đó'],
+      ['3', 'Máy chưa có WinGet — cài App Installer trước'],
+      ['4', 'Bạn đã nhấn Ctrl+C để dừng']
+    ]),
+  P('File báo cáo JSON nằm trong thư mục Reports cạnh file .exe. Hãy lưu file này lại làm hồ sơ ' +
+    'bàn giao máy: nó ghi rõ máy nào, lúc nào, cài những gì, gói nào trượt và vì sao.')
 );
 
 // ================================================================ TẠO FILE DOCX
