@@ -92,7 +92,7 @@ public static class ConsoleMessages
         "  --existing skip|upgrade What to do with packages already on the machine. Default: skip.",
         "  --report <path>         Where to write the JSON report.",
         "                          Default: Reports\\unattended-<yyyyMMdd-HHmmss>.json next to the .exe.",
-        "  --help, -h, -?          Show this help.",
+        "  --help, -h, -?, /?      Show this help.",
         "",
         "EXIT CODES",
         "  0  All packages handled (packages skipped because they were already installed count as success).",

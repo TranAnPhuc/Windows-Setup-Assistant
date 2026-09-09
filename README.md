@@ -204,7 +204,7 @@ Không mở cửa sổ nào. Tiến trình in thẳng ra cửa sổ lệnh, kế
 | `--profile <tên>` | cấu hình đang chọn | Cấu hình cần cài |
 | `--existing skip\|upgrade` | `skip` | Gói đã có trên máy: bỏ qua hay nâng cấp |
 | `--report <đường dẫn>` | `Reports\unattended-<thời điểm>.json` | Nơi ghi báo cáo |
-| `--help` | — | In hướng dẫn |
+| `--help` | — | In hướng dẫn. Viết tắt được: `-h`, `-?`, `/?` |
 
 | Mã thoát | Ý nghĩa |
 |---|---|
@@ -218,18 +218,32 @@ Không mở cửa sổ nào. Tiến trình in thẳng ra cửa sổ lệnh, kế
 > người bấm sẽ phá hỏng đúng thứ tính năng này sinh ra để làm. Nếu cần cài ở phạm vi toàn máy,
 > hãy **mở PowerShell bằng quyền Administrator trước**, rồi mới gõ lệnh.
 
-Script cài cho nhiều máy:
+Script cài cho nhiều máy — chép công cụ sang từng máy rồi chạy tại chỗ:
 
 ```powershell
+$nguon = "\\file-server\setup\WindowsSetupAssistant"
 $ket_qua = @()
+
 foreach ($may in @("PC-01", "PC-02", "PC-03")) {
-    Invoke-Command -ComputerName $may -ScriptBlock {
-        & "\\file-server\setup\WindowsSetupAssistant.exe" --unattended --profile "Máy công ty"
+    Copy-Item $nguon "\\$may\C$\Temp\WindowsSetupAssistant" -Recurse -Force
+
+    $ma_thoat = Invoke-Command -ComputerName $may -ScriptBlock {
+        & "C:\Temp\WindowsSetupAssistant\WindowsSetupAssistant.exe" --unattended --profile "Máy công ty"
         $LASTEXITCODE
-    } | ForEach-Object { $ket_qua += [pscustomobject]@{ May = $may; MaThoat = $_ } }
+    }
+
+    $ket_qua += [pscustomobject]@{ May = $may; MaThoat = $ma_thoat }
 }
+
 $ket_qua | Format-Table
 ```
+
+> **Vì sao phải chép về máy trước, không chạy thẳng từ đường dẫn mạng?** Bên trong
+> `Invoke-Command`, phiên từ xa **không mang theo** quyền truy cập file server — đây là
+> hạn chế "double hop" của Windows. Gọi thẳng `\\file-server\...` trong khối lệnh từ xa
+> sẽ báo *Access is denied* dù bạn có quyền đọc thư mục đó. Chép cả thư mục (kèm `Data/`)
+> về máy đích rồi chạy tại chỗ là cách gọn nhất; nếu bắt buộc phải chạy từ đường dẫn mạng
+> thì phải cấu hình CredSSP hoặc uỷ quyền Kerberos.
 
 ---
 

@@ -153,6 +153,10 @@ public class CommandLineParserTests
         var result = CommandLineParser.Parse(new[] { "--turbo", "--unattended" });
 
         Assert.Equal(CommandLineMode.Invalid, result.Mode);
+
+        // Thong bao phai chi dich danh tham so sai, khong duoc chung chung -
+        // nguoi go lenh can biet chinh xac phai sua chu nao.
+        Assert.Contains("--turbo", result.ErrorMessage);
     }
 
     [Fact]
@@ -163,6 +167,7 @@ public class CommandLineParserTests
         var result = CommandLineParser.Parse(new[] { "--turbo", "--profile", "X" });
 
         Assert.Equal(CommandLineMode.Invalid, result.Mode);
+        Assert.Contains("--turbo", result.ErrorMessage);
     }
 
     [Fact]
@@ -180,15 +185,25 @@ public class CommandLineParserTests
         var result = CommandLineParser.Parse(new[] { "--unattended", "--profile", "A", "--turbo" });
 
         Assert.Equal(CommandLineMode.Invalid, result.Mode);
+        Assert.Contains("--turbo", result.ErrorMessage);
+
+        // Tham so hop le dung truoc no khong duoc lam mo thong bao: chi "--turbo" la sai.
+        Assert.DoesNotContain("--profile", result.ErrorMessage);
     }
 
     [Fact]
-    public void ReportDungTruocHelpVanTraVeHelp()
+    public void TokenODungViTriGiaTriNhungKhongTheLaGiaTriThiVanLaMotCoDocLap()
     {
-        // Giu nguyen hanh vi cu: --help thang tat ca du dung o vi tri nao.
+        // Khac voi HelpThangTheNgayCaKhiDiKemThamSoKhac (help dung canh mot co hop le):
+        // o day "--help" nam dung o VI TRI GIA TRI cua "--report". Vi gia tri khong duoc
+        // phep bat dau bang dau gach ngang, token nay khong bi "--report" nuot lam gia tri,
+        // nen no van la mot co doc lap va help thang.
         var result = CommandLineParser.Parse(new[] { "--report", "--help" });
 
         Assert.Equal(CommandLineMode.Help, result.Mode);
+
+        // Va vi da tra ve Help thi khong duoc kem theo loi "thieu gia tri sau --report".
+        Assert.Null(result.ErrorMessage);
     }
 
     [Fact]

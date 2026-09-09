@@ -86,33 +86,42 @@ public sealed class UnattendedRunner
 
         var selected = profile.Packages.Where(package => package.IsSelected).ToList();
 
-        var installedIds = await GetInstalledIdsAsync(cancellationToken).ConfigureAwait(false);
+        // Giữ null nghĩa là "chưa hỏi WinGet xem máy đã cài những gì" - đúng hợp đồng
+        // của InstallationOptions.PreCheckedInstalledPackageIds.
+        IReadOnlySet<string>? installedIds = null;
 
-        if (installedIds is null)
+        if (selected.Count == 0)
         {
-            // Quét thất bại: KHÔNG được coi "không biết" là "biết chắc rỗng" rồi suy ra
-            // "không gói nào đã cài". In một dòng riêng nói rõ là không biết, thay vì bịa ra
-            // một con số "not installed" trông như sự thật. Hàng đợi phía dưới vẫn nhận
-            // installedIds = null nguyên vẹn để nó tự hỏi WinGet từng gói.
-            _output.WriteLine(ConsoleMessages.ProfileSummaryUnknownInstallState(profile.Name, selected.Count));
-
-            // Chỉ được kết luận NothingToDo khi không có gói nào được tick - tuyệt đối
-            // không được dùng trạng thái "không biết" để suy ra "mọi gói đã cài sẵn".
-            if (selected.Count == 0)
-            {
-                _output.WriteLine(ConsoleMessages.NothingToDo);
-            }
+            // Không gói nào được tick thì bỏ hẳn lượt quét "winget list": nó mất vài giây
+            // mà kết quả chắc chắn không dùng tới, vì hàng đợi rỗng.
+            _output.WriteLine(ConsoleMessages.ProfileSummary(profile.Name, 0, 0));
+            _output.WriteLine(ConsoleMessages.NothingToDo);
         }
         else
         {
-            var notInstalled = selected.Count(package => !installedIds.Contains(package.PackageId));
+            installedIds = await GetInstalledIdsAsync(cancellationToken).ConfigureAwait(false);
 
-            _output.WriteLine(ConsoleMessages.ProfileSummary(profile.Name, selected.Count, notInstalled));
-
-            if (selected.Count == 0 ||
-                (options.ExistingPackageAction == ExistingPackageAction.Skip && notInstalled == 0))
+            if (installedIds is null)
             {
-                _output.WriteLine(ConsoleMessages.NothingToDo);
+                // Quét thất bại: KHÔNG được coi "không biết" là "biết chắc rỗng" rồi suy ra
+                // "không gói nào đã cài". In một dòng riêng nói rõ là không biết, thay vì bịa ra
+                // một con số "not installed" trông như sự thật. Hàng đợi phía dưới vẫn nhận
+                // installedIds = null nguyên vẹn để nó tự hỏi WinGet từng gói.
+                //
+                // Tuyệt đối không kết luận NothingToDo ở nhánh này: có gói được tick mà chưa
+                // biết trạng thái thì vẫn phải chạy hàng đợi.
+                _output.WriteLine(ConsoleMessages.ProfileSummaryUnknownInstallState(profile.Name, selected.Count));
+            }
+            else
+            {
+                var notInstalled = selected.Count(package => !installedIds.Contains(package.PackageId));
+
+                _output.WriteLine(ConsoleMessages.ProfileSummary(profile.Name, selected.Count, notInstalled));
+
+                if (options.ExistingPackageAction == ExistingPackageAction.Skip && notInstalled == 0)
+                {
+                    _output.WriteLine(ConsoleMessages.NothingToDo);
+                }
             }
         }
 

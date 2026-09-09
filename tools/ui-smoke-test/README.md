@@ -71,4 +71,15 @@ Không đặt biến thì giữ nguyên hành vi cũ (5 phút) - `Run-UiSmokeTes
 tiến trình cài sống lâu, nhờ đó cả 5 bước chỉ mất khoảng **vài giây đến vài chục giây**, thay vì
 18-20 phút như trước.
 
+> **Nếu kịch bản đột nhiên chạy 18-20 phút:** gần như chắc chắn `winget.exe` giả đang là bản build
+> cũ, có trước khi biến môi trường được thêm vào. Thư mục `bin/` không nằm trong git, nên sau khi
+> clone mới hoặc sau khi gộp nhánh, bạn phải **build lại** winget giả:
+>
+> ```
+> dotnet build tools/ui-smoke-test/fake-winget -c Release
+> ```
+>
+> Kịch bản có kiểm tra `winget.exe` **tồn tại** hay không, nhưng không thể biết bản đó cũ hay mới -
+> nên trường hợp này không báo lỗi, chỉ chạy chậm.
+
 Kết thúc phải thấy `Ket qua: 18 dat, 0 truot`.
